@@ -12,11 +12,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_190_307_124_714) do
+ActiveRecord::Schema.define(version: 20_190_307_130_344) do
   create_table 'buildings', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
     t.string 'name'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+  end
+
+  create_table 'count_logs', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
+    t.datetime 'date'
+    t.integer 'count'
+    t.bigint 'klass_id'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['klass_id'], name: 'index_count_logs_on_klass_id'
   end
 
   create_table 'course_offerings', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
@@ -56,6 +65,7 @@ ActiveRecord::Schema.define(version: 20_190_307_124_714) do
     t.index ['building_id'], name: 'index_klasses_on_building_id'
   end
 
+  add_foreign_key 'count_logs', 'klasses'
   add_foreign_key 'course_offerings', 'courses'
   add_foreign_key 'klass_requests', 'klasses'
   add_foreign_key 'klasses', 'buildings'
