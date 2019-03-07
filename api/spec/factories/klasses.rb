@@ -2,10 +2,12 @@
 
 FactoryBot.define do
   factory :klass do
-    name { 'MyString' }
-    floor { 'MyString' }
-    capacity { 1 }
-    projector { false }
-    building { nil }
+    name { 'C11' }
+    floor { 'first' }
+    capacity { 30 }
+    projector { true }
+    trait :ssp do
+      association :building, factory: %i[building ssp]
+    end
   end
 end

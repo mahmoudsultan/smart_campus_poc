@@ -2,8 +2,10 @@
 
 FactoryBot.define do
   factory :klass_request do
-    required_capacity { 1 }
-    projector { false }
-    state { 1 }
+    trait :valid do
+      required_capacity { 30 }
+      projector { true }
+      state { 0 }
+    end
   end
 end

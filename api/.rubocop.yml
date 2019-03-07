@@ -8,3 +8,7 @@ Style/Documentation:
 AllCops:
   Exclude:
     - 'bin/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'db/schema.rb'

@@ -2,6 +2,8 @@
 
 FactoryBot.define do
   factory :building do
-    name { 'MyString' }
+    trait :ssp do
+      name { 'SSP' }
+    end
   end
 end
