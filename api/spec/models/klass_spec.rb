@@ -7,5 +7,5 @@ RSpec.describe Klass, type: :model do
   it { should validate_presence_of(:floor) }
   it { should validate_presence_of(:capacity) }
 
-  it { should belong_to(:building) } 
+  it { should belong_to(:building) }
 end
