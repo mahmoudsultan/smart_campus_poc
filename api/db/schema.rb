@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_190_307_131_929) do
+ActiveRecord::Schema.define(version: 20_190_307_143_824) do
   create_table 'activity_logs', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
     t.datetime 'date'
     t.integer 'state'
@@ -74,6 +74,15 @@ ActiveRecord::Schema.define(version: 20_190_307_131_929) do
     t.index ['building_id'], name: 'index_klasses_on_building_id'
   end
 
+  create_table 'lecture_instances', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
+    t.integer 'week_number'
+    t.datetime 'date'
+    t.bigint 'lecture_id'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['lecture_id'], name: 'index_lecture_instances_on_lecture_id'
+  end
+
   create_table 'lectures', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
     t.integer 'start_timeslot'
     t.integer 'end_timeslot'
@@ -89,5 +98,6 @@ ActiveRecord::Schema.define(version: 20_190_307_131_929) do
   add_foreign_key 'course_offerings', 'courses'
   add_foreign_key 'klass_requests', 'klasses'
   add_foreign_key 'klasses', 'buildings'
+  add_foreign_key 'lecture_instances', 'lectures'
   add_foreign_key 'lectures', 'course_offerings'
 end
