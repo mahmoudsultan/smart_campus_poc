@@ -1,89 +1,75 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer
+  <v-app>
+    <v-navigation-drawer 
       v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
       app
+      clipped
+      fixed
+      hide-overlay
     >
-      <v-list>
+      <v-list expand>
+        <v-list-tile 
+          avatar
+        >
+          <v-list-tile-avatar
+            color="white"
+          >
+            <v-img
+              src="https://source.unsplash.com/600x320/?face,human"
+              contain
+            />
+          </v-list-tile-avatar>
+          <v-list-tile-title>
+            {{ user.name }}
+          </v-list-tile-title>
+        </v-list-tile>
+
         <v-list-tile
-          v-for="(item, i) in items"
-          :key="i"
+          v-for="item in items"
           :to="item.to"
-          router
-          exact
+          :key="item.title"
+          no-action
         >
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title" />
-          </v-list-tile-content>
+          <v-list-tile-title
+            v-text="item.title"
+          />
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar
-      :clipped-left="clipped"
-      fixed
       app
+      clipped-left
+      fixed
+      color="primary white--text"
     >
-      <v-toolbar-side-icon @click="drawer = !drawer" />
-      <v-btn
-        @click.stop="miniVariant = !miniVariant"
-        icon
-      >
-        <v-icon>{{ `chevron_${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        @click.stop="clipped = !clipped"
-        icon
-      >
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn
-        @click.stop="fixed = !fixed"
-        icon
-      >
-        <v-icon>remove</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn
-        @click.stop="rightDrawer = !rightDrawer"
-        icon
-      >
-        <v-icon>menu</v-icon>
-      </v-btn>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer" color="white--text" />
+      <v-toolbar-title
+        class="font-weight-thin"
+      > 
+        {{ title }}
+      </v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-container>
+      <v-container fluid>
         <nuxt />
       </v-container>
     </v-content>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-tile @click.native="right = !right">
-          <v-list-tile-action>
-            <v-icon light>
-              compare_arrows
-            </v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :fixed="fixed"
+    <v-footer 
       app
+      color="secondaryDark"
+      inset
     >
-      <span>&copy; 2019</span>
+      <v-flex
+        text-xs-center
+        white--text
+        xs12
+        class="font-weight-thin"
+      >
+        &copy;2018 — <strong>Faculty of Engineering?</strong>  
+      </v-flex>
     </v-footer>
   </v-app>
 </template>
@@ -92,9 +78,10 @@
 export default {
   data() {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
+      drawer: true,
+      user: {
+        name: 'John Doe'
+      },
       items: [
         {
           icon: 'apps',
@@ -107,10 +94,7 @@ export default {
           to: '/inspire'
         }
       ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'University System'
     }
   }
 }
