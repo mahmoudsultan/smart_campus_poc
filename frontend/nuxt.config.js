@@ -38,8 +38,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '@/plugins/vuetify' },
-    { src: '@/plugins/konva', mode: 'client' }
+    { src: '@/plugins/vuetify' }
   ],
 
   /*

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer 
+    <v-navigation-drawer
       v-model="drawer"
       app
       clipped
@@ -8,7 +8,7 @@
       hide-overlay
     >
       <v-list expand>
-        <v-list-tile 
+        <v-list-tile
           avatar
         >
           <v-list-tile-avatar
@@ -48,7 +48,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer" color="white--text" />
       <v-toolbar-title
         class="font-weight-thin"
-      > 
+      >
         {{ title }}
       </v-toolbar-title>
     </v-toolbar>
@@ -57,7 +57,7 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer 
+    <v-footer
       app
       color="secondaryDark"
       inset
@@ -68,7 +68,7 @@
         xs12
         class="font-weight-thin"
       >
-        &copy;2018 — <strong>Faculty of Engineering?</strong>  
+        &copy;2018 — <strong>Faculty of Engineering?</strong>
       </v-flex>
     </v-footer>
   </v-app>
