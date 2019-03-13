@@ -5,6 +5,7 @@
       <attendance-image
         :image="attendanceSheet.image"
         :faceBoxes="attendanceSheet.faceBoxes"
+        :drawMode="addingNewAttendance"
         @facebox-click="handleClickedFaceBox"
       />
     </v-card>
@@ -70,13 +71,6 @@
       multi-line
     >
       Please Draw a Facebox on the Attendance Image and Click Next.
-      <!-- <v-btn
-        color="error"
-        flat
-        @click="addingNewAttendance = false"
-      >
-        Cancel
-      </v-btn> -->
     </v-snackbar>
 
     <v-card>

@@ -6,6 +6,9 @@
           <v-img id="attendance-image" :src="image"/>
         </div>
         <div class="layer">
+          <canvas id="draw-canvas"></canvas>
+        </div>
+        <div class="layer">
           <canvas id="attendance-canvas"></canvas>
         </div>
       </v-flex>
@@ -19,7 +22,8 @@ const _ = require('lodash')
 export default {
   props: {
     image: String,
-    faceBoxes: Array
+    faceBoxes: Array,
+    drawMode: Boolean
   },
   data() {
     return {
@@ -27,7 +31,11 @@ export default {
       detectedRGBA: 'rgba(247, 202, 24, 1)',
       ratio: 1,
       imageObj: null,
-      offScreenCanvas: null
+      offScreenCanvas: null,
+      boxStartCorner: null,
+      boxEndCorner: null,
+      drawStage: 0,
+      scratchPadCanvas: null
     }
   },
   methods: {
@@ -49,6 +57,11 @@ export default {
       canvas.height = attendanceImage.clientHeight || 1
 
       this.ratio = canvas.width / this.imageObj.width
+    },
+    updateScratchPadCanvasWidthAndHeight() {
+      const attendanceImage = document.getElementById('attendance-image')
+      this.scratchPadCanvas.width = attendanceImage.clientWidth
+      this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
     faceBoxDimensions(faceBox) {
       const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
@@ -87,13 +100,35 @@ export default {
       const clickX = event.layerX
       const clickY = event.layerY
 
-      this.buildOffScreenImageCanvas()
-      const faceBoxIndex = this.getFaceBoxIndexByPoint(clickX, clickY)
-      const faceBox = this.faceBoxes[faceBoxIndex]
-      if (faceBoxIndex !== -1) {
-        const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
-        this.$emit('facebox-click', faceBoxIndex,
-          this.getFaceBoxImageData(x, y, width, height))
+      if (this.drawMode) {
+        if (this.drawStage === 0 || this.drawStage === 2) {
+          // eslint-disable-next-line
+          console.log('Stage 1')
+          this.boxStartCorner = [clickX, clickY]
+          this.drawStage = 1
+        } else {
+          // eslint-disable-next-line
+          console.log('Stage 2')
+          this.boxEndCorner = [clickX, clickY]
+          this.drawStage = 2
+        }
+      } else {
+        this.buildOffScreenImageCanvas()
+        const faceBoxIndex = this.getFaceBoxIndexByPoint(clickX, clickY)
+        const faceBox = this.faceBoxes[faceBoxIndex]
+        if (faceBoxIndex !== -1) {
+          const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
+          this.$emit('facebox-click', faceBoxIndex,
+            this.getFaceBoxImageData(x, y, width, height))
+        }
+      }
+    },
+    handleMouseMoveOnCanvas(event) {
+      const clickX = event.layerX
+      const clickY = event.layerY
+
+      if (this.drawMode && this.drawStage === 1) {
+        this.boxEndCorner = [clickX, clickY]
       }
     },
     getFaceBoxIndexByPoint(clickX, clickY) {
@@ -140,6 +175,40 @@ export default {
 
     const canvas = document.getElementById('attendance-canvas')
     canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
+    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
+
+    this.scratchPadCanvas = document.getElementById('draw-canvas')
+  },
+  watch: {
+    boxEndCorner: function (val) {
+      const [endX, endY] = val
+      const [startX, startY] = this.boxStartCorner
+
+      // eslint-disable-next-line
+      console.log(endX, endY, startX, startY)
+
+      // Clear Canvas and Draw New Rectangle
+      const ctx = this.scratchPadCanvas.getContext('2d')
+      ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
+
+      const [x1, y1] = this.boxStartCorner
+      const [x2, y2] = this.boxEndCorner
+      const width = x2 - x1
+      const height = y2 - y1
+      ctx.strokeRect(x1, y1, width, height)
+    },
+    drawMode: function (val) {
+      if (!val) {
+        this.drawStage = 0
+        this.boxStartCorner = null
+        this.boxEndCorner = null
+
+        this.scratchPadCanvas.style.cursor = 'pointer'
+      } else {
+        this.updateScratchPadCanvasWidthAndHeight()
+        this.scratchPadCanvas.style.cursor = 'crosshair'
+      }
+    }
   }
 }
 </script>
@@ -164,5 +233,10 @@ export default {
 }
 canvas {
   z-index: 5000;
+  cursor: pointer;
+}
+
+#draw-canvas {
+  z-index: 3000;
 }
 </style>
