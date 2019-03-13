@@ -63,9 +63,9 @@ export default {
     }
   },
   methods: {
-    handleClickedFaceBox(index) {
+    handleClickedFaceBox(index, faceBoxImageData) {
       // eslint-disable-next-line
-      console.log(index)
+      console.log(index, faceBoxImageData)
     }
   }
 }

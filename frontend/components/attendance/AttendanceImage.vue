@@ -44,7 +44,9 @@ export default {
       const attendanceImage = document.getElementById('attendance-image')
       const canvas = document.getElementById('attendance-canvas')
       canvas.width = attendanceImage.clientWidth
-      canvas.height = attendanceImage.clientHeight
+      // Image class height is initially zero so the 1 is needed
+      // to avoid Rendering a zero-height canvas exception
+      canvas.height = attendanceImage.clientHeight || 1
 
       this.ratio = canvas.width / this.imageObj.width
     },
@@ -77,9 +79,11 @@ export default {
       const clickX = event.layerX
       const clickY = event.layerY
 
+      this.buildOffScreenImageCanvas()
       const faceBoxIndex = this.getFaceBoxIndexByPoint(clickX, clickY)
       if (faceBoxIndex !== -1) {
-        this.$emit('facebox-click', faceBoxIndex)
+        this.$emit('facebox-click', faceBoxIndex,
+          this.getFaceBoxImageData(this.faceBoxes[faceBoxIndex]))
       }
     },
     getFaceBoxIndexByPoint(clickX, clickY) {
@@ -108,6 +112,18 @@ export default {
       offScreenCanvas.height = canvas.height
       offScreenCanvas.width = canvas.width
       return offScreenCanvas
+    },
+    buildOffScreenImageCanvas() {
+      if (!this.offScreenImageCanvas) {
+        this.offScreenImageCanvas = document.createElement('canvas')
+        this.offScreenImageCanvas.height = this.imageObj.height
+        this.offScreenImageCanvas.width = this.imageObj.width
+        this.offScreenImageCanvas.getContext('2d').drawImage(this.imageObj, 0, 0)
+      }
+    },
+    getFaceBoxImageData(faceBox) {
+      const [x, y, width, height] = this.faceBoxDimensions(faceBox)
+      return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
     }
   },
   async mounted() {
