@@ -25,12 +25,18 @@ export default {
     return {
       recognizedRGBA: 'rgba(46, 204, 113, 1)',
       detectedRGBA: 'rgba(247, 202, 24, 1)',
-      ratio: 1
+      ratio: 1,
+      imageObj: null,
+      offScreenCanvas: null
     }
   },
   methods: {
-    drawCanvas() {
+    async drawCanvas() {
+      if (!this.imageObj) {
+        this.imageObj = await this.loadImageObject()
+      }
       this.updateCanvasWidthAndHeight()
+      this.offScreenCanvas = this.buildOffScreenCanvas()
       this.drawFaceBoxes()
     },
     updateCanvasWidthAndHeight() {
@@ -39,6 +45,8 @@ export default {
       const canvas = document.getElementById('attendance-canvas')
       canvas.width = attendanceImage.clientWidth
       canvas.height = attendanceImage.clientHeight
+
+      this.ratio = canvas.width / this.imageObj.width
     },
     faceBoxDimensions(faceBox) {
       const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
@@ -51,30 +59,19 @@ export default {
     },
     drawFaceBoxes() {
       const canvas = document.getElementById('attendance-canvas')
+      const offScreenCtx = this.offScreenCanvas.getContext('2d')
 
-      const offScreenCanvas = document.createElement('canvas')
-      offScreenCanvas.height = canvas.height
-      offScreenCanvas.width = canvas.width
+      this.faceBoxes.forEach((faceBox) => {
+        const [x1, y1, width, height] = this.faceBoxDimensions(faceBox)
+        if (faceBox.student_id) {
+          offScreenCtx.strokeStyle = this.recognizedRGBA
+        } else {
+          offScreenCtx.strokeStyle = this.detectedRGBA
+        }
+        offScreenCtx.strokeRect(x1, y1, width, height)
+      })
 
-      const offScreenCtx = offScreenCanvas.getContext('2d')
-
-      const img = new window.Image()
-      img.src = this.image
-      img.onload = () => {
-        // TODO: move ratio calculation to updateCanvasWidthAndHeight
-        this.ratio = canvas.width / img.width
-        this.faceBoxes.forEach((faceBox) => {
-          const [x1, y1, width, height] = this.faceBoxDimensions(faceBox)
-          if (faceBox.student_id) {
-            offScreenCtx.strokeStyle = this.recognizedRGBA
-          } else {
-            offScreenCtx.strokeStyle = this.detectedRGBA
-          }
-          offScreenCtx.strokeRect(x1, y1, width, height)
-        })
-
-        canvas.getContext('2d').drawImage(offScreenCanvas, 0, 0)
-      }
+      canvas.getContext('2d').drawImage(this.offScreenCanvas, 0, 0)
     },
     handleMouseDownOnCanvas(event) {
       const clickX = event.layerX
@@ -94,10 +91,27 @@ export default {
       const [x1, y1, width, height] = this.faceBoxDimensions(faceBox)
 
       return ((x1 <= x) && (x <= x1 + width)) && ((y1 <= y) && (y <= y1 + height))
+    },
+    loadImageObject() {
+      return new Promise((resolve, reject) => {
+        const img = new window.Image()
+        img.src = this.image
+
+        img.onload = () => {
+          resolve(img)
+        }
+      })
+    },
+    buildOffScreenCanvas() {
+      const canvas = document.getElementById('attendance-canvas')
+      const offScreenCanvas = document.createElement('canvas')
+      offScreenCanvas.height = canvas.height
+      offScreenCanvas.width = canvas.width
+      return offScreenCanvas
     }
   },
-  mounted() {
-    this.drawCanvas()
+  async mounted() {
+    await this.drawCanvas()
 
     const canvas = document.getElementById('attendance-canvas')
     canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
