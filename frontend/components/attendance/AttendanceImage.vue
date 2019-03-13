@@ -102,15 +102,13 @@ export default {
 
       if (this.drawMode) {
         if (this.drawStage === 0 || this.drawStage === 2) {
-          // eslint-disable-next-line
-          console.log('Stage 1')
           this.boxStartCorner = [clickX, clickY]
           this.drawStage = 1
+          this.$emit('facebox-canceled')
         } else {
-          // eslint-disable-next-line
-          console.log('Stage 2')
           this.boxEndCorner = [clickX, clickY]
           this.drawStage = 2
+          this.$emit('facebox-drawn', this.boxStartCorner, this.boxEndCorner)
         }
       } else {
         this.buildOffScreenImageCanvas()
@@ -168,6 +166,15 @@ export default {
     },
     getFaceBoxImageData(x, y, width, height) {
       return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
+    },
+    handleKeyUp(event) {
+      if (event.key === 'Escape') {
+        this.boxStartCorner = null
+        this.drawStage = 0
+
+        const ctx = this.scratchPadCanvas.getContext('2d')
+        ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
+      }
     }
   },
   async mounted() {
@@ -178,15 +185,11 @@ export default {
     canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
 
     this.scratchPadCanvas = document.getElementById('draw-canvas')
+
+    document.addEventListener('keyup', this.handleKeyUp)
   },
   watch: {
     boxEndCorner: function (val) {
-      const [endX, endY] = val
-      const [startX, startY] = this.boxStartCorner
-
-      // eslint-disable-next-line
-      console.log(endX, endY, startX, startY)
-
       // Clear Canvas and Draw New Rectangle
       const ctx = this.scratchPadCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
@@ -195,6 +198,7 @@ export default {
       const [x2, y2] = this.boxEndCorner
       const width = x2 - x1
       const height = y2 - y1
+      ctx.strokeStyle = '#ffffff'
       ctx.strokeRect(x1, y1, width, height)
     },
     drawMode: function (val) {

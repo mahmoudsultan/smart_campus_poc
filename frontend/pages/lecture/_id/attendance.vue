@@ -7,6 +7,8 @@
         :faceBoxes="attendanceSheet.faceBoxes"
         :drawMode="addingNewAttendance"
         @facebox-click="handleClickedFaceBox"
+        @facebox-drawn="receiveFaceBoxCoordinates"
+        @facebox-canceled="cancelFaceBoxCoordinates"
       />
     </v-card>
 
@@ -18,6 +20,7 @@
             block
             ripple
             color="primary"
+            @click="checkFaceBoxAndMoveToStudentSelection"
           >
             Next
           </v-btn>
@@ -104,6 +107,7 @@ export default {
       ],
       downloadLoading: false,
       addingNewAttendance: false,
+      drawnFaceBox: null,
       attendanceSheet: {
         faceBoxes: [
           {
@@ -145,6 +149,21 @@ export default {
     },
     cancelAddingNewAttendance() {
       this.addingNewAttendance = false
+    },
+    receiveFaceBoxCoordinates(startCorner, endCorner) {
+      this.drawnFaceBox = [startCorner, endCorner]
+    },
+    cancelFaceBoxCoordinates() {
+      this.drawnFaceBox = null
+    },
+    checkFaceBoxAndMoveToStudentSelection() {
+      if (!this.drawnFaceBox) {
+        // eslint-disable-next-line
+        console.log('No')
+      } else {
+        // eslint-disable-next-line
+        console.log('yes')
+      }
     }
   }
 }
