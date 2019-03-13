@@ -7,15 +7,20 @@
           ref="calendar"
           :now="today"
           :value="today"
+          :day-format="day_formater"
+          :intervalMinutes="slotSize"
+          :first-interval="startSlot"
+          :dark="true"
+          :short-weekdays="false"
+          :weekdays="[6,0,1,2,3,4]"
           color="primary"
           type="week"
         >
           <!-- the events at the top (all-day) -->
-          <template v-slot:dayHeader="{ date }">
+          <template #dayHeader="{ date }">
             <template v-for="event in eventsMap[date]">
               <!-- all day events don't have time -->
               <div
-          
                 v-if="!event.time"
                 :key="event.title"
                 @click="open(event)"
@@ -25,13 +30,14 @@
             </template>
           </template>
           <!-- the events at the bottom (timed) -->
-          <template v-slot:dayBody="{ date, timeToY, minutesToPixels }">
+          <template #dayBody="{ date, timeToY, minutesToPixels }">
             <template v-for="event in eventsMap[date]">
               <!-- timed events -->
               <div
                 v-if="event.time"
                 :key="event.title"
-                :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
+                :style="{ top: timeToY(event.time) + 'px',
+                          height: minutesToPixels(event.duration) + 'px' }"
                 @click="open(event)"
                 v-html="event.title"
                 class="my-event with-time"
@@ -46,6 +52,8 @@
 <script>
 export default {
   data: () => ({
+    slotSize: 30,
+    firstHour: 8.5,
     today: '2019-01-08',
     events: [
       {
@@ -72,6 +80,12 @@ export default {
       const map = {}
       this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
       return map
+    },
+    startSlot() {
+      const wholeHour = Math.floor(this.firstHour)
+      const start = wholeHour / (this.slotSize / 60)
+      const addSlot = wholeHour !== this.firstHour ? 1 : 0
+      return start + addSlot
     }
   },
   mounted() {
@@ -80,6 +94,10 @@ export default {
   methods: {
     open(event) {
       alert(event.title)
+    },
+    day_formater() {
+      // return an empty string to remove day numbers
+      return ''
     }
   }
 }
