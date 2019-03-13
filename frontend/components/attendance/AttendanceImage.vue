@@ -59,6 +59,14 @@ export default {
 
       return [x1, y1, width, height]
     },
+    faceBoxDimensionsNotRatioed(faceBox) {
+      const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
+        return Number.parseInt(v)
+      })
+      const width = x2 - x1
+      const height = y2 - y1
+      return [x1, y1, width, height]
+    },
     drawFaceBoxes() {
       const canvas = document.getElementById('attendance-canvas')
       const offScreenCtx = this.offScreenCanvas.getContext('2d')
@@ -81,9 +89,11 @@ export default {
 
       this.buildOffScreenImageCanvas()
       const faceBoxIndex = this.getFaceBoxIndexByPoint(clickX, clickY)
+      const faceBox = this.faceBoxes[faceBoxIndex]
       if (faceBoxIndex !== -1) {
+        const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
         this.$emit('facebox-click', faceBoxIndex,
-          this.getFaceBoxImageData(this.faceBoxes[faceBoxIndex]))
+          this.getFaceBoxImageData(x, y, width, height))
       }
     },
     getFaceBoxIndexByPoint(clickX, clickY) {
@@ -121,8 +131,7 @@ export default {
         this.offScreenImageCanvas.getContext('2d').drawImage(this.imageObj, 0, 0)
       }
     },
-    getFaceBoxImageData(faceBox) {
-      const [x, y, width, height] = this.faceBoxDimensions(faceBox)
+    getFaceBoxImageData(x, y, width, height) {
       return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
     }
   },

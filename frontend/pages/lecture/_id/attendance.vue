@@ -1,14 +1,88 @@
 <template>
-  <v-flex>
+  <div>
     <v-breadcrumbs :items="breadCrumbItems" divider=" > "></v-breadcrumbs>
-    <v-card class="mb-3 pa-1">
+    <v-card class="mb-1 pa-1">
       <attendance-image
         :image="attendanceSheet.image"
         :faceBoxes="attendanceSheet.faceBoxes"
         @facebox-click="handleClickedFaceBox"
       />
     </v-card>
-  </v-flex>
+
+    <v-container fluid>
+      <v-layout justify-center fill-height v-if="addingNewAttendance">
+        <v-flex xs12 md4 class="pa-1">
+          <v-btn
+            depressed
+            block
+            ripple
+            color="primary"
+          >
+            Next
+          </v-btn>
+        </v-flex>
+        <v-flex xs12 md4 class="pa-1">
+          <v-btn
+            depressed
+            ripple
+            block
+            color="error"
+            @click="cancelAddingNewAttendance"
+          >
+            Cancel
+          </v-btn>
+        </v-flex>
+      </v-layout>
+
+      <v-layout justify-end wrap fill-height v-else>
+        <v-flex xs12 md6 class="pa-1">
+          <v-btn
+            depressed
+            ripple
+            dark
+            block
+            @click="onAddNewAttendance"
+          >
+            <v-icon left dark>add</v-icon>
+            Add Student
+          </v-btn>
+        </v-flex>
+        <v-flex xs12 md6 class="pa-1">
+          <v-btn
+            ripple
+            block
+            depressed
+            :loading="downloadLoading"
+            color="primary"
+          >
+            <v-icon left dark>cloud_download</v-icon>
+            Download
+          </v-btn>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
+    <v-snackbar
+      v-model="addingNewAttendance"
+      light
+      color="primary"
+      :timeout="0"
+      multi-line
+    >
+      Please Draw a Facebox on the Attendance Image and Click Next.
+      <!-- <v-btn
+        color="error"
+        flat
+        @click="addingNewAttendance = false"
+      >
+        Cancel
+      </v-btn> -->
+    </v-snackbar>
+
+    <v-card>
+      <canvas id="img-w-kda" />
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -34,6 +108,8 @@ export default {
           disabled: true
         }
       ],
+      downloadLoading: false,
+      addingNewAttendance: false,
       attendanceSheet: {
         faceBoxes: [
           {
@@ -64,12 +140,26 @@ export default {
   },
   methods: {
     handleClickedFaceBox(index, faceBoxImageData) {
-      // eslint-disable-next-line
-      console.log(index, faceBoxImageData)
+      const canvas = document.getElementById('img-w-kda')
+      const ctx = canvas.getContext('2d')
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      ctx.putImageData(faceBoxImageData, 0, 0, 0, 0, faceBoxImageData.width, faceBoxImageData.height)
+    },
+    onAddNewAttendance() {
+      this.addingNewAttendance = true
+    },
+    cancelAddingNewAttendance() {
+      this.addingNewAttendance = false
     }
   }
 }
 </script>
 
 <style scoped>
+canvas {
+  height: 100px;
+  width: 100px;
+  border: 1px solid black;
+}
 </style>
