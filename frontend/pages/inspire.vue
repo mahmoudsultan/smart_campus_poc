@@ -4,42 +4,28 @@
       <v-sheet height="400">
         <!-- now is normally calculated by itself, but to keep the calendar in this date range to view events -->
         <v-calendar
+
           ref="calendar"
-          :now="today"
-          :value="today"
-          :day-format="day_formater"
+          :now="hackyWeekStartDay"
+          :value="hackyWeekStartDay"
+          :dayFormat="()=>''" 
           :intervalMinutes="slotSize"
           :first-interval="startSlot"
           :dark="true"
           :short-weekdays="false"
-          :weekdays="[6,0,1,2,3,4]"
+          :weekdays="weekDays"
+          :interval-format="()=>''"
           color="primary"
           type="week"
         >
-          <!-- the events at the top (all-day) -->
-          <template #dayHeader="{ date }">
-            <template v-for="event in eventsMap[date]">
-              <!-- all day events don't have time -->
-              <div
-                v-if="!event.time"
-                :key="event.title"
-                @click="open(event)"
-                v-html="event.title"
-                class="my-event"
-              />
-            </template>
-          </template>
-          <!-- the events at the bottom (timed) -->
           <template #dayBody="{ date, timeToY, minutesToPixels }">
-            <template v-for="event in eventsMap[date]">
-              <!-- timed events -->
+            <template v-for="event in timeTableMap[date]">
               <div
-                v-if="event.time"
-                :key="event.title"
-                :style="{ top: timeToY(event.time) + 'px',
-                          height: minutesToPixels(event.duration) + 'px' }"
+                :key="event.code"
+                :style="{ top: timeToY(event.start) + 'px',
+                          height: minutesToPixels( 60 ) + 'px' }"
                 @click="open(event)"
-                v-html="event.title"
+                v-html="hi"
                 class="my-event with-time"
               />
             </template>
@@ -52,9 +38,35 @@
 <script>
 export default {
   data: () => ({
-    slotSize: 30,
-    firstHour: 8.5,
-    today: '2019-01-08',
+    slotSize: 50,
+    numberOfSlots: 12,
+    weekDays: [6, 0, 1, 2, 3, 4],
+    hackyWeekStartDay: '2019-01-05', // Set up any saturday as a hack
+    firstSlotHour: 8,
+    firstSlotMinutes: 30,
+    timeTable: [
+      {
+        code: 'cc123',
+        day: 0,
+        startSlot: 0,
+        endSlot: 1,
+        start: '08:30'
+      },
+      {
+        code: 'cc124',
+        day: 1,
+        startSlot: 3,
+        endSlot: 4,
+        start: '08:30'
+      },
+      {
+        code: 'cc125',
+        day: 2,
+        startSlot: 2,
+        endSlot: 5,
+        start: '10:00'
+      }
+    ],
     events: [
       {
         title: 'Weekly Meeting',
@@ -81,23 +93,40 @@ export default {
       this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
       return map
     },
+    timeTableMap() {
+      const map = {}
+      this.timeTable.forEach(e =>
+        (map[this.dayIndexToDate(e.date)] =
+          map[this.dayIndexToDate(e.date)] || []).push(e)
+      )
+      return map
+    },
+    slotsMap() {
+      const map = {}
+      const dt = new Date(2019, 1, 1, this.firstSlotHour, this.firstSlotMinutes)
+      for (let i = 0; i < this.numberOfSlots; i++) {
+        map[i] = `${dt.getHours}:${dt.getMinutes}`
+        dt.setMinutes(dt.getMinutes + this.slotSize)
+      }
+      return map
+    },
     startSlot() {
-      const wholeHour = Math.floor(this.firstHour)
-      const start = wholeHour / (this.slotSize / 60)
-      const addSlot = wholeHour !== this.firstHour ? 1 : 0
-      return start + addSlot
+      const start = this.firstSlotHour / (this.slotSize / 60)
+      const residue = this.firstSlotMinutes / this.slotSize
+      return start + residue
     }
   },
   mounted() {
-    this.$refs.calendar.scrollToTime('08:00')
+    this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
     open(event) {
       alert(event.title)
     },
-    day_formater() {
-      // return an empty string to remove day numbers
-      return ''
+    dayIndexToDate(index) {
+      const dt = new Date(this.hackyWeekStartDay)
+      dt.setDate(dt.getDate() + index)
+      return dt
     }
   }
 }
