@@ -13,8 +13,3 @@ ADD . $APP_ROOT
 
 RUN gem update bundler && \
     bundle install
-
-# WORKDIR /system_api/
-
-# # Start the main process.
-# CMD ["rails", "server", "-b", "0.0.0.0"]

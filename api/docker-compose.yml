@@ -13,29 +13,25 @@ services:
       - 3000:3000
     volumes:
       - .:/app
-      - bundle:/usr/local/bundle
     links:
       - db
-    # Keep the stdin open, so we can attach to our app container's process and do things such as
-    # byebug, etc:
     stdin_open: true
     # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
     tty: true
     command: bash -c "rm -f tmp/pids/server.pid && rails s -p 3000 -b '0.0.0.0'"
-    environment: &app_env
-      PORT: 3000
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PSWD: postgres
-      DB_NAME: development_database
+    # environment: &app_env
+    #   PORT: 3000
+    #   DB_HOST: db
+    #   DB_PORT: 3306
+    #   DB_USER: root
+    #   DB_PSWD:  
   db:
     image: memsql/quickstart
     ports:
-      - 5432:5432
+      - 3306:3306
+      - 8080:8080
     volumes:
-      - store:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: development_database
+      - ./tmp/db:/var/lib/postgresql/data
+    # environment:
+    #   POSTGRES_USER: root
+    #   POSTGRES_PASSWORD: 
