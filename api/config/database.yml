@@ -14,8 +14,8 @@ default: &default
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
-  password: password
-  socket: /var/run/mysqld/mysqld.sock
+  password: 
+  # socket: /var/lib/memsql-ops/data/installs/MI85eaf8fca04849888be7f1a9a596210e/data/memsql.sock
 
 development:
   <<: *default
