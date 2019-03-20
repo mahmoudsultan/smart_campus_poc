@@ -1,8 +1,5 @@
 <template>
   <v-layout>
-    <div>
-      {{ timeTableMap }}
-    </div>
     <v-flex>
       <v-sheet height="400">
         <!-- :interval-format="(t,s)=>t.hour<19?`${padNumber(t.hour,2)} : ${padNumber(t.minute,2)}`:''" -->
@@ -114,28 +111,30 @@ export default {
       return start + residue
     }
   },
-  async created() {},
-  async mounted() {
-    const response = await this.$axios.$get(
-      'http://localhost:5000/12/courses/12/12'
-    )
-    this.buildTimeTableMap(response)
+  mounted() {
+    this.$axios
+      .$get('http://localhost:5000/12/courses/12/12')
+      .then(tt => this.fillTimeTableMap(tt))
+
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
-    buildTimeTableMap(tt) {
+    fillTimeTableMap(tt) {
       // eslint-disable-next-line no-console
       console.log(tt)
-      const map = {}
       const pad = n => this.padNumber(n, 2)
       tt.forEach(e => {
         const date = this.dayNameToDate(e.day)
         const dateString = `${date.getFullYear()}-${pad(
           date.getMonth() + 1
         )}-${pad(date.getDate())}`
-        ;(map[dateString] = map[dateString] || []).push(e)
+
+        if (dateString in this.timeTableMap) {
+          this.timeTableMap[dateString].push(e)
+        } else {
+          this.$set(this.timeTableMap, dateString, [e])
+        }
       })
-      return map
     },
     padNumber(num, len) {
       return ('' + num).padStart(2, '0')
@@ -145,7 +144,7 @@ export default {
     },
     dayNameToDate(dayName) {
       const dt = new Date(this.hackyWeekStartDay)
-      const dayMap = { sat: 0, sun: 1, mon: 2, wed: 3, thurs: 4 }
+      const dayMap = { sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thurs: 5 }
       dt.setDate(dt.getDate() + dayMap[dayName])
       return dt
     },
@@ -179,7 +178,7 @@ export default {
     font-size: 12px;
     padding: 3px;
     cursor: pointer;
-    margin-bottom: 1px;
+    margin-bottom: 3px;
     left: 4px;
     margin-right: 8px;
     position: relative;
