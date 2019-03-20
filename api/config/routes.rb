@@ -8,4 +8,9 @@ Rails.application.routes.draw do
     # Define routes for Admin within this block.
   end
   # For details on the DSL available within this file, see
+
+  # Upload Image Route
+  resources :users, only: [] do
+    post 'image', to: 'users#upload_image'
+  end
 end
