@@ -21,14 +21,16 @@
         >
           <template #dayBody="{ date, timeToY, minutesToPixels }">
             <template v-for="lec in timeTableMap[date]">
-              <div
+              <nuxt-link
                 :key="lec.code"
+                :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.lec_id}}"
                 :style="{ top: timeToY(slotsMap[lec.startSlot]) + cellSpacing + 'px',
                           height: minutesToPixels(slotsRangeToMinuites(lec.startSlot,lec.endSlot)) - cellSpacing + 'px' }"
                 class="my-event with-time"
                 @click="open(lec)"
                 v-html="lectureToHtml(lec)"
               />
+              </nuxt-link>
             </template>
           </template>
         </v-calendar>
@@ -36,47 +38,11 @@
     </v-flex>
   </v-layout>
 </template>
+              <!-- <nuxt-link :to {name: 'lecture_details', :key="lec.code" params:{lec_id:1}}> -->
+
 <script>
 export default {
   data: () => ({
-    timeTable: [
-      {
-        code: 'cc123',
-        day: 'sat',
-        startSlot: 0,
-        endSlot: 2
-      },
-      {
-        code: 'cc124',
-        day: 'sun',
-        startSlot: 3,
-        endSlot: 4
-      },
-      {
-        code: 'cc125',
-        day: 'mon',
-        startSlot: 2,
-        endSlot: 5
-      },
-      {
-        code: 'cc126',
-        day: 'tue',
-        startSlot: 3,
-        endSlot: 5
-      },
-      {
-        code: 'cc127',
-        day: 'wed',
-        startSlot: 7,
-        endSlot: 9
-      },
-      {
-        code: 'cc128',
-        day: 'thurs',
-        startSlot: 7,
-        endSlot: 9
-      }
-    ],
     timeTableMap: {},
     cellSize: 30,
     slotSize: 50,
@@ -88,12 +54,6 @@ export default {
     cellSpacing: 10
   }),
   computed: {
-    // convert the list of events into a map of lists keyed by date
-    eventsMap() {
-      const map = {}
-      this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
-      return map
-    },
     slotsMap() {
       const map = {}
       const dt = new Date(2019, 1, 1, this.firstSlotHour, this.firstSlotMinutes)
