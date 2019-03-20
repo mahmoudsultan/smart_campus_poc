@@ -23,8 +23,8 @@
             <template v-for="lec in timeTableMap[date]">
               <div
                 :key="lec.code"
-                :style="{ top: timeToY(slotsMap[lec.startSlot]) + 'px',
-                          height: minutesToPixels(slotsRangeToMinuites(lec.startSlot,lec.endSlot)) + 'px' }"
+                :style="{ top: timeToY(slotsMap[lec.startSlot]) + cellSpacing + 'px',
+                          height: minutesToPixels(slotsRangeToMinuites(lec.startSlot,lec.endSlot)) - cellSpacing + 'px' }"
                 class="my-event with-time"
                 @click="open(lec)"
                 v-html="lectureToHtml(lec)"
@@ -84,7 +84,8 @@ export default {
     weekDays: [6, 0, 1, 2, 3, 4],
     hackyWeekStartDay: '2019-01-05', // Set up any saturday as a hack
     firstSlotHour: 8,
-    firstSlotMinutes: 30
+    firstSlotMinutes: 30,
+    cellSpacing: 10
   }),
   computed: {
     // convert the list of events into a map of lists keyed by date
@@ -112,6 +113,8 @@ export default {
     }
   },
   mounted() {
+    // eslint-disable-next-line no-console
+    console.log(this.$route)
     this.$axios
       .$get('http://localhost:5000/12/courses/12/12')
       .then(tt => this.fillTimeTableMap(tt))
