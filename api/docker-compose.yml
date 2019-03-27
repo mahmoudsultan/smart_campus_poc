@@ -11,7 +11,7 @@ mysql:
 dbdata:
   image: tianon/true
   volumes:
-    - /var/lib/mysql
+    - ./tmp/db:/var/lib/mysql
 
 app:
   build: .
@@ -19,12 +19,12 @@ app:
     RAILS_ENV: development
   ports:
     - '3000:3000'
-  volumes_from:
-    - appdata
+  volumes:
+    - .:/app
   links:
     - "mysql"
 
-appdata:
-  image: tianon/true
-  volumes:
-    - ".:/workspace"
+# appdata:
+#   image: tianon/true
+#   volumes:
+#     - ".:/workspace"
