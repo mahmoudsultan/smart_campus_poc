@@ -1,37 +1,30 @@
-version: '3'
+mysql:
+  image: mysql:5.7
+  ports:
+    - "3306:3306"
+  volumes_from:
+    - dbdata
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+    - MYSQL_DATABASE=dev
 
-volumes:
-  store:
-    driver: local
-  bundle:
-    driver: local
+dbdata:
+  image: tianon/true
+  volumes:
+    - ./tmp/db:/var/lib/mysql
 
-services:
-  web:
-    build: .
-    ports:
-      - 3000:3000
-    volumes:
-      - .:/app
-    links:
-      - db
-    stdin_open: true
-    # Enable sending signals (CTRL+C, CTRL+P + CTRL+Q) into the container:
-    tty: true
-    command: bash -c "rm -f tmp/pids/server.pid && rails s -p 3000 -b '0.0.0.0'"
-    # environment: &app_env
-    #   PORT: 3000
-    #   DB_HOST: db
-    #   DB_PORT: 3306
-    #   DB_USER: root
-    #   DB_PSWD:  
-  db:
-    image: memsql/quickstart
-    ports:
-      - 3306:3306
-      - 8080:8080
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
-    # environment:
-    #   POSTGRES_USER: root
-    #   POSTGRES_PASSWORD: 
+app:
+  build: .
+  environment:
+    RAILS_ENV: development
+  ports:
+    - '3000:3000'
+  volumes:
+    - .:/app
+  links:
+    - "mysql"
+
+# appdata:
+#   image: tianon/true
+#   volumes:
+#     - ".:/workspace"
