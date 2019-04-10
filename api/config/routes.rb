@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get 'courses/show_lectures'
+  get 'courses/show_lectures/:pid/:term/:year' => 'courses#show_lectures'
   mount_devise_token_auth_for 'User', at: 'auth'
 
   mount_devise_token_auth_for 'Admin', at: 'TOwIWRgFHU'
