@@ -22,8 +22,11 @@ module Attendance
     private
 
     def call
-      params = { request_body: build_request_body, content_type: @content_type }
-      ContactServerService.new(params).execute
+      ContactServerService.new(uri, build_request_body, content_type).execute
+    end
+
+    def uri
+      URI(Rails.configuration.attendance_api)
     end
 
     # TODO: Refactor to add class students ids
