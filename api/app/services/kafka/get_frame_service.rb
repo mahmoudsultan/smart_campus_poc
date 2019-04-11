@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kafka
   class GetFrameService
     def initialize(topic_name)
@@ -7,7 +9,7 @@ module Kafka
     def execute
       consumer = Kafka.server.consumer(group_id: 'demo')
       consumer.subscribe(@topic_name, start_from_beginning: false)
-      
+
       consumer.each_message do |message|
         return message.value
       end
