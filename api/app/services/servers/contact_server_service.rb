@@ -4,10 +4,10 @@ require 'net/http'
 
 module Servers
   class ContactServerService
-    def initialize(params)
-      @uri = URI(Rails.configuration.attendance_api.endpoint)
-      @request_body = params[:request_body]
-      @content_type = params[:content_type]
+    def initialize(uri, request_body, content_type)
+      @uri = uri
+      @request_body = request_body
+      @content_type = content_type
     end
 
     def execute
