@@ -16,6 +16,8 @@
 #
 
 require 'simplecov'
+# require "shoulda/matchers"
+# require "shoulda/matchers/integrations/rspec"
 SimpleCov.start
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
