@@ -16,9 +16,7 @@ module Attendance
     end
 
     def execute
-      @response = call
-      puts @response.body
-      @response
+      call
     end
 
     private

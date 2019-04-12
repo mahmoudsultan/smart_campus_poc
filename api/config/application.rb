@@ -33,6 +33,6 @@ module UniSystemApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.attendance_api = 'http://localhost:5000/attendance'
+    config.attendance_api = 'http://18.224.183.163:50000/attendance'
   end
 end

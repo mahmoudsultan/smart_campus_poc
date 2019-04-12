@@ -2,7 +2,7 @@ class AttendancesController < ApplicationController
 
     def get
         results = Attendance::GetAttendanceService.new(params).execute
-        results
+        render json: results.body
     end
 
 end
