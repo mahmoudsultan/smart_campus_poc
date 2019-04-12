@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   end
   # For details on the DSL available within this file, see
 
+  get 'attendance', to: 'attendances#get'
+
   # Upload Image Route
   resources :users, only: [] do
     post 'image', to: 'users#upload_image'
