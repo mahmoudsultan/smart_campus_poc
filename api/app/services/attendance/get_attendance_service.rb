@@ -16,13 +16,15 @@ module Attendance
     end
 
     def execute
-      call
+      @response = call
+      puts @response.body
+      @response
     end
 
     private
 
     def call
-      ContactServerService.new(uri, build_request_body, content_type).execute
+      Servers::ContactServerService.new(uri, build_request_body, @content_type).execute
     end
 
     def uri

@@ -21,7 +21,7 @@ module Servers
       req = Net::HTTP::Post.new(@uri.path, 'Content-Type' => @content_type)
       req.body = @request_body
       res = http.request(req)
-      res.body
+      res
     end
   end
 end
