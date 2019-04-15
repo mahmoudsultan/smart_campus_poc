@@ -4,15 +4,15 @@
     <v-card>
       <v-stepper alt-labels v-model="step">
         <v-stepper-header>
-          <v-stepper-step editable :complete="step > 1" step="1">Confirm Location</v-stepper-step>
+          <v-stepper-step :editable="!saved" :complete="step > 1" step="1">Choose Location</v-stepper-step>
 
           <v-divider></v-divider>
 
-          <v-stepper-step editable :complete="step > 2" step="2">Confirm Attendance Sheet</v-stepper-step>
+          <v-stepper-step :editable="!saved" :complete="step > 2" step="2">Confirm Attendance Sheet</v-stepper-step>
 
           <v-divider></v-divider>
 
-          <v-stepper-step :complete="step > 3" step="3">Save Attendance Sheet</v-stepper-step>
+          <v-stepper-step :complete="step == 3" step="3">Save Attendance Sheet</v-stepper-step>
         </v-stepper-header>
         <v-stepper-items>
           <v-stepper-content step="1">
@@ -55,19 +55,73 @@
               @facebox-drawn="receiveFaceBoxCoordinates"
               @facebox-canceled="cancelFaceBoxCoordinates"
             />
+            <v-divider></v-divider>
+            <v-layout row wrap justify-end align-content-end>
+              <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
+              <v-flex xs12 sm3>
+                <v-btn
+                  :disabled="loading"
+                  depressed
+                  ripple
+                  block
+                  color="primary"
+                  @click="confirmAttendanceSheet"
+                >
+                  Next
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-stepper-content>
+          <v-stepper-content step="3">
+            <v-alert
+              :value="true"
+              type="success"
+            >
+              Attendance is Saved Successfully.
+            </v-alert>
+            <v-btn
+              ripple
+              block
+              depressed
+              :loading="downloadLoading"
+              color="primary"
+            >
+              <v-icon left dark>cloud_download</v-icon>
+              Download
+            </v-btn>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
     </v-card>
+
+    <v-dialog
+      v-model="showFaceBoxDialog.display"
+      :overlay="false"
+      persistent
+      width="500"
+      height="300"
+      transition="dialog-transition"
+    >
+      <face-box-info
+        v-if="showFaceBoxDialog.display"
+        :image="showFaceBoxDialog.imagePart"
+        :studentName="showFaceBoxDialog.studentName"
+        :studentId="showFaceBoxDialog.studentId"
+        :studentImage="showFaceBoxDialog.studentImage"
+        @close="showFaceBoxDialog.display = false"
+      />
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import AttendanceImage from '@/components/attendance/AttendanceImage'
+import FaceBoxInfo from '@/components/attendance/FaceBoxInfo'
 
 export default {
   components: {
-    AttendanceImage
+    AttendanceImage,
+    FaceBoxInfo
   },
   data() {
     return {
@@ -90,7 +144,15 @@ export default {
       lectureLocation: 'C11',
       image: null,
       faceBoxes: [],
-      addingNewAttendance: false
+      addingNewAttendance: false,
+      showFaceBoxDialog: {
+        display: false,
+        imagePart: '',
+        studentName: '',
+        studentId: '',
+        studentImage: ''
+      },
+      saved: false
     }
   },
   computed: {
@@ -117,17 +179,28 @@ export default {
         console.error(err)
       })
     },
-    handleClickedFaceBox() {
+    confirmAttendanceSheet() {
+      this.loading = true
+      setTimeout(() => {
+        this.step = 3
+        this.saved = true
+      }, 2000)
+    },
+    handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
       // TODO
-      // eslint-disable-next-line
-      console.error('Not Yet Implemented')
+      this.showFaceBoxDialog.imagePart = clickedPartImage
+      this.showFaceBoxDialog.studentId = this.faceBoxes[faceBoxIndex].student_id
+      this.showFaceBoxDialog.studentName = 'John Doe'
+      this.showFaceBoxDialog.studentImage = clickedPartImage
+
+      this.showFaceBoxDialog.display = true
     },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
       // TODO
       // eslint-disable-next-line
       console.error('Not Yet Implemented')
     },
-    cancelFaceBoxCoordinates(faceBoxIndex, clickedPartImage) {
+    cancelFaceBoxCoordinates() {
       // TODO
       // eslint-disable-next-line
       console.error('Not Yet Implemented')

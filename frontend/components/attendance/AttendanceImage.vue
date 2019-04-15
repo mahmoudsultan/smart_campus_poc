@@ -117,7 +117,7 @@ export default {
         if (faceBoxIndex !== -1) {
           const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
           this.$emit('facebox-click', faceBoxIndex,
-            this.getFaceBoxImageData(x, y, width, height))
+            this.getFaceBoxImageBase64(x, y, width, height))
         }
       }
     },
@@ -166,6 +166,19 @@ export default {
     },
     getFaceBoxImageData(x, y, width, height) {
       return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
+    },
+    getFaceBoxImageBase64(x, y, width, height) {
+      const imageData = this.getFaceBoxImageData(x, y, width, height)
+      const canvas = document.createElement('canvas')
+      canvas.width = imageData.width
+      canvas.height = imageData.height
+      canvas.getContext('2d').putImageData(imageData, 0, 0)
+
+      const image = canvas.toDataURL('image/png')
+      // eslint-disable-next-line
+      console.log(image)
+
+      return image
     },
     handleKeyUp(event) {
       if (event.key === 'Escape') {
