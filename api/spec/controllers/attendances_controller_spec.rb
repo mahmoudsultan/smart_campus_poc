@@ -5,7 +5,7 @@ RSpec.describe AttendancesController, type: :controller do
         context "given a valid image" do
             it "returns detected locations" do
                 img = Base64.encode64(file_fixture("IMG_20190224_172925-min.jpg").read)
-                get :get, params: {image: img, info: 0}
+                get :get, params: {image: img, 'ids'=> ['rana', 'ezz', 'magdy', 'aly', 'taw2am', 123]}
                 expect(response).to have_http_status(:success)
             end
         end
