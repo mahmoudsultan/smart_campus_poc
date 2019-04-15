@@ -152,6 +152,7 @@ export default {
         studentId: '',
         studentImage: ''
       },
+      downloadLoading: false,
       saved: false
     }
   },

@@ -2,6 +2,15 @@
   <v-container fluid grid-list-xs class="ma-0 pa-0">
     <v-layout xs12 v-resize="drawCanvas" column>
       <v-flex id="canvas-container" class="parent">
+        <v-tooltip bottom class="layer">
+          <!-- eslint-disable-next-line -->
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" @click="refreshFaceBoxes" class="refresh-btn" color="grey lighten-5">
+              <v-icon>refresh</v-icon>
+            </v-btn>
+          </template>
+          <span>Redraw Faceboxes</span>
+        </v-tooltip>
         <div>
           <v-img id="attendance-image" :src="image"/>
         </div>
@@ -174,11 +183,7 @@ export default {
       canvas.height = imageData.height
       canvas.getContext('2d').putImageData(imageData, 0, 0)
 
-      const image = canvas.toDataURL('image/png')
-      // eslint-disable-next-line
-      console.log(image)
-
-      return image
+      return canvas.toDataURL('image/png')
     },
     handleKeyUp(event) {
       if (event.key === 'Escape') {
@@ -188,6 +193,9 @@ export default {
         const ctx = this.scratchPadCanvas.getContext('2d')
         ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
       }
+    },
+    async refreshFaceBoxes() {
+      await this.drawCanvas()
     }
   },
   async mounted() {
@@ -255,5 +263,12 @@ canvas {
 
 #draw-canvas {
   z-index: 3000;
+}
+
+.refresh-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
 }
 </style>
