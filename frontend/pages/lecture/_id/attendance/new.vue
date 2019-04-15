@@ -8,7 +8,7 @@
 
           <v-divider></v-divider>
 
-          <v-stepper-step :editable="!saved" :complete="step > 2" step="2">Confirm Attendance Sheet</v-stepper-step>
+          <v-stepper-step :complete="step > 2" step="2">Confirm Attendance Sheet</v-stepper-step>
 
           <v-divider></v-divider>
 
@@ -56,6 +56,54 @@
               @facebox-canceled="cancelFaceBoxCoordinates"
             />
             <v-divider></v-divider>
+
+            <v-layout row wrap class="pa-1 mt-4">
+              <v-flex xs12 sm6>
+                <span class="display-1 font-weight-light">Number of Attendees: {{ numberOfAttendess }}</span>
+              </v-flex>
+              <v-spacer></v-spacer>
+              <v-flex xs12 sm2>
+                <v-btn color="success">
+                  <v-icon>add</v-icon>
+                  <v-spacer></v-spacer>
+                  <span>Add Attendee</span>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+            <v-data-table
+              :headers="attendanceTableHeaders"
+              :items="attendanceItems"
+              hide-actions
+              class="elevation-1"
+              item-key="student_id"
+            >
+              <template slot="items" slot-scope="props">
+                <tr>
+                  <td class="text-xs-left">{{ props.item.studentId }}</td>
+                  <td class="text-xs-left">{{ props.item.studentName }}</td>
+                  <td class="text-xs-right">
+                    <v-flex xs12>
+                      <v-btn round xs6 sm4 color="info">
+                        <v-icon small>edit</v-icon>
+                        <v-spacer></v-spacer>
+                        <span>Edit</span>
+                      </v-btn>
+                      <v-btn
+                        dark
+                        round
+                        xs6
+                        sm4
+                        color="red">
+                        <v-icon small>delete</v-icon>
+                        <v-spacer></v-spacer>
+                        <span>delete</span>
+                      </v-btn>
+                    </v-flex>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+            <v-divider></v-divider>
             <v-layout row wrap justify-end align-content-end>
               <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
               <v-flex xs12 sm3>
@@ -67,7 +115,7 @@
                   color="primary"
                   @click="confirmAttendanceSheet"
                 >
-                  Next
+                  Confirm
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -117,6 +165,7 @@
 <script>
 import AttendanceImage from '@/components/attendance/AttendanceImage'
 import FaceBoxInfo from '@/components/attendance/FaceBoxInfo'
+import _ from 'lodash'
 
 export default {
   components: {
@@ -153,12 +202,33 @@ export default {
         studentImage: ''
       },
       downloadLoading: false,
-      saved: false
+      saved: false,
+      attendanceTableHeaders: [
+        {
+          text: 'ID',
+          sortable: false
+        }, {
+          text: 'Name',
+          sortable: false
+        }, {
+          text: '',
+          sortable: false
+        }
+      ]
     }
   },
   computed: {
     lectureHref() {
       return `/lecture/${this.$route.params.id}`
+    },
+    attendanceItems() {
+      return _.map(this.faceBoxes, (faceBox) => {
+        // TODO:
+        return { studentId: faceBox.student_id, studentName: 'John Doe' }
+      })
+    },
+    numberOfAttendess() {
+      return this.faceBoxes.length
     }
   },
   methods: {
