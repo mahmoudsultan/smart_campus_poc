@@ -11,8 +11,8 @@ module Attendance
       # For now the server expects the request to be just the image.
 
       @image = params[:image]
-      @class_info = params[:info]
-      @content_type = 'image/jpeg'
+      @student_ids = params[:ids]
+      @content_type = 'application/json'
     end
 
     def execute
@@ -31,7 +31,8 @@ module Attendance
 
     # TODO: Refactor to add class students ids
     def build_request_body
-      @image
+      req = {'image' => @image, 'ids' => @student_ids}
+      req.to_json
     end
   end
 end
