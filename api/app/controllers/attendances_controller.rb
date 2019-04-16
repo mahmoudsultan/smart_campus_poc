@@ -47,19 +47,30 @@ class AttendancesController < ApplicationController
     end
 
 
-    # Takes a set of IDs along with facebox coordinates
-    # and creates the associated facebox active records and attendances heet
-    # currently assumes it received a JSON keyed using id and
-    # the value is the coordinates of the facebox (state is assumed to be `recognized`)
+    # Takes a lecture_instance_id and a set of ids along with the coordinates
+    # of the bounding box for each student
+    # and creates the associated facebox active records and attendance sheet
+    # JSON: {
+    #    'lecture_instance_id': 1, 
+    #    'attendances': 
+    #       {
+    #           '123': {'coords': [100, 200, 400, 500], 'state': 0},
+    #           '456': {'coords': [500, 600, 800, 800], 'state': 1}
+    #       }
+    #   }
+    # 
     def save
-        # TODO
-        # Create AttendaceSheet object
-        # Modify to get state from the sent data
+        lecture_instance_id = params[:lecture_instance_id]
+        attendance_sheet = AttendanceSheet.create!({lecture_instance_id: lecture_instance_id})
 
-        params[:face_boxes].each do |student_id, facebox_coords|
-            facebox = {user_id: student_id, boundaries: facebox_coords, state: 0}
+        params[:attendances].each do |student_id, data|
+            state = data[:state]
+            coords = data[:coords]
+            facebox = {user_id: student_id, boundaries: coords, state: state, attendance_sheet_id: attendance_sheet.id}
             Facebox.create!(facebox)
         end
+
+        render json: attendance_sheet, status: :created
     end
 
     private
