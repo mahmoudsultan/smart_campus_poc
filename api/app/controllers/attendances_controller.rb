@@ -34,13 +34,16 @@ class AttendancesController < ApplicationController
         @frame = Kafka::GetAttendanceFrameService.new(@topic_name).execute
         @frame_encoded = Base64.encode64(@frame)
 
-        # @student_ids = insert_query_here
+        @registered_students = GroupUser.select('users.id as user_id')
+                            .joins(:user)
+                            .where("group_id = ?", @group_id)
 
-        # TODO
-        # Get list of registered students in the course_offering
-        # Send the @frame_encoded with the retrieved ids to the attendance service 
-
-        params = {image: @frame_encoded, ids: @student_ids}
+        @students_ids = []
+        @registered_students.each do |student|
+            @students_ids.push(student.user_id)
+        end
+        
+        params = {image: @frame_encoded, ids: @students_ids}
         results = Attendance::GetAttendanceService.new(params).execute
 
         render json: results.body, status: :ok
