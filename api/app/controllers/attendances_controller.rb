@@ -16,13 +16,17 @@ class AttendancesController < ApplicationController
         if params[:class_id].nil?
             @topic_name = get_topic_name_from_class(params[:class_id])
         else
-            @ret_val = LectureInstance.pluck('klass_id, group_id, course_offering_id')
-                            .joins(:lecture)
-                            .find_by('id' => params[:lecture_instance_id]))
+            ret_val = LectureInstance.select('lecture_instances.id as id, lectures.klass_id as klass_id, lectures.group_id as group_id, lectures.id as lecture_id, course_offerings.id as course_offering_id')
+                                    .joins(:lecture => [:group => :course_offering])
+                                    .find(params[:lecture_instance_id])
+                                    
+
+
             
-            @klass_id = @ret_val[0]
-            @group_id = @ret_val[1]
-            @course_offering_id = @ret_val[2]
+            @klass_id = ret_val.klass_id
+            @group_id = ret_val.group_id
+            @course_offering_id = ret_val.course_offering_id
+            @lecture_id = ret_val.lecture_id
 
             @topic_name = get_topic_name_from_class(@klass_id)
         end
