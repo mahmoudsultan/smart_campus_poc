@@ -20,9 +20,6 @@ class AttendancesController < ApplicationController
                                     .joins(:lecture => [:group => :course_offering])
                                     .find(params[:lecture_instance_id])
                                     
-
-
-            
             @klass_id = ret_val.klass_id
             @group_id = ret_val.group_id
             @course_offering_id = ret_val.course_offering_id
@@ -51,9 +48,18 @@ class AttendancesController < ApplicationController
 
 
     # Takes a set of IDs along with facebox coordinates
-    # and creates the associated active records
+    # and creates the associated facebox active records and attendances heet
+    # currently assumes it received a JSON keyed using id and
+    # the value is the coordinates of the facebox (state is assumed to be `recognized`)
     def save
+        # TODO
+        # Create AttendaceSheet object
+        # Modify to get state from the sent data
 
+        params[:face_boxes].each do |student_id, facebox_coords|
+            facebox = {user_id: student_id, boundaries: facebox_coords, state: 0}
+            Facebox.create!(facebox)
+        end
     end
 
     private
