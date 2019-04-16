@@ -73,23 +73,35 @@
 #   end
 # end
 
-#seed lecture_instances
+# #seed lecture_instances
 
-def rand_time(from, to=Time.now)
-    Time.at(rand_in_range(from.to_f, to.to_f))
-end
+# def rand_time(from, to=Time.now)
+#     Time.at(rand_in_range(from.to_f, to.to_f))
+# end
 
-def rand_in_range(from, to)
-    rand * (to - from) + from
-  end
+# def rand_in_range(from, to)
+#     rand * (to - from) + from
+#   end
 
-week_numbers = (1..14)
+# week_numbers = (1..14)
 
-Lecture.all.each do |lecture|
-    week_numbers.each do |week|
-        lecture_date = rand_time((14-week).days.ago)
-        lecture_instance = {:lecture => lecture, :date => lecture_date, :week_number => week}
-        LectureInstance.create!(lecture_instance)
-    end
+# Lecture.all.each do |lecture|
+#     week_numbers.each do |week|
+#         lecture_date = rand_time((14-week).days.ago)
+#         lecture_instance = {:lecture => lecture, :date => lecture_date, :week_number => week}
+#         LectureInstance.create!(lecture_instance)
+#     end
+# end
+
+
+# seed group_users
+
+all_groups = Group.all
+
+User.all.each do |user|
+    offset = rand(Group.count)
+    group = Group.offset(offset).first
+    group_user = {:group_id => group.id, :user_id => user.id}
+    GroupUser.create!(group_user)
 end
 
