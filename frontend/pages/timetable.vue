@@ -23,9 +23,9 @@
             <template v-for="lec in timeTableMap[date]">
               <nuxt-link
                 :key="lec.code"
-                :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.lec_id}}"
-                :style="{ top: timeToY(slotsMap[lec.startSlot]) + cellSpacing + 'px',
-                          height: minutesToPixels(slotsRangeToMinuites(lec.startSlot,lec.endSlot)) - cellSpacing + 'px' }"
+                :to="{name: 'lecture_details-lec_id', params:{lec:lec}}"
+                :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
+                          height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
                 class="my-event with-time"
                 @click="open(lec)"
                 v-html="lectureToHtml(lec)"
@@ -76,7 +76,7 @@ export default {
     // eslint-disable-next-line no-console
     console.log(this.$route)
     this.$axios
-      .$get('http://localhost:5000/12/courses/12/12')
+      .$get('/courses/show_lectures/17/fall/2018')
       .then(tt => this.fillTimeTableMap(tt))
 
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
@@ -87,11 +87,12 @@ export default {
       console.log(tt)
       const pad = n => this.padNumber(n, 2)
       tt.forEach(e => {
-        const date = this.dayNameToDate(e.day)
+        const date = this.dayNumberToDate(e.day)
         const dateString = `${date.getFullYear()}-${pad(
           date.getMonth() + 1
         )}-${pad(date.getDate())}`
-
+        // eslint-disable-next-line no-console
+        console.log(dateString)
         if (dateString in this.timeTableMap) {
           this.timeTableMap[dateString].push(e)
         } else {
@@ -105,10 +106,9 @@ export default {
     open(event) {
       alert(event.title)
     },
-    dayNameToDate(dayName) {
+    dayNumberToDate(dayNumber) {
       const dt = new Date(this.hackyWeekStartDay)
-      const dayMap = { sat: 0, sun: 1, mon: 2, tue: 3, wed: 4, thurs: 5 }
-      dt.setDate(dt.getDate() + dayMap[dayName])
+      dt.setDate(dt.getDate() + dayNumber)
       return dt
     },
     slotsRangeToMinuites(start, end) {
@@ -118,8 +118,8 @@ export default {
       return `<div class=lecture-text>
               <div>${lecture.code}</div>
 
-              <div>${this.slotsMap[lecture.startSlot]} to ${
-        this.slotsMap[lecture.endSlot]
+              <div>${this.slotsMap[lecture.start_timeslot]} to ${
+        this.slotsMap[lecture.end_timeslot]
       }</div>
       </div>`
     }
