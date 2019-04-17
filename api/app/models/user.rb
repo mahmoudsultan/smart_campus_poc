@@ -10,6 +10,8 @@ class User < ApplicationRecord
 
   # before_save -> { skip_confirmation! }
 
+  mount_base64_uploader :image, ImageUploader, file_name: ->(u) { "#{u.id}-#{u.name}" }
+
   has_many :group_users
   has_many :groups, through: :group_users, foreign_key: :user_id
   has_many :face_boxes
