@@ -29,7 +29,6 @@ module Attendance
       URI(Rails.configuration.attendance_api)
     end
 
-    # TODO: Refactor to add class students ids
     def build_request_body
       req = {'image' => @image, 'ids' => @student_ids}
       req.to_json

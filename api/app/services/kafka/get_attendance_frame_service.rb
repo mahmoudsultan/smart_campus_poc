@@ -4,7 +4,7 @@ module Kafka
         @topic_name = topic_name
       end
   
-      # TODO return a single frame in base64 encoding
+      # TODO return a single frame
       def execute
         @frames = Kafka::GetFrameService(@topic_name)
 
