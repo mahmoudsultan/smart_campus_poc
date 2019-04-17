@@ -1,44 +1,50 @@
 <template>
-  <v-layout>
-    <v-flex>
-      <v-sheet height="400">
-        <!-- :interval-format="(t,s)=>t.hour<19?`${padNumber(t.hour,2)} : ${padNumber(t.minute,2)}`:''" -->
-        <!-- now is normally calculated by itself, but to keep the calendar in this date range to view events -->
-
-        <v-calendar
-
-          ref="calendar"
-          :now="hackyWeekStartDay"
-          :value="hackyWeekStartDay"
-          :day-format="(t,s)=>''" 
-          :interval-minutes="cellSize"
-          :first-interval="firstSlot"
-          :dark="true"
-          :short-weekdays="false"
-          :weekdays="weekDays"
-          color="primary"
-          type="week"
-        >
-          <template #dayBody="{ date, timeToY, minutesToPixels }">
-            <template v-for="lec in timeTableMap[date]">
-              <nuxt-link
-                :key="lec.code"
-                :to="{name: 'lecture_details-lec_id', params:{lec:lec}}"
-                :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
-                          height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
-                class="my-event with-time"
-                @click="open(lec)"
-                v-html="lectureToHtml(lec)"
-              />
-              </nuxt-link>
-            </template>
+  <v-container grid-list-md text-xs-center>
+    <v-layout row wrap>
+      <v-flex xs12>
+        <v-breadcrumbs :items="items">
+          <template v-slot:divider>
+            <v-icon>chevron_right</v-icon>
           </template>
-        </v-calendar>
-      </v-sheet>
-    </v-flex>
-  </v-layout>
+        </v-breadcrumbs>
+      </v-flex>
+
+      <v-flex>
+        <v-sheet height="400">
+          <v-calendar
+
+            ref="calendar"
+            :now="hackyWeekStartDay"
+            :value="hackyWeekStartDay"
+            :day-format="(t,s)=>''" 
+            :interval-minutes="cellSize"
+            :first-interval="firstSlot"
+            :dark="true"
+            :short-weekdays="false"
+            :weekdays="weekDays"
+            color="primary"
+            type="week"
+          >
+            <template #dayBody="{ date, timeToY, minutesToPixels }">
+              <template v-for="lec in timeTableMap[date]">
+                <nuxt-link
+                  :key="lec.code"
+                  :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.id}}"
+                  :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
+                            height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
+                  class="my-event with-time"
+                  @click="open(lec)"
+                  v-html="lectureToHtml(lec)"
+                />
+                </nuxt-link>
+              </template>
+            </template>
+          </v-calendar>
+        </v-sheet>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
-              <!-- <nuxt-link :to {name: 'lecture_details', :key="lec.code" params:{lec_id:1}}> -->
 
 <script>
 export default {
@@ -51,7 +57,20 @@ export default {
     hackyWeekStartDay: '2019-01-05', // Set up any saturday as a hack
     firstSlotHour: 8,
     firstSlotMinutes: 30,
-    cellSpacing: 10
+    cellSpacing: 10,
+    last_lecture_idx: 0,
+    items: [
+      {
+        text: '2018',
+        disabled: false,
+        href: 'breadcrumbs_dashboard'
+      },
+      {
+        text: 'Fall',
+        disabled: true,
+        href: 'breadcrumbs_link_1'
+      }
+    ]
   }),
   computed: {
     slotsMap() {
@@ -91,13 +110,14 @@ export default {
         const dateString = `${date.getFullYear()}-${pad(
           date.getMonth() + 1
         )}-${pad(date.getDate())}`
-        // eslint-disable-next-line no-console
-        console.log(dateString)
         if (dateString in this.timeTableMap) {
           this.timeTableMap[dateString].push(e)
         } else {
           this.$set(this.timeTableMap, dateString, [e])
         }
+        e.id = this.last_lecture_idx++
+        // Add the lecture to localstorage
+        localStorage.setItem(e.id, JSON.stringify(e))
       })
     },
     padNumber(num, len) {
@@ -116,7 +136,7 @@ export default {
     },
     lectureToHtml(lecture) {
       return `<div class=lecture-text>
-              <div>${lecture.code}</div>
+              <div>${lecture.title}</div>
 
               <div>${this.slotsMap[lecture.start_timeslot]} to ${
         this.slotsMap[lecture.end_timeslot]
