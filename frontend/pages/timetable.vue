@@ -2,10 +2,58 @@
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
       <v-flex xs12>
+        <!-- <v-menu open-on-hover top offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              color="primary"
+              dark
+              v-on="on"
+            >
+              Dropdown
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-tile
+              v-for="(item, index) in items"
+              :key="index"
+              @click="()=>''"
+            >
+              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu> -->
         <v-breadcrumbs :items="items">
           <template v-slot:divider>
             <v-icon>chevron_right</v-icon>
           </template>
+          <v-breadcrumbs-item
+            slot="item"
+            slot-scope="{ item }"
+            exact
+            :to="item.to"
+          >
+            <v-menu open-on-hover top offset-y>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  color="primary"
+                  dark
+                  v-on="on"
+                >
+                  {{ item.text }}
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-tile
+                  v-for="(menu_item, index) in menu_items[item.category]"
+                  :key="index"
+                  @click="menuItemReact(item, menu_item)"
+                >
+                  <v-list-tile-title>{{ menu_item }}</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </v-breadcrumbs-item>
         </v-breadcrumbs>
       </v-flex>
 
@@ -59,13 +107,22 @@ export default {
     firstSlotMinutes: 30,
     cellSpacing: 10,
     last_lecture_idx: 0,
+    current_term: 'fall',
+    current_year: 2018,
+
+    menu_items: {
+      years: [],
+      terms: []
+    },
     items: [
       {
+        category: 'years',
         text: '2018',
         disabled: false,
         href: 'breadcrumbs_dashboard'
       },
       {
+        category: 'terms',
         text: 'Fall',
         disabled: true,
         href: 'breadcrumbs_link_1'
@@ -95,13 +152,37 @@ export default {
     // eslint-disable-next-line no-console
     console.log(this.$route)
     this.$axios
-      .$get('/courses/show_lectures/17/fall/2018')
+      .$get('/courses/years')
+      .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
+    this.$axios
+      .$get('/courses/terms')
+      .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
+
+    this.$axios
+      .$get(`/lectures/17/${this.current_term}/${this.current_year}`)
       .then(tt => this.fillTimeTableMap(tt))
 
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
+    menuItemReact(item, menuItem) {
+      let term = this.current_term
+      let year = this.current_year
+      if (item.category === 'terms') {
+        term = menuItem
+        this.current_term = term
+        item.text = term
+      } else if (item.category === 'years') {
+        year = menuItem
+        this.current_year = year
+        item.text = year
+      }
+      this.$axios
+        .$get(`/lectures/17/${term}/${year}`)
+        .then(tt => this.fillTimeTableMap(tt))
+    },
     fillTimeTableMap(tt) {
+      this.timeTableMap = {}
       // eslint-disable-next-line no-console
       console.log(tt)
       const pad = n => this.padNumber(n, 2)

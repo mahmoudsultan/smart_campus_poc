@@ -19,6 +19,17 @@ class CoursesController < ApplicationController
 
     render json: @q
   end
+
+  def show_years 
+    years = CourseOffering.distinct.pluck(:year)
+    render json: years
+  end
+
+  def show_terms
+    terms = CourseOffering.distinct.pluck(:term)
+    render json: terms
+  end
+
 end
 
 
