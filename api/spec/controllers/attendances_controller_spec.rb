@@ -10,4 +10,14 @@ RSpec.describe AttendancesController, type: :controller do
             end
         end
     end
+
+    describe "#get_attendance" do
+        context "given a class_id" do
+            it "gets a single frame and returns detected students" do
+                get :get_attendance, params: {class_id: 1}
+                expect(response).to have_http_status(:success)
+            end
+        end
+    end
+
 end
