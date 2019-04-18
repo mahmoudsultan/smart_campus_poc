@@ -59,13 +59,14 @@
 
             <v-layout row wrap class="pa-1 mt-4">
               <v-flex xs12 sm6>
-                <span class="display-1 font-weight-light">Number of Attendees: {{ numberOfAttendess }}</span>
+                <span class="headline font-weight-light">
+                  Number of Attendees: {{ numberOfAttendess }}
+                </span>
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 sm2>
-                <v-btn color="success">
+                <v-btn block color="success">
                   <v-icon>add</v-icon>
-                  <v-spacer></v-spacer>
                   <span>Add Attendee</span>
                 </v-btn>
               </v-flex>
@@ -83,13 +84,14 @@
                   <td class="text-xs-left">{{ props.item.studentName }}</td>
                   <td class="text-xs-right">
                     <v-flex xs12>
-                      <v-btn round xs6 sm4 color="info">
+                      <v-btn round small xs6 sm4 color="info">
                         <v-icon small>edit</v-icon>
                         <v-spacer></v-spacer>
                         <span>Edit</span>
                       </v-btn>
                       <v-btn
                         dark
+                        small
                         round
                         xs6
                         sm4
