@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 class AttendancesController < ApplicationController
-  before_action :set_lecture_instance, only: [:get_attendance]
-
-  # def get
-  #   results = Attendance::GetAttendanceService.new(params).execute
-  #   render json: results.body
-  # end
+  before_action :set_lecture_instance, only: %i[new save]
 
   # Takes lecture_instance_id and an optional class_id
   # Gets a frame from the corresponding class
@@ -38,15 +33,17 @@ class AttendancesController < ApplicationController
   #           '456': {'coords': [500, 600, 800, 800], 'state': 1}
   #       }
   #   }
-  #
   def save
-    lecture_instance_id = params[:lecture_instance_id]
-    attendance_sheet = AttendanceSheet.create!(lecture_instance_id: lecture_instance_id)
+    attendance_sheet = @lecture_instance.attendance_sheet.create!
 
-    params[:attendances].each do |student_id, data|
-      state = data[:state]
-      coords = data[:coords]
-      facebox = { user_id: student_id, boundaries: coords, state: state, attendance_sheet_id: attendance_sheet.id }
+    params[:face_boxes].each do |face_box|
+      state = face_box[:student_id].nil? ? :detected : :recognized
+
+      user = nil
+      user = User.find_by student_id: face_box[:student_id] if face_box[:student_id]
+
+      facebox = { user: user, state: state,
+                  boundaries: face_box[:boundaries], attendance_sheet_id: attendance_sheet.id }
       Facebox.create!(facebox)
     end
 
