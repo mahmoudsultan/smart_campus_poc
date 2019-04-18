@@ -30,7 +30,7 @@ module Attendance
     end
 
     def build_request_body
-      req = {'image' => @image, 'ids' => @student_ids}
+      req = { 'image' => @image, 'ids' => @student_ids }
       req.to_json
     end
   end

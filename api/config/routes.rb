@@ -9,7 +9,10 @@ Rails.application.routes.draw do
   end
   # For details on the DSL available within this file, see
 
-  get 'attendance', to: 'attendances#get'
+  scope 'attendance' do
+    post 'new', to: 'attendances#new'
+    post 'save', to: 'attendances#save'
+  end
 
   # Upload Image Route
   resources :users, only: [] do
