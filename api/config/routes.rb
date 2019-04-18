@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     post 'save', to: 'attendances#save'
   end
 
+  resources :students, only: %i[index show create update destroy]
+
   # Upload Image Route
   resources :users, only: [] do
     post 'image', to: 'users#upload_image'

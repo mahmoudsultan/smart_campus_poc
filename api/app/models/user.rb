@@ -17,4 +17,5 @@ class User < ApplicationRecord
   has_many :face_boxes
 
   validates :name, :department, presence: true
+  validates :student_id, presence: true, if: :student?
 end

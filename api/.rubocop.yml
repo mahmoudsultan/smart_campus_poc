@@ -14,3 +14,4 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - 'db/schema.rb'
+    - 'spec/*'
