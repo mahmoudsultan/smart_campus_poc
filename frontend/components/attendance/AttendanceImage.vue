@@ -2,6 +2,15 @@
   <v-container fluid grid-list-xs class="ma-0 pa-0">
     <v-layout xs12 v-resize="drawCanvas" column>
       <v-flex id="canvas-container" class="parent">
+        <v-tooltip bottom class="layer">
+          <!-- eslint-disable-next-line -->
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" @click="refreshFaceBoxes" class="refresh-btn" color="grey lighten-5">
+              <v-icon>refresh</v-icon>
+            </v-btn>
+          </template>
+          <span>Redraw Faceboxes</span>
+        </v-tooltip>
         <div>
           <v-img id="attendance-image" :src="image"/>
         </div>
@@ -117,7 +126,7 @@ export default {
         if (faceBoxIndex !== -1) {
           const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
           this.$emit('facebox-click', faceBoxIndex,
-            this.getFaceBoxImageData(x, y, width, height))
+            this.getFaceBoxImageBase64(x, y, width, height))
         }
       }
     },
@@ -167,6 +176,15 @@ export default {
     getFaceBoxImageData(x, y, width, height) {
       return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
     },
+    getFaceBoxImageBase64(x, y, width, height) {
+      const imageData = this.getFaceBoxImageData(x, y, width, height)
+      const canvas = document.createElement('canvas')
+      canvas.width = imageData.width
+      canvas.height = imageData.height
+      canvas.getContext('2d').putImageData(imageData, 0, 0)
+
+      return canvas.toDataURL('image/png')
+    },
     handleKeyUp(event) {
       if (event.key === 'Escape') {
         this.boxStartCorner = null
@@ -175,6 +193,9 @@ export default {
         const ctx = this.scratchPadCanvas.getContext('2d')
         ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
       }
+    },
+    async refreshFaceBoxes() {
+      await this.drawCanvas()
     }
   },
   async mounted() {
@@ -243,4 +264,13 @@ canvas {
 #draw-canvas {
   z-index: 3000;
 }
+
+.refresh-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  opacity: 0.8;
+}
+
 </style>
