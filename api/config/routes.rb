@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   resources :students, only: %i[index create update destroy] do
     collection do
       get ':id', to: 'students#show'
-      get ':student_id', to: 'students#show' 
+      get '/sid/:student_id', to: 'students#show' 
     end
   end
 
