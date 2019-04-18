@@ -129,16 +129,31 @@
             >
               Attendance is Saved Successfully.
             </v-alert>
-            <v-btn
-              ripple
-              block
-              depressed
-              :loading="downloadLoading"
-              color="primary"
-            >
-              <v-icon left dark>cloud_download</v-icon>
-              Download
-            </v-btn>
+            <v-layout row reverse wrap>
+              <v-flex xs12 sm6 class="pa-1">
+                <v-btn
+                  ripple
+                  block
+                  depressed
+                  :loading="downloadLoading"
+                  color="primary"
+                >
+                  <v-icon left dark>cloud_download</v-icon>
+                  Download
+                </v-btn>
+              </v-flex>
+              <v-flex xs12 sm6 class="pa-1">
+                <v-btn
+                  ripple
+                  block
+                  depressed
+                  color="grey lighten-2"
+                >
+                  <v-icon left>chevron_left</v-icon>
+                  Back to Lecture
+                </v-btn>
+              </v-flex>
+            </v-layout>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
