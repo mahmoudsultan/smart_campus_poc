@@ -3,14 +3,17 @@
 # seed courses
 courses = ActiveSupport::JSON.decode(File.read('db/seeds/courses.json'))
 
+puts 'Courses Being Seeded'
 courses.each do |a|
   Course.create!(a)
 end
+puts 'Courses are created!'
 
 # seed course offerings
 years = (2017..2019).to_a
 terms = %i[fall spring summer]
 
+puts 'Years being created'
 years.each do |year|
   terms.each do |term|
     Course.all.each do |course|
@@ -19,8 +22,10 @@ years.each do |year|
     end
   end
 end
+puts 'Course Offerings are created! Wow !'
 
 # seed groups
+puts 'Course offerings are being created'
 CourseOffering.includes(:course).all.each do |offering|
   Group.create!(course_offering: offering, name: 'group' + offering.course.title)
 end
@@ -31,6 +36,7 @@ buildings = ['Preparatory Building', 'Electricity Building', 'Mechanical Buildin
 buildings.each do |building|
   Building.create!(name: building)
 end
+puts 'Course offerings and Building both are created! this is AMAZING!'
 
 # seed klasses
 klasses = ActiveSupport::JSON.decode(File.read('db/seeds/klass.json'))
@@ -42,6 +48,7 @@ klasses.each do |klass|
   klass[:building] = rand_build
   Klass.create!(klass)
 end
+puts 'And you know what? Klasses are created too!'
 
 # seed users
 users = ActiveSupport::JSON.decode(File.read('db/seeds/user.json'))
@@ -52,6 +59,7 @@ users.each_with_index do |a, i|
   a[:role] = (rand(2) == 1 ? 'professor' : 'student')
   User.create!(a)
 end
+puts "At this point I don't have to tell you that everything is going smooth."
 
 # seed lectures
 days = %i[saturday sunday monday tuesday wednesday thrusday friday]
@@ -69,6 +77,7 @@ days.each do |day|
     end
   end
 end
+puts 'Oh my days! Lectures... Lectures are indeed created! '
 
 # seed lecture_instances
 
@@ -89,6 +98,7 @@ Lecture.all.each do |lecture|
     LectureInstance.create!(lecture_instance)
   end
 end
+puts 'And their lecture instances with a random period!'
 
 # seed group_users
 
@@ -100,3 +110,5 @@ User.all.each do |user|
   group_user = { group_id: group.id, user_id: user.id }
   GroupUser.create!(group_user)
 end
+puts 'Users enters the system, Prepare for Errors!'
+puts 'This was fun... Goodbye, Visit Soon when you get stuck and need to drop the database!'
