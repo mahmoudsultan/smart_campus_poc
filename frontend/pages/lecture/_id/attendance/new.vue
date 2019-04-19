@@ -27,6 +27,7 @@
               v-model="lectureLocation"
               label="Lecture Location (e.g. C11, K1)"
               prepend-inner-icon="place"
+              loading=true
             ></v-text-field>
             <v-divider></v-divider>
             <v-layout row wrap justify-end align-content-end>
@@ -207,9 +208,9 @@ export default {
           disabled: true
         }
       ],
-      lectureLocation: 'C11',
       image: null,
       faceBoxes: [],
+      lectureLocation: '',
       addingNewAttendance: false,
       showFaceBoxDialog: {
         display: false,
@@ -293,6 +294,16 @@ export default {
       // eslint-disable-next-line
       console.error('Not Yet Implemented')
     }
+  },
+  mounted: async function () {
+    await this.$axios.get('http://localhost:5000/place/1').then((response) => {
+      this.lectureLocation = response.data.place
+      this.lectureLocationLoading = false
+    }).catch((err) => {
+      // TODO:
+      // eslint-disable-next-line
+      console.error(err)
+    })
   }
 }
 </script>
