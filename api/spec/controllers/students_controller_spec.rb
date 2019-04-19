@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe StudentsController, type: :controller do
-
   let(:valid_attributes) do
     FactoryBot.attributes_for :user, :student
   end

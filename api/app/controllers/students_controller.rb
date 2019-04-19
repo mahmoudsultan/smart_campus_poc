@@ -44,11 +44,11 @@ class StudentsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_student
-    @student =  if params[:id]
-      User.student.find(params[:id])
-    elsif params[:student_id]
-      User.student.find_by student_id: params[:student_id]
-    end
+    @student = if params[:id]
+                 User.student.find(params[:id])
+               elsif params[:student_id]
+                 User.student.find_by student_id: params[:student_id]
+               end
   end
 
   # Only allow a trusted parameter "white list" through.
