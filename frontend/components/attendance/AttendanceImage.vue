@@ -32,7 +32,11 @@ export default {
   props: {
     image: String,
     faceBoxes: Array,
-    drawMode: Boolean
+    drawMode: Boolean,
+    redraw: {
+      type: Boolean,
+      required: false
+    }
   },
   data() {
     return {
@@ -232,6 +236,14 @@ export default {
       } else {
         this.updateScratchPadCanvasWidthAndHeight()
         this.scratchPadCanvas.style.cursor = 'crosshair'
+      }
+    },
+    redraw: async function (val) {
+      if (val) {
+        // eslint-disable-next-line
+        console.log('Triggered')
+        await this.drawCanvas()
+        this.redraw = false
       }
     }
   }

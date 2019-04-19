@@ -52,6 +52,7 @@
               :image="image"
               :faceBoxes="faceBoxes"
               :drawMode="addingNewAttendance"
+              :redraw="redrawCanvasTrigger"
               @facebox-click="handleClickedFaceBox"
               @facebox-drawn="receiveFaceBoxCoordinates"
               @facebox-canceled="cancelFaceBoxCoordinates"
@@ -175,6 +176,7 @@
         :studentId="showFaceBoxDialog.studentId"
         :studentImage="showFaceBoxDialog.studentImage"
         @close="showFaceBoxDialog.display = false"
+        @assign="assignStudentToFaceBox"
       />
     </v-dialog>
   </div>
@@ -211,13 +213,15 @@ export default {
       image: null,
       faceBoxes: [],
       lectureLocation: '',
+      redrawCanvasTrigger: false,
       addingNewAttendance: false,
       showFaceBoxDialog: {
         display: false,
         imagePart: '',
         studentName: '',
         studentId: '',
-        studentImage: ''
+        studentImage: '',
+        faceBoxIndex: -1
       },
       downloadLoading: false,
       saved: false,
@@ -276,13 +280,29 @@ export default {
       }, 2000)
     },
     handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
-      // TODO
+      this.showFaceBoxDialog.faceBoxIndex = faceBoxIndex
       this.showFaceBoxDialog.imagePart = clickedPartImage
-      this.showFaceBoxDialog.studentId = this.faceBoxes[faceBoxIndex].student_id
-      this.showFaceBoxDialog.studentName = 'John Doe'
-      this.showFaceBoxDialog.studentImage = clickedPartImage
+      const studentId = this.faceBoxes[faceBoxIndex].student_id
+      this.showFaceBoxDialog.studentId = studentId
 
-      this.showFaceBoxDialog.display = true
+      // Fetch Student data if id is given (recognized)
+      if (studentId) {
+        this.$axios.get(`/students/sid/${studentId}`).then((response) => {
+          this.showFaceBoxDialog.studentName = response.data.name
+          this.showFaceBoxDialog.studentImage = response.data.image
+          this.showFaceBoxDialog.display = true
+        }).catch((err) => {
+          // eslint-disable-next-line
+          console.log(err)
+        })
+      } else {
+        this.showFaceBoxDialog.display = true
+      }
+    },
+    assignStudentToFaceBox(studentId) {
+      this.faceBoxes[this.showFaceBoxDialog.faceBoxIndex].student_id = studentId
+      this.showFaceBoxDialog.display = false
+      this.redrawCanvasTrigger = true
     },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
       // TODO
