@@ -67,9 +67,18 @@
               </v-flex>
               <v-spacer></v-spacer>
               <v-flex xs12 sm2>
-                <v-btn block color="success">
+                <v-btn v-if="!addingNewAttendance" block color="success" @click="startAddingNewAttendance">
                   <v-icon>add</v-icon>
                   <span>Add Attendee</span>
+                </v-btn>
+                <v-btn
+                  v-else
+                  block
+                  color="success"
+                  :disabled="!newFaceBox"
+                  @click="confirmNewFaceBoxLocation"
+                >
+                  Confirm
                 </v-btn>
               </v-flex>
             </v-layout>
@@ -215,6 +224,7 @@ export default {
       lectureLocation: '',
       redrawCanvasTrigger: false,
       addingNewAttendance: false,
+      newFaceBox: {},
       showFaceBoxDialog: {
         display: false,
         imagePart: '',
@@ -260,7 +270,6 @@ export default {
 
       // Request Attendance on complete Unset Loading and Set Attendance Image
       // and Faceboxes
-      console.log(this.$route) //eslint-disable-line
       this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
         const attendanceObj = response.data
         this.image = attendanceObj.image
@@ -305,15 +314,25 @@ export default {
       this.showFaceBoxDialog.display = false
       this.redrawCanvasTrigger = true
     },
+    startAddingNewAttendance() {
+      this.addingNewAttendance = true
+      this.newFaceBox = null
+    },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
-      // TODO
-      // eslint-disable-next-line
-      console.error('Not Yet Implemented')
+      this.newFaceBox = {
+        boundries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
+        student_id: null
+      }
     },
     cancelFaceBoxCoordinates() {
-      // TODO
-      // eslint-disable-next-line
-      console.error('Not Yet Implemented')
+      this.newFaceBox = null
+    },
+    confirmNewFaceBoxLocation() {
+      // Save the facebox and redraw
+      // TODO: Make the edit dialog opens up automatically
+      this.faceBoxes.push(this.newFaceBox)
+      this.redrawCanvasTrigger = true
+      this.addingNewAttendance = false
     }
   },
   mounted: async function () {

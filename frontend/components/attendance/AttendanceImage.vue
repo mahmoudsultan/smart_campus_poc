@@ -219,12 +219,14 @@ export default {
       const ctx = this.scratchPadCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
 
-      const [x1, y1] = this.boxStartCorner
-      const [x2, y2] = this.boxEndCorner
-      const width = x2 - x1
-      const height = y2 - y1
-      ctx.strokeStyle = '#ffffff'
-      ctx.strokeRect(x1, y1, width, height)
+      if (val != null) {
+        const [x1, y1] = this.boxStartCorner
+        const [x2, y2] = this.boxEndCorner
+        const width = x2 - x1
+        const height = y2 - y1
+        ctx.strokeStyle = '#ffffff'
+        ctx.strokeRect(x1, y1, width, height)
+      }
     },
     drawMode: function (val) {
       if (!val) {
