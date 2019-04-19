@@ -2,27 +2,6 @@
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
       <v-flex xs12>
-        <!-- <v-menu open-on-hover top offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="primary"
-              dark
-              v-on="on"
-            >
-              Dropdown
-            </v-btn>
-          </template>
-
-          <v-list>
-            <v-list-tile
-              v-for="(item, index) in items"
-              :key="index"
-              @click="()=>''"
-            >
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu> -->
         <v-breadcrumbs :items="items">
           <template v-slot:divider>
             <v-icon>chevron_right</v-icon>
@@ -42,6 +21,7 @@
                 >
                   {{ item.text }}
                 </v-btn>
+                </a>
               </template>
               <v-list>
                 <v-list-tile
