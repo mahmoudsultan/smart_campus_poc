@@ -32,6 +32,7 @@
             <v-divider></v-divider>
             <v-layout row wrap justify-end align-content-end>
               <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
+              <v-progress-linear v-if="lectureLocationLoading" :indeterminate="true"></v-progress-linear>
               <v-flex xs12 sm3>
                 <v-btn
                   :disabled="loading"
@@ -85,6 +86,7 @@
             <v-data-table
               :headers="attendanceTableHeaders"
               :items="attendanceItems"
+              :loading="attendanceItemsLoading"
               hide-actions
               class="elevation-1"
               item-key="student_id"
@@ -221,7 +223,9 @@ export default {
       ],
       image: null,
       faceBoxes: [],
+      attendanceItems: [],
       lectureLocation: '',
+      lectureLocationLoading: true,
       redrawCanvasTrigger: false,
       addingNewAttendance: false,
       newFaceBox: {},
@@ -253,12 +257,12 @@ export default {
     lectureHref() {
       return `/lecture/${this.$route.params.id}`
     },
-    attendanceItems() {
-      return _.map(this.faceBoxes, (faceBox) => {
-        // TODO:
-        return { studentId: faceBox.student_id, studentName: 'John Doe' }
-      })
-    },
+    // attendanceItems() {
+    //   return _.map(this.faceBoxes, (faceBox) => {
+    //     // TODO:
+    //     return { studentId: faceBox.student_id, studentName: '' }
+    //   })
+    // },
     numberOfAttendess() {
       return this.faceBoxes.length
     }
@@ -270,7 +274,7 @@ export default {
 
       // Request Attendance on complete Unset Loading and Set Attendance Image
       // and Faceboxes
-      this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
+      this.$axios.get('http://localhost:8080', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
         const attendanceObj = response.data
         this.image = attendanceObj.image
         this.faceBoxes = attendanceObj.face_boxes
@@ -284,10 +288,13 @@ export default {
     },
     confirmAttendanceSheet() {
       this.loading = true
-      setTimeout(() => {
+      this.$axios.post('attendance/save', { face_boxes: this.faceBoxes }).then((response) => {
         this.step = 3
-        this.saved = true
-      }, 2000)
+      }).catch((err) => {
+        // TODO:
+        // eslint-disable-next-line
+        console.error(err)
+      })
     },
     handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
       this.showFaceBoxDialog.faceBoxIndex = faceBoxIndex
@@ -313,6 +320,7 @@ export default {
       this.faceBoxes[this.showFaceBoxDialog.faceBoxIndex].student_id = studentId
       this.showFaceBoxDialog.display = false
       this.redrawCanvasTrigger = true
+      this.updateTable()
     },
     startAddingNewAttendance() {
       this.addingNewAttendance = true
@@ -333,10 +341,34 @@ export default {
       this.faceBoxes.push(this.newFaceBox)
       this.redrawCanvasTrigger = true
       this.addingNewAttendance = false
+    },
+    async updateTable() {
+      this.attendanceItemsLoading = true
+      let studentName = ''
+      this.attendanceItems = await Promise.all(_.map(this.faceBoxes, async (faceBox) => {
+        if (faceBox.student_id) {
+          studentName = await this.$axios.get(`/students/sid/${faceBox.student_id}`).then((response) => {
+            return response.data.name
+          })
+        } else {
+          studentName = 'Not Recognized'
+        }
+
+        return {
+          studentId: faceBox.student_id,
+          studentName: studentName
+        }
+      }))
+      this.attendanceItemsLoading = false
+    }
+  },
+  watch: {
+    faceBoxes: async function () {
+      await this.updateTable()
     }
   },
   mounted: async function () {
-    await this.$axios.get('/place/1').then((response) => {
+    await this.$axios.get(`/place/${this.$route.params.id}`).then((response) => {
       this.lectureLocation = response.data.name
       this.lectureLocationId = response.data.id
       this.lectureLocationLoading = false

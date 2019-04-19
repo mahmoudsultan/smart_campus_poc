@@ -34,6 +34,7 @@ class AttendancesController < ApplicationController
   #       }
   #   }
   def save
+    # TODO: Save frame
     attendance_sheet = @lecture_instance.attendance_sheet.create!
 
     params[:face_boxes].each do |face_box|

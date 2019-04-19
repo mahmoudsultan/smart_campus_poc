@@ -19,7 +19,7 @@ def format_json_for_image(key, pixels):
     "image": pixels
   }
   """
-  return json.dumps({'key': key, 'image': pixels})
+  return json.dumps({'image': pixels})
 
 def on_send_error(excp):
   print(excp)
@@ -27,7 +27,7 @@ def on_send_error(excp):
 def on_send_success(excp):
   print('Frame Sent.')
 
-def publish_video(producer, topic, key, sleep=0.2, file_name='test_video.avi'):
+def publish_video(producer, topic, key, sleep=0.5, file_name='test_video.mp4'):
   """
   Publish frames from a local video to producer topic
   args:
@@ -35,7 +35,7 @@ def publish_video(producer, topic, key, sleep=0.2, file_name='test_video.avi'):
     topic: Topic name to publish frames to.
   """
   cap = cv2.VideoCapture(file_name)
-  print('Starting Camera Frames Publishing... Best of Luck.')
+  print('Starting Camera Frames Publishing... Best of Luck. 😎️')
 
   while(True):
     success, frame = cap.read()
@@ -45,9 +45,10 @@ def publish_video(producer, topic, key, sleep=0.2, file_name='test_video.avi'):
       continue
 
     _, buffer = cv2.imencode('.jpg', frame)
+    jpg_base64 = (base64.b64encode(buffer)).decode("utf-8")
     # jpg_base64 = base64.encodestring(buffer.tostring())
-    pixels_list = buffer.flatten().tolist()
-    json = format_json_for_image(key, pixels_list)
+#    pixels_list = buffer.flatten().tolist()
+    json = format_json_for_image(key, jpg_base64)
     json_bytes = json.encode('utf-8')
     producer.send(topic, json_bytes).add_callback(on_send_success).add_errback(on_send_error)
 
@@ -58,7 +59,7 @@ def publish_video(producer, topic, key, sleep=0.2, file_name='test_video.avi'):
   cap.release()
 
 def main(args):
-  if not args.topicname or not args.key:
+  if not args.topicname:
     print('Topic name and JSON Key must be specified.')
     sys.exit(1)
   topic_name = args.topicname
@@ -69,7 +70,7 @@ def main(args):
   bootstrap_servers = args.bsservers if args.bsservers else 'localhost:9092'
 
   producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
-  publish_camera(producer, topic_name, key)
+  publish_video(producer, topic_name, key)
 
 if __name__ == '__main__':
   # Configure script arguments and flags
