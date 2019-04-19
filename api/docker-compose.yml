@@ -24,6 +24,16 @@ app:
   links:
     - "mysql"
 
+# nuxt:
+#   build: ../frontend/
+#   restart: always
+#   ports: 
+#     - "3003:3003"
+#   volumes:
+#     - .:/app
+#   command:
+#     "npm run start"
+
 # appdata:
 #   image: tianon/true
 #   volumes:
