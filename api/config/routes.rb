@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/place/:id', to: 'lecture_instances#place'
+
   # Upload Image Route
   resources :users, only: [] do
     post 'image', to: 'users#upload_image'
