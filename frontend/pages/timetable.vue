@@ -57,7 +57,7 @@
               <template v-for="lec in timeTableMap[date]">
                 <nuxt-link
                   :key="lec.code"
-                  :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.id}}"
+                  :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.lec_id}}"
                   :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
                             height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
                   class="my-event with-time"
@@ -86,7 +86,6 @@ export default {
     firstSlotHour: 8,
     firstSlotMinutes: 30,
     cellSpacing: 10,
-    last_lecture_idx: 0,
     current_term: 'fall',
     current_year: 2018,
 
@@ -176,9 +175,8 @@ export default {
         } else {
           this.$set(this.timeTableMap, dateString, [e])
         }
-        e.id = this.last_lecture_idx++
         // Add the lecture to localstorage
-        localStorage.setItem(e.id, JSON.stringify(e))
+        localStorage.setItem(e.lec_id, JSON.stringify(e))
       })
     },
     padNumber(num, len) {

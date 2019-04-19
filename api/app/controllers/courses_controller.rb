@@ -15,7 +15,8 @@ class CoursesController < ApplicationController
         " AND `course_offerings`.`year`=?", params[:pid], params[:term], params[:year]
       ).select('users.id as user_id, users.name as user_name,courses.code,courses.title,lectures.day,'\
                'lectures.start_timeslot,lectures.end_timeslot,'\
-               'buildings.name as building_name,klasses.name as klass_name,klasses.floor,klasses.capacity')
+               'buildings.name as building_name,klasses.name as klass_name,klasses.floor,klasses.capacity,'\
+               'lectures.id as lec_id')
 
     render json: @q
   end
