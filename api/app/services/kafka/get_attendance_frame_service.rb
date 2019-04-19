@@ -8,8 +8,7 @@ module Kafka
 
     # TODO: return a single frame
     def execute
-      @frames = Kafka::GetFrameService(@topic_name)
-
+      @frames = Kafka::GetFrameService.new(@topic_name).execute
       @frames
     end
   end

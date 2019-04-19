@@ -259,7 +259,7 @@ export default {
 
       // Request Attendance on complete Unset Loading and Set Attendance Image
       // and Faceboxes
-      this.$axios.get('http://localhost:8080').then((response) => {
+      this.$axios.post('http://localhost:5000/attendance/new', { lecture_instance_id: 1 }).then((response) => {
         const attendanceObj = response.data
         this.image = attendanceObj.image
         this.faceBoxes = attendanceObj.face_boxes
