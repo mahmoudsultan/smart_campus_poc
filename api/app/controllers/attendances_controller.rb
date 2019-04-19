@@ -56,8 +56,8 @@ class AttendancesController < ApplicationController
     @lecture_instance = LectureInstance.find params[:lecture_instance_id]
   end
 
-  def get_topic_name_from_class(_class_id)
-    'random_topic_name'
+  def get_topic_name_from_class(class_id)
+    Klass.find(class_id).topic_name
   end
 
   def klass_id_from_lecture_instance
