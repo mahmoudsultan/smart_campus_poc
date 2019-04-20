@@ -228,6 +228,7 @@ export default {
       lectureLocationLoading: true,
       redrawCanvasTrigger: false,
       addingNewAttendance: false,
+      attendanceItemsLoading: false,
       newFaceBox: {},
       showFaceBoxDialog: {
         display: false,
@@ -274,7 +275,7 @@ export default {
 
       // Request Attendance on complete Unset Loading and Set Attendance Image
       // and Faceboxes
-      this.$axios.get('http://localhost:8080', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
+      this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
         const attendanceObj = response.data
         this.image = attendanceObj.image
         this.faceBoxes = attendanceObj.face_boxes
@@ -288,7 +289,7 @@ export default {
     },
     confirmAttendanceSheet() {
       this.loading = true
-      this.$axios.post('attendance/save', { face_boxes: this.faceBoxes }).then((response) => {
+      this.$axios.post('attendance/save', { lecture_instance_id: this.$route.params.id, face_boxes: this.faceBoxes }).then((response) => {
         this.step = 3
       }).catch((err) => {
         // TODO:
@@ -306,7 +307,7 @@ export default {
       if (studentId) {
         this.$axios.get(`/students/sid/${studentId}`).then((response) => {
           this.showFaceBoxDialog.studentName = response.data.name
-          this.showFaceBoxDialog.studentImage = response.data.image
+          this.showFaceBoxDialog.studentImage = `${this.$axios.defaults.baseURL}${response.data.image.url}`
           this.showFaceBoxDialog.display = true
         }).catch((err) => {
           // eslint-disable-next-line
@@ -328,7 +329,7 @@ export default {
     },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
       this.newFaceBox = {
-        boundries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
+        boundaries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
         student_id: null
       }
     },

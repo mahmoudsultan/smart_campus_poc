@@ -12,14 +12,20 @@ class AttendancesController < ApplicationController
   def new
     # 1. Get Frame from Kafka (encoded in base64)
     frame_encoded = Kafka::GetAttendanceFrameService.new(topic_name).execute
-
+    frame_encoded_base64 = "data:image/jpeg;base64," + frame_encoded
     # 2. Send Frame to Attendance MicroService along with group students
     group_students = @lecture_instance.group.students.pluck(:student_id)
     params = { image: frame_encoded, ids: group_students }
     results = Attendance::GetAttendanceService.new(params).execute
 
+    
+    face_boxes = JSON.parse(JSON.parse(results.body))["face_boxes"]
+    face_boxes.each do |face_box|
+      face_box["boundaries"] = face_box["boundaries"].join(',')
+    end
+
     # 3. Return Frame and the Returned Face Boxes
-    render json: { frame: frame_encoded, face_boxes: results.body }, status: :ok
+    render json: { image: frame_encoded_base64, face_boxes: face_boxes }, status: :ok
   end
 
   # Takes a lecture_instance_id and a set of ids along with the coordinates
@@ -45,7 +51,7 @@ class AttendancesController < ApplicationController
 
       facebox = { user: user, state: state,
                   boundaries: face_box[:boundaries], attendance_sheet_id: attendance_sheet.id }
-      Facebox.create!(facebox)
+      FaceBox.create!(facebox)
     end
 
     render json: attendance_sheet, status: :created

@@ -33,7 +33,7 @@ module UniSystemApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.attendance_api = 'http://18.222.151.88:50000/attendance'
+    config.attendance_api = 'http://52.15.240.121:50000/attendance'
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do

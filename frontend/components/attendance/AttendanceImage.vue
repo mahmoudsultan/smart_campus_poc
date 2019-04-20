@@ -77,7 +77,7 @@ export default {
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
     faceBoxDimensions(faceBox) {
-      const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
+      const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
         return Number.parseInt(v) * this.ratio
       })
       const width = x2 - x1
@@ -86,7 +86,7 @@ export default {
       return [x1, y1, width, height]
     },
     faceBoxDimensionsNotRatioed(faceBox) {
-      const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
+      const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
         return Number.parseInt(v)
       })
       const width = x2 - x1

@@ -9,7 +9,6 @@ module Kafka
     # TODO: return a single frame
     def execute
       @frames = Kafka::GetFrameService.new(@topic_name).execute
-      puts "Hello?"
       JSON.parse(@frames)['image']
     end
   end
