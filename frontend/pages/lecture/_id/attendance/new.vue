@@ -49,6 +49,7 @@
           </v-stepper-content>
           <v-stepper-content step="2">
             <attendance-wizard
+              v-if="step === 2"
               :image="this.image"
               :faceBoxes="this.faceBoxes"
               :students="this.studentsInfoObj"
@@ -157,7 +158,6 @@ export default {
       const studentsInfoRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/students`)
 
       Promise.all([attendanceRequest, studentsInfoRequest]).then(([attendanceResponse, studentsInfoResponse]) => {
-        console.log(attendanceResponse, studentsInfoResponse) // eslint-disable-line
         /*
           Parse students data to the form:
           student_id: {
@@ -182,19 +182,6 @@ export default {
       }).catch((err) => {
         console.error(err) // eslint-disable-line
       })
-
-      // // this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
-      // this.$axios.get('http://localhost:8080').then((response) => {
-      //   const attendanceObj = response.data
-      //   this.image = attendanceObj.image
-      //   this.faceBoxes = attendanceObj.face_boxes
-      //   this.loading = false
-      //   this.step = 2
-      // }).catch((err) => {
-      //   // TODO:
-      //   // eslint-disable-next-line
-      //   console.error(err)
-      // })
     },
     confirmAttendanceSheet(faceBoxes) {
       console.log('called') // eslint-disable-line

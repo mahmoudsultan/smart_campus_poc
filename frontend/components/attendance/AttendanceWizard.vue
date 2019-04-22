@@ -169,7 +169,6 @@ export default {
   },
   methods: {
     handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
-      console.err('Not yet refactored') // eslint-disable-line
       this.showFaceBoxDialog.faceBoxIndex = faceBoxIndex
       this.showFaceBoxDialog.imagePart = clickedPartImage
       const studentId = this.faceBoxes[faceBoxIndex].student_id
@@ -177,15 +176,10 @@ export default {
 
       // Fetch Student data if id is given (recognized)
       if (studentId) {
-        // TODO: the data is passed
-        this.$axios.get(`/students/sid/${studentId}`).then((response) => {
-          this.showFaceBoxDialog.studentName = response.data.name
-          this.showFaceBoxDialog.studentImage = `${this.$axios.defaults.baseURL}${response.data.image.url}`
-          this.showFaceBoxDialog.display = true
-        }).catch((err) => {
-          // eslint-disable-next-line
-          console.log(err)
-        })
+        const student = this.students[studentId]
+        this.showFaceBoxDialog.studentName = student.name
+        this.showFaceBoxDialog.studentImage = this.fullImageUrl(student.image.url)
+        this.showFaceBoxDialog.display = true
       } else {
         this.showFaceBoxDialog.display = true
       }
@@ -239,6 +233,9 @@ export default {
     },
     callInjectedSaveMethod() {
       this.confirmAttendanceSheet(this.faceBoxes)
+    },
+    fullImageUrl(imageUrl) {
+      return `${this.$axios.defaults.baseURL}${imageUrl}`
     }
   },
   watch: {

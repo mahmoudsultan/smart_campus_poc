@@ -73,6 +73,7 @@ export default {
     },
     updateScratchPadCanvasWidthAndHeight() {
       const attendanceImage = document.getElementById('attendance-image')
+
       this.scratchPadCanvas.width = attendanceImage.clientWidth
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
@@ -109,6 +110,9 @@ export default {
 
       canvas.getContext('2d').drawImage(this.offScreenCanvas, 0, 0)
     },
+    canvasCoordsToImageCoords([x, y]) {
+      return [x / this.ratio, y / this.ratio]
+    },
     handleMouseDownOnCanvas(event) {
       const clickX = event.layerX
       const clickY = event.layerY
@@ -121,7 +125,8 @@ export default {
         } else {
           this.boxEndCorner = [clickX, clickY]
           this.drawStage = 2
-          this.$emit('facebox-drawn', this.boxStartCorner, this.boxEndCorner)
+          this.$emit('facebox-drawn', this.canvasCoordsToImageCoords(this.boxStartCorner),
+            this.canvasCoordsToImageCoords(this.boxEndCorner))
         }
       } else {
         this.buildOffScreenImageCanvas()
