@@ -7,6 +7,6 @@ class Klass < ApplicationRecord
   validates :name, :floor, :capacity, :building, presence: true
 
   def topic_name
-    self.klass_topic_map.topic
+    klass_topic_map.topic
   end
 end

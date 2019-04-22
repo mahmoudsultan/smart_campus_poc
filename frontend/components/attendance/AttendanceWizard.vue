@@ -242,6 +242,9 @@ export default {
     faceBoxes: async function () {
       await this.updateTable()
     }
+  },
+  mounted() {
+    this.updateTable()
   }
 }
 </script>

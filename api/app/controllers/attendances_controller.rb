@@ -12,16 +12,15 @@ class AttendancesController < ApplicationController
   def new
     # 1. Get Frame from Kafka (encoded in base64)
     frame_encoded = Kafka::GetAttendanceFrameService.new(topic_name).execute
-    frame_encoded_base64 = "data:image/jpeg;base64," + frame_encoded
+    frame_encoded_base64 = 'data:image/jpeg;base64,' + frame_encoded
     # 2. Send Frame to Attendance MicroService along with group students
     group_students = @lecture_instance.group.students.pluck(:student_id)
     params = { image: frame_encoded, ids: group_students }
     results = Attendance::GetAttendanceService.new(params).execute
 
-    
-    face_boxes = JSON.parse(JSON.parse(results.body))["face_boxes"]
+    face_boxes = JSON.parse(JSON.parse(results.body))['face_boxes']
     face_boxes.each do |face_box|
-      face_box["boundaries"] = face_box["boundaries"].join(',')
+      face_box['boundaries'] = face_box['boundaries'].join(',')
     end
 
     # 3. Return Frame and the Returned Face Boxes
@@ -40,8 +39,7 @@ class AttendancesController < ApplicationController
   #       }
   #   }
   def save
-    # TODO: Save frame
-    attendance_sheet = @lecture_instance.attendance_sheet.create!
+    attendance_sheet = AttendanceSheet.create! lecture_instance: @lecture_instance
 
     params[:face_boxes].each do |face_box|
       state = face_box[:student_id].nil? ? :detected : :recognized
@@ -60,7 +58,7 @@ class AttendancesController < ApplicationController
   private
 
   def set_lecture_instance
-    @lecture_instance = LectureInstance.find params[:lecture_instance_id]
+    @lecture_instance = LectureInstance.find(params[:id] || params[:lecture_instance_id])
   end
 
   def get_topic_name_from_class(class_id)

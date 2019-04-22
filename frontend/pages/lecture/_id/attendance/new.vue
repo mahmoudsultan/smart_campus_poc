@@ -27,7 +27,6 @@
               v-model="lectureLocation"
               label="Lecture Location (e.g. C11, K1)"
               prepend-inner-icon="place"
-              loading=true
             ></v-text-field>
             <v-divider></v-divider>
             <v-layout row wrap justify-end align-content-end>
@@ -153,8 +152,8 @@ export default {
         Then pass those data to the AttendanceWizard component
       */
 
-      // this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
-      const attendanceRequest = this.$axios.get('http://localhost:8080')
+      const attendanceRequest = this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId })
+      // const attendanceRequest = this.$axios.get('http://localhost:8080')
       const studentsInfoRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/students`)
 
       Promise.all([attendanceRequest, studentsInfoRequest]).then(([attendanceResponse, studentsInfoResponse]) => {
@@ -184,10 +183,10 @@ export default {
       })
     },
     confirmAttendanceSheet(faceBoxes) {
-      console.log('called') // eslint-disable-line
       this.loading = true
       this.$axios.post('attendance/save', { lecture_instance_id: this.$route.params.id, face_boxes: faceBoxes }).then((response) => {
         this.step = 3
+        this.saved = true
       }).catch((err) => {
         // TODO:
         // eslint-disable-next-line

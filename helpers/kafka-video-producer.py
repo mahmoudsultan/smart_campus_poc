@@ -27,7 +27,7 @@ def on_send_error(excp):
 def on_send_success(excp):
   print('Frame Sent.')
 
-def publish_video(producer, topic, key, sleep=0.5, file_name='test_video.mp4'):
+def publish_video(producer, topic, key, continuous_mode=False, sleep=0.5, file_name='test_video.mp4'):
   """
   Publish frames from a local video to producer topic
   args:
@@ -53,8 +53,10 @@ def publish_video(producer, topic, key, sleep=0.5, file_name='test_video.mp4'):
     producer.send(topic, json_bytes).add_callback(on_send_success).add_errback(on_send_error)
 
     # Choppier stream, reduced load on processor
-    time.sleep(sleep)
-
+    if continuous_mode:
+      time.sleep(sleep)
+    else:
+      input()
 
   cap.release()
 
@@ -64,13 +66,14 @@ def main(args):
     sys.exit(1)
   topic_name = args.topicname
   key = args.key
+  file_path = args.filepath
 
   if not args.bsservers:
     print('Bootstrap servers not specified... Using default localhost:9092')
   bootstrap_servers = args.bsservers if args.bsservers else 'localhost:9092'
 
   producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
-  publish_video(producer, topic_name, key)
+  publish_video(producer, topic_name, key, file_name=file_path)
 
 if __name__ == '__main__':
   # Configure script arguments and flags
@@ -78,4 +81,5 @@ if __name__ == '__main__':
   parser.add_argument('-t', '--topicname', help='Kafka Topic Name ex. -t "camera 1"')
   parser.add_argument('-b', '--bsservers', help='Kafka Bootstrap Servers ex. --bsservers localhost:9092')
   parser.add_argument('-k', '--key', help='Key value for the published json.')
+  parser.add_argument('-f', '--filepath', help='File Path to publish.')
   main(parser.parse_args())
