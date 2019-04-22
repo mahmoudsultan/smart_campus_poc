@@ -21,7 +21,10 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/place/:id', to: 'lecture_instances#place'
+  resources :lecture_instances, only: [] do
+    get 'place', to: 'lecture_instances#place'
+    get 'students', to: 'lecture_instances#students'
+  end
 
   # Upload Image Route
   resources :users, only: [] do

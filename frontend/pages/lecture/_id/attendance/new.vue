@@ -48,92 +48,11 @@
             </v-layout>
           </v-stepper-content>
           <v-stepper-content step="2">
-            <attendance-image
-              v-if="step == 2"
-              :image="image"
-              :faceBoxes="faceBoxes"
-              :drawMode="addingNewAttendance"
-              :redraw="redrawCanvasTrigger"
-              @facebox-click="handleClickedFaceBox"
-              @facebox-drawn="receiveFaceBoxCoordinates"
-              @facebox-canceled="cancelFaceBoxCoordinates"
+            <attendance-wizard
+              :image="this.image"
+              :faceBoxes="this.faceBoxes"
+              :students="this.studentsInfoObj"
             />
-            <v-divider></v-divider>
-
-            <v-layout row wrap class="pa-1 mt-4">
-              <v-flex xs12 sm6>
-                <span class="headline font-weight-light">
-                  Number of Attendees: {{ numberOfAttendess }}
-                </span>
-              </v-flex>
-              <v-spacer></v-spacer>
-              <v-flex xs12 sm2>
-                <v-btn v-if="!addingNewAttendance" block color="success" @click="startAddingNewAttendance">
-                  <v-icon>add</v-icon>
-                  <span>Add Attendee</span>
-                </v-btn>
-                <v-btn
-                  v-else
-                  block
-                  color="success"
-                  :disabled="!newFaceBox"
-                  @click="confirmNewFaceBoxLocation"
-                >
-                  Confirm
-                </v-btn>
-              </v-flex>
-            </v-layout>
-            <v-data-table
-              :headers="attendanceTableHeaders"
-              :items="attendanceItems"
-              :loading="attendanceItemsLoading"
-              hide-actions
-              class="elevation-1"
-              item-key="student_id"
-            >
-              <template slot="items" slot-scope="props">
-                <tr>
-                  <td class="text-xs-left">{{ props.item.studentId }}</td>
-                  <td class="text-xs-left">{{ props.item.studentName }}</td>
-                  <td class="text-xs-right">
-                    <v-flex xs12>
-                      <v-btn round small xs6 sm4 color="info">
-                        <v-icon small>edit</v-icon>
-                        <v-spacer></v-spacer>
-                        <span>Edit</span>
-                      </v-btn>
-                      <v-btn
-                        dark
-                        small
-                        round
-                        xs6
-                        sm4
-                        color="red">
-                        <v-icon small>delete</v-icon>
-                        <v-spacer></v-spacer>
-                        <span>delete</span>
-                      </v-btn>
-                    </v-flex>
-                  </td>
-                </tr>
-              </template>
-            </v-data-table>
-            <v-divider></v-divider>
-            <v-layout row wrap justify-end align-content-end>
-              <v-progress-linear v-if="loading" :indeterminate="true"></v-progress-linear>
-              <v-flex xs12 sm3>
-                <v-btn
-                  :disabled="loading"
-                  depressed
-                  ripple
-                  block
-                  color="primary"
-                  @click="confirmAttendanceSheet"
-                >
-                  Confirm
-                </v-btn>
-              </v-flex>
-            </v-layout>
           </v-stepper-content>
           <v-stepper-content step="3">
             <v-alert
@@ -171,37 +90,22 @@
         </v-stepper-items>
       </v-stepper>
     </v-card>
-
-    <v-dialog
-      v-model="showFaceBoxDialog.display"
-      :overlay="false"
-      persistent
-      width="500"
-      height="300"
-      transition="dialog-transition"
-    >
-      <face-box-info
-        v-if="showFaceBoxDialog.display"
-        :image="showFaceBoxDialog.imagePart"
-        :studentName="showFaceBoxDialog.studentName"
-        :studentId="showFaceBoxDialog.studentId"
-        :studentImage="showFaceBoxDialog.studentImage"
-        @close="showFaceBoxDialog.display = false"
-        @assign="assignStudentToFaceBox"
-      />
-    </v-dialog>
   </div>
 </template>
 
 <script>
-import AttendanceImage from '@/components/attendance/AttendanceImage'
-import FaceBoxInfo from '@/components/attendance/FaceBoxInfo'
 import _ from 'lodash'
+
+import AttendanceWizard from '@/components/attendance/AttendanceWizard'
 
 export default {
   components: {
-    AttendanceImage,
-    FaceBoxInfo
+    AttendanceWizard
+  },
+  provide() {
+    return {
+      confirmAttendanceSheet: this.confirmAttendanceSheet
+    }
   },
   data() {
     return {
@@ -221,51 +125,18 @@ export default {
           disabled: true
         }
       ],
-      image: null,
-      faceBoxes: [],
-      attendanceItems: [],
       lectureLocation: '',
       lectureLocationLoading: true,
-      redrawCanvasTrigger: false,
-      addingNewAttendance: false,
-      attendanceItemsLoading: false,
-      newFaceBox: {},
-      showFaceBoxDialog: {
-        display: false,
-        imagePart: '',
-        studentName: '',
-        studentId: '',
-        studentImage: '',
-        faceBoxIndex: -1
-      },
+      image: '',
+      faceBoxes: [],
+      studentsInfoObj: {},
       downloadLoading: false,
-      saved: false,
-      attendanceTableHeaders: [
-        {
-          text: 'ID',
-          sortable: false
-        }, {
-          text: 'Name',
-          sortable: false
-        }, {
-          text: '',
-          sortable: false
-        }
-      ]
+      saved: false
     }
   },
   computed: {
     lectureHref() {
       return `/lecture/${this.$route.params.id}`
-    },
-    // attendanceItems() {
-    //   return _.map(this.faceBoxes, (faceBox) => {
-    //     // TODO:
-    //     return { studentId: faceBox.student_id, studentName: '' }
-    //   })
-    // },
-    numberOfAttendess() {
-      return this.faceBoxes.length
     }
   },
   methods: {
@@ -273,103 +144,72 @@ export default {
       // Move Stepper and Set Loading
       this.loading = true
 
-      // Request Attendance on complete Unset Loading and Set Attendance Image
-      // and Faceboxes
-      this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
-        const attendanceObj = response.data
-        this.image = attendanceObj.image
-        this.faceBoxes = attendanceObj.face_boxes
+      /*
+        Request two things:
+        1- Attendance on the given location
+        2- Students data of this course offering
+
+        Then pass those data to the AttendanceWizard component
+      */
+
+      // this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
+      const attendanceRequest = this.$axios.get('http://localhost:8080')
+      const studentsInfoRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/students`)
+
+      Promise.all([attendanceRequest, studentsInfoRequest]).then(([attendanceResponse, studentsInfoResponse]) => {
+        console.log(attendanceResponse, studentsInfoResponse) // eslint-disable-line
+        /*
+          Parse students data to the form:
+          student_id: {
+            id: '',
+            name: '',
+            student_id: '',
+            image: 'full url'
+          }
+        */
+        this.image = attendanceResponse.data.image
+        this.faceBoxes = attendanceResponse.data.face_boxes
+
+        const studentsInfo = studentsInfoResponse.data
+        const studentIds = _.map(studentsInfo, (studentInfo) => {
+          return studentInfo.student_id
+        })
+
+        this.studentsInfoObj = _.zipObject(studentIds, studentsInfo)
+
         this.loading = false
         this.step = 2
       }).catch((err) => {
-        // TODO:
-        // eslint-disable-next-line
-        console.error(err)
+        console.error(err) // eslint-disable-line
       })
+
+      // // this.$axios.post('attendance/new', { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId }).then((response) => {
+      // this.$axios.get('http://localhost:8080').then((response) => {
+      //   const attendanceObj = response.data
+      //   this.image = attendanceObj.image
+      //   this.faceBoxes = attendanceObj.face_boxes
+      //   this.loading = false
+      //   this.step = 2
+      // }).catch((err) => {
+      //   // TODO:
+      //   // eslint-disable-next-line
+      //   console.error(err)
+      // })
     },
-    confirmAttendanceSheet() {
+    confirmAttendanceSheet(faceBoxes) {
+      console.log('called') // eslint-disable-line
       this.loading = true
-      this.$axios.post('attendance/save', { lecture_instance_id: this.$route.params.id, face_boxes: this.faceBoxes }).then((response) => {
+      this.$axios.post('attendance/save', { lecture_instance_id: this.$route.params.id, face_boxes: faceBoxes }).then((response) => {
         this.step = 3
       }).catch((err) => {
         // TODO:
         // eslint-disable-next-line
         console.error(err)
       })
-    },
-    handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
-      this.showFaceBoxDialog.faceBoxIndex = faceBoxIndex
-      this.showFaceBoxDialog.imagePart = clickedPartImage
-      const studentId = this.faceBoxes[faceBoxIndex].student_id
-      this.showFaceBoxDialog.studentId = studentId
-
-      // Fetch Student data if id is given (recognized)
-      if (studentId) {
-        this.$axios.get(`/students/sid/${studentId}`).then((response) => {
-          this.showFaceBoxDialog.studentName = response.data.name
-          this.showFaceBoxDialog.studentImage = `${this.$axios.defaults.baseURL}${response.data.image.url}`
-          this.showFaceBoxDialog.display = true
-        }).catch((err) => {
-          // eslint-disable-next-line
-          console.log(err)
-        })
-      } else {
-        this.showFaceBoxDialog.display = true
-      }
-    },
-    assignStudentToFaceBox(studentId) {
-      this.faceBoxes[this.showFaceBoxDialog.faceBoxIndex].student_id = studentId
-      this.showFaceBoxDialog.display = false
-      this.redrawCanvasTrigger = true
-      this.updateTable()
-    },
-    startAddingNewAttendance() {
-      this.addingNewAttendance = true
-      this.newFaceBox = null
-    },
-    receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
-      this.newFaceBox = {
-        boundaries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
-        student_id: null
-      }
-    },
-    cancelFaceBoxCoordinates() {
-      this.newFaceBox = null
-    },
-    confirmNewFaceBoxLocation() {
-      // Save the facebox and redraw
-      // TODO: Make the edit dialog opens up automatically
-      this.faceBoxes.push(this.newFaceBox)
-      this.redrawCanvasTrigger = true
-      this.addingNewAttendance = false
-    },
-    async updateTable() {
-      this.attendanceItemsLoading = true
-      let studentName = ''
-      this.attendanceItems = await Promise.all(_.map(this.faceBoxes, async (faceBox) => {
-        if (faceBox.student_id) {
-          studentName = await this.$axios.get(`/students/sid/${faceBox.student_id}`).then((response) => {
-            return response.data.name
-          })
-        } else {
-          studentName = 'Not Recognized'
-        }
-
-        return {
-          studentId: faceBox.student_id,
-          studentName: studentName
-        }
-      }))
-      this.attendanceItemsLoading = false
-    }
-  },
-  watch: {
-    faceBoxes: async function () {
-      await this.updateTable()
     }
   },
   mounted: async function () {
-    await this.$axios.get(`/place/${this.$route.params.id}`).then((response) => {
+    await this.$axios.get(`lecture_instances/${this.$route.params.id}/place`).then((response) => {
       this.lectureLocation = response.data.name
       this.lectureLocationId = response.data.id
       this.lectureLocationLoading = false
