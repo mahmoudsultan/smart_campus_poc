@@ -88,6 +88,7 @@ export default {
     cellSpacing: 10,
     current_term: 'fall',
     current_year: 2018,
+    prof_id: 136,
 
     menu_items: {
       years: [],
@@ -98,13 +99,13 @@ export default {
         category: 'years',
         text: '2018',
         disabled: false,
-        href: 'breadcrumbs_dashboard'
+        href: 'timetable'
       },
       {
         category: 'terms',
         text: 'Fall',
         disabled: true,
-        href: 'breadcrumbs_link_1'
+        href: 'timetable'
       }
     ]
   }),
@@ -129,7 +130,7 @@ export default {
   },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.$route)
+    console.log(this.prof_id)
     this.$axios
       .$get('/courses/years')
       .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
@@ -138,7 +139,9 @@ export default {
       .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
-      .$get(`/lectures/17/${this.current_term}/${this.current_year}`)
+      .$get(
+        `/lectures/${this.prof_id}/${this.current_term}/${this.current_year}`
+      )
       .then(tt => this.fillTimeTableMap(tt))
 
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
@@ -157,7 +160,7 @@ export default {
         item.text = year
       }
       this.$axios
-        .$get(`/lectures/17/${term}/${year}`)
+        .$get(`/lectures/${this.prof_id}/${term}/${year}`)
         .then(tt => this.fillTimeTableMap(tt))
     },
     fillTimeTableMap(tt) {

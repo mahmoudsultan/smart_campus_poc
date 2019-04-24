@@ -22,7 +22,12 @@ module.exports = {
       }
     ]
   },
-
+  // Hot reloading
+  watchers: {
+    webpack: {
+      poll: true
+    }
+  },
   /*
   ** Customize the progress-bar color
   */
@@ -52,7 +57,7 @@ module.exports = {
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
     host: 'localhost',
-    port: 3002
+    port: 3000
   },
 
   /*
