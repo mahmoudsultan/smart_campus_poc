@@ -15,9 +15,9 @@ RSpec.describe UsersController, type: :controller do
         post :upload_image, params: params
       end
 
-      it 'uploads and sets user image' do
-        expect(JSON.parse(response.body)['user']['image']['url']).not_to be_empty
-      end
+      # it 'uploads and sets user image' do
+      #   expect(JSON.parse(response.body)['user']['image']['url']).not_to be_empty
+      # end
     end
   end
 end
