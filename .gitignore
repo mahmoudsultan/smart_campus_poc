@@ -88,3 +88,6 @@ sw.*
 
 #vscode
 .vscode/
+
+#tmp files
+tmp/

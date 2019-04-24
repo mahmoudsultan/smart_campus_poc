@@ -2,27 +2,6 @@
   <v-container grid-list-md text-xs-center>
     <v-layout row wrap>
       <v-flex xs12>
-        <!-- <v-menu open-on-hover top offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="primary"
-              dark
-              v-on="on"
-            >
-              Dropdown
-            </v-btn>
-          </template>
-
-          <v-list>
-            <v-list-tile
-              v-for="(item, index) in items"
-              :key="index"
-              @click="()=>''"
-            >
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu> -->
         <v-breadcrumbs :items="items">
           <template v-slot:divider>
             <v-icon>chevron_right</v-icon>
@@ -42,6 +21,7 @@
                 >
                   {{ item.text }}
                 </v-btn>
+                </a>
               </template>
               <v-list>
                 <v-list-tile
@@ -77,7 +57,7 @@
               <template v-for="lec in timeTableMap[date]">
                 <nuxt-link
                   :key="lec.code"
-                  :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.id}}"
+                  :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.lec_id}}"
                   :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
                             height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
                   class="my-event with-time"
@@ -106,9 +86,9 @@ export default {
     firstSlotHour: 8,
     firstSlotMinutes: 30,
     cellSpacing: 10,
-    last_lecture_idx: 0,
     current_term: 'fall',
     current_year: 2018,
+    prof_id: 136,
 
     menu_items: {
       years: [],
@@ -119,13 +99,13 @@ export default {
         category: 'years',
         text: '2018',
         disabled: false,
-        href: 'breadcrumbs_dashboard'
+        href: 'timetable'
       },
       {
         category: 'terms',
         text: 'Fall',
         disabled: true,
-        href: 'breadcrumbs_link_1'
+        href: 'timetable'
       }
     ]
   }),
@@ -150,7 +130,7 @@ export default {
   },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.$route)
+    console.log(this.prof_id)
     this.$axios
       .$get('/courses/years')
       .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
@@ -159,7 +139,9 @@ export default {
       .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
-      .$get(`/lectures/17/${this.current_term}/${this.current_year}`)
+      .$get(
+        `/lectures/${this.prof_id}/${this.current_term}/${this.current_year}`
+      )
       .then(tt => this.fillTimeTableMap(tt))
 
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
@@ -178,7 +160,7 @@ export default {
         item.text = year
       }
       this.$axios
-        .$get(`/lectures/17/${term}/${year}`)
+        .$get(`/lectures/${this.prof_id}/${term}/${year}`)
         .then(tt => this.fillTimeTableMap(tt))
     },
     fillTimeTableMap(tt) {
@@ -196,9 +178,8 @@ export default {
         } else {
           this.$set(this.timeTableMap, dateString, [e])
         }
-        e.id = this.last_lecture_idx++
         // Add the lecture to localstorage
-        localStorage.setItem(e.id, JSON.stringify(e))
+        localStorage.setItem(e.lec_id, JSON.stringify(e))
       })
     },
     padNumber(num, len) {

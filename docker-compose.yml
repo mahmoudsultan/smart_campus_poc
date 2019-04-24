@@ -1,5 +1,5 @@
 version: "3"
-
+ 
 services:
   mysql:
     image: mysql:5.7
@@ -7,23 +7,23 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./api/tmp/db:/var/lib/mysql
+      - ./tmp/db:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=dev
-
+      
   api:
     build: ./api/
     container_name: deepx-api
     environment:
       RAILS_ENV: development
-    # command:
-    #   ""
     ports:
       - "3000:3000"
     volumes:
       - ./api/:/app
     links:
+      - "mysql"
+    depends_on:
       - "mysql"
 
   nuxt:
@@ -31,51 +31,8 @@ services:
     container_name: deepx-frontend
     restart: always
     ports:
-      - "8000:3000"
+      - "4000:3000"
     volumes:
-      - ./frontend/:/app
+      - ./frontend/:/frontend
     command:
-      "npm run start"
-
-# mysql:
-#   image: mysql:5.7
-#   ports:
-#     - "3306:3306"
-#   volumes_from:
-#     - dbdata
-#   environment:
-#     - MYSQL_ROOT_PASSWORD=root
-#     - MYSQL_DATABASE=dev
-
-# dbdata:
-#   image: tianon/true
-#   volumes:
-#     - ./tmp/db:/var/lib/mysql
-
-# api:
-#   build: ./api/
-#   environment:
-#     RAILS_ENV: development
-#   ports:
-#     - '3000:3000'
-#   volumes:
-#     - .:/app
-#   command:
-#     "rails s -b 0.0.0.0"
-#   links:
-#     - "mysql"
-
-# nuxt:
-#   build: ./frontend/
-#   restart: always
-#   ports: 
-#     - "3003:3003"
-#   volumes:
-#     - .:/app
-#   command:
-#     "npm run start"
-
-# appdata:
-#   image: tianon/true
-#   volumes:
-#     - ".:/workspace"
+      "npm run dev"
