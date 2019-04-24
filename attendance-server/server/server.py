@@ -43,25 +43,24 @@ def get_some_embeddings(embeddings_dict, student_ids):
     print(f'{embeddings.shape}\t{labels.shape}')
     return embeddings, labels
 
+def convert_coords(coords):
+    return [coords[0], coords[3], coords[2], coords[1]]
 
-def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5):
+def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5, method='cnn'):
     known_embds, known_labels        = get_some_embeddings(embeddings_dict, student_ids)
-    unknown_embds, unknown_locations = get_embeddings_in_query_image(img)
+    unknown_embds, unknown_locations = get_embeddings_in_query_image(img, detection_model=method)
     
     knn = get_knn_model(k, known_embds, known_labels)
     
     predictions = get_people_in_image(knn, known_labels, unknown_embds, k=k, threshold=threshold)
     
     ret_val = {}
-
-    unknown_counter = 0
     
     for pred, loc in zip(predictions, unknown_locations):
         if pred == "unknown":
-            pred = "unknown{}".format(unknown_counter)
-            unknown_counter += 1
+            continue
 
-        ret_val[pred] = list(loc)
+        ret_val[pred] = convert_coords(list(loc))
         
     return ret_val
 
@@ -82,6 +81,8 @@ try:
 except:
     gpu_available = false
 
+print(embeddings_dict)
+
 @app.route('/')
 def index():
     return "<h1> Hello World </h1>"
@@ -101,10 +102,7 @@ def test():
     print('Getting Predictions...')
     ids = req['ids']
     print(f'ids: {ids}')
-    if gpu_available:
-        predictions = _get_people_in_image(img, embeddings_dict, ids, method='cnn')
-    else:
-        predictions = _get_people_in_image(img, embeddings_dict, ids, method='hog')
+    predictions = _get_people_in_image(img, embeddings_dict, ids, method='cnn')
     print(predictions) 
     response = convert_dict_to_JSON(predictions)
     print(response)    
