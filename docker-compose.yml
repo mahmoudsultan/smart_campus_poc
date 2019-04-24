@@ -11,7 +11,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=dev
-      
+
   api:
     build: ./api/
     container_name: deepx-api
@@ -29,10 +29,14 @@ services:
   nuxt:
     build: ./frontend/
     container_name: deepx-frontend
-    restart: always
+    # restart: always
     ports:
       - "4000:3000"
     volumes:
-      - ./frontend/:/frontend
+      - ./frontend/:/frontend/
+      - /frontend/node_modules
+      # - worker/:/worker/
+      # - /worker/node_modules
+      
     command:
       "npm run dev"

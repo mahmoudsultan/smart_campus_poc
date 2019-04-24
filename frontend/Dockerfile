@@ -4,9 +4,10 @@ ENV APP_ROOT /frontend
 
 RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
-ADD . ${APP_ROOT}
+COPY package.json ${APP_ROOT}
 
-RUN apk add inotify-tools
 RUN npm install
+
+ADD . ${APP_ROOT}
 
 ENV HOST 0.0.0.0
