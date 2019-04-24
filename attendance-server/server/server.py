@@ -8,6 +8,7 @@ import jsonpickle
 import pickle
 import json
 from pathlib import Path
+import GPUtil
 
 def load_embeddings(student_dir):
     embeddings_path = student_dir/'embeddings'
@@ -75,7 +76,11 @@ def convert_dict_to_JSON(dict):
 app = Flask(__name__)
 embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
 
-print(embeddings_dict)
+try:
+    _ = GPUtil.getGPUs()
+    gpu_available = true
+except:
+    gpu_available = false
 
 @app.route('/')
 def index():
@@ -96,7 +101,10 @@ def test():
     print('Getting Predictions...')
     ids = req['ids']
     print(f'ids: {ids}')
-    predictions = _get_people_in_image(img, embeddings_dict, ids)
+    if gpu_available:
+        predictions = _get_people_in_image(img, embeddings_dict, ids, method='cnn')
+    else:
+        predictions = _get_people_in_image(img, embeddings_dict, ids, method='hog')
     print(predictions) 
     response = convert_dict_to_JSON(predictions)
     print(response)    
