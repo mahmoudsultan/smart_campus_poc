@@ -52,10 +52,13 @@ def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5)
     predictions = get_people_in_image(knn, known_labels, unknown_embds, k=k, threshold=threshold)
     
     ret_val = {}
+
+    unknown_counter = 0
     
     for pred, loc in zip(predictions, unknown_locations):
         if pred == "unknown":
-            continue
+            pred = "unknown{}".format(unknown_counter)
+            unknown_counter += 1
 
         ret_val[pred] = list(loc)
         
@@ -63,7 +66,11 @@ def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5)
 
 
 def convert_dict_to_JSON(dict):
-    return json.dumps(dict)
+    lst = []
+    for key in dict.keys():
+        lst.append({"boundaries":dict[key], "student_id":key})
+    new_dict = {"face_boxes": lst}
+    return json.dumps(new_dict)
 
 app = Flask(__name__)
 embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
@@ -92,9 +99,9 @@ def test():
     predictions = _get_people_in_image(img, embeddings_dict, ids)
     print(predictions) 
     response = convert_dict_to_JSON(predictions)
-    
+    print(response)    
     response_pickled = jsonpickle.encode(response)
     print('Sending response')
-    return jsonify(predictions)
+    return jsonify(response)
 
 app.run(host="0.0.0.0", port=50000)
