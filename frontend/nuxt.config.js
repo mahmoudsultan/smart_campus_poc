@@ -3,7 +3,6 @@ const pkg = require('./package')
 
 module.exports = {
   mode: 'universal',
-
   /*
   ** Headers of the page
   */
@@ -23,7 +22,12 @@ module.exports = {
       }
     ]
   },
-
+  // Hot reloading
+  watchers: {
+    webpack: {
+      poll: true
+    }
+  },
   /*
   ** Customize the progress-bar color
   */
@@ -52,6 +56,8 @@ module.exports = {
   */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
+    host: 'localhost',
+    port: 3000
   },
 
   /*
