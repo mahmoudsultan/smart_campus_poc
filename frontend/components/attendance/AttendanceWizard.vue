@@ -14,14 +14,14 @@
     <v-layout row wrap class="pa-1 mt-4">
       <v-flex xs12 sm6>
         <span class="headline font-weight-light">
-          Number of Attendees: {{ numberOfAttendess }}
+          Number of FaceBoxes: {{ numberOfFaceBoxes }}
         </span>
       </v-flex>
       <v-spacer></v-spacer>
       <v-flex xs12 sm2>
         <v-btn v-if="!addingNewAttendance" block color="success" @click="startAddingNewAttendance">
           <v-icon>add</v-icon>
-          <span>Add Attendee</span>
+          <span>Add FaceBox</span>
         </v-btn>
         <v-btn
           v-else
@@ -32,6 +32,15 @@
         >
           Confirm
         </v-btn>
+      </v-flex>
+    </v-layout>
+    <v-layout row justify-start align-start class="pa-1">
+      <v-flex xs12 class="text-xs-center">
+        <v-icon color="warning" x-large left light>warning</v-icon>
+        <p class="subheading text-uppercase font-weight-light">
+          There are {{ numberOfNotRecognized }} unrecognized students...
+          <v-btn flat color="primary">Manual Identification</v-btn>
+        </p>
       </v-flex>
     </v-layout>
     <v-data-table
@@ -163,8 +172,11 @@ export default {
     }
   },
   computed: {
-    numberOfAttendess() {
+    numberOfFaceBoxes() {
       return this.faceBoxes.length
+    },
+    numberOfNotRecognized() {
+      return _.filter(this.faceBoxes, (faceBox) => { return !faceBox.student_id }).length
     }
   },
   methods: {
