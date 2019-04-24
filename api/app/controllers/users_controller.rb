@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  include ActionController::RequestForgeryProtection
+  protect_from_forgery unless: -> {request.format.json?}
   before_action :authenticate_user!
   before_action :set_user, only: %i[upload_image]
   before_action :user_params, only: %i[upload_image]

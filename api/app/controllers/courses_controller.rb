@@ -1,4 +1,7 @@
 class CoursesController < ApplicationController
+  
+  before_action :authenticate_user!
+  
   def show_lectures
     CourseOffering.connection
     Building.connection
