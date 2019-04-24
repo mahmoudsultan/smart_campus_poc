@@ -78,6 +78,15 @@ export default {
   components: {
     Logo,
     VuetifyLogo
+  },
+  beforeCreate() {
+    const existingSession = this.$cookie.get('session')
+
+    if (existingSession && existingSession.length) {
+      const session = JSON.parse(existingSession)
+      this.$store.commit('user', session.user)
+      this.$store.commit('auth', session.tokens)
+    }
   }
 }
 </script>
