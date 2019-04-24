@@ -88,7 +88,7 @@ export default {
     cellSpacing: 10,
     current_term: 'fall',
     current_year: 2018,
-    prof_id: 136,
+    prof_id: 83,
 
     menu_items: {
       years: [],

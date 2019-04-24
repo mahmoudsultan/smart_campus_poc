@@ -73,31 +73,31 @@
 #   end
 # end
 
-# seed lecture_instances
+# # seed lecture_instances
 
-def rand_time(from, to = Time.now)
-  Time.at(rand_in_range(from.to_f, to.to_f))
-end
-
-def rand_in_range(from, to)
-  rand * (to - from) + from
-  end
-
-week_numbers = (1..14)
-
-Lecture.all.each do |lecture|
-  week_numbers.each do |week|
-    lecture_date = rand_time((14 - week).days.ago)
-    lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
-    LectureInstance.create!(lecture_instance)
-  end
-end
-
-
-
-
-# # seed assigning of users to groups
-# Group.all.each do |g|
-#   rand_prof = User.where(role: :professor).find(User.where(role: :professor).pluck(:id).sample)
-#   GroupUser.create!(:user=>rand_prof, :group=>g)
+# def rand_time(from, to = Time.now)
+#   Time.at(rand_in_range(from.to_f, to.to_f))
 # end
+
+# def rand_in_range(from, to)
+#   rand * (to - from) + from
+#   end
+
+# week_numbers = (1..14)
+
+# Lecture.all.each do |lecture|
+#   week_numbers.each do |week|
+#     lecture_date = rand_time((14 - week).days.ago)
+#     lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
+#     LectureInstance.create!(lecture_instance)
+#   end
+# end
+
+
+
+
+# seed assigning of users to groups
+Group.all.each do |g|
+  rand_prof = User.where(role: :professor).find(User.where(role: :professor).pluck(:id).sample)
+  GroupUser.create!(:user=>rand_prof, :group=>g)
+end
