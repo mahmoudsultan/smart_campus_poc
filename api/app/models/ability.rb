@@ -8,7 +8,7 @@ class Ability
     #
       user ||= User.new # guest user (not logged in)
       if user.role == 'professor'
-        can :manage, :all
+        can :manage, :all, user_id: user.id
       else
         can :read, :all
       end

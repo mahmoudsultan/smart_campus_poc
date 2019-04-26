@@ -204,6 +204,10 @@ ActiveRecord::Schema.define(version: 2019_03_08_220147) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "activity_logs", "klasses"
+  add_foreign_key "attendance_issues", "attendance_sheets"
+  add_foreign_key "attendance_issues", "face_boxes"
+  add_foreign_key "attendance_issues", "users"
   add_foreign_key "attendance_sheets", "lecture_instances"
   add_foreign_key "count_logs", "klasses"
   add_foreign_key "course_offerings", "courses"

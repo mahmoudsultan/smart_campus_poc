@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::API
+  include ActionController::MimeResponds
   include CanCan::ControllerAdditions
   include DeviseTokenAuth::Concerns::SetUserByToken
   devise_token_auth_group :member, contains: %i[user admin]
@@ -9,8 +10,7 @@ class ApplicationController < ActionController::API
   protected
 
   def configure_permitted_parameters
-    # Permit the `subscribe_newsletter` parameter along with the other
-    # sign up parameters.
+    # Permit the required fields not only the email
     devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :department, :role])
   end
 end

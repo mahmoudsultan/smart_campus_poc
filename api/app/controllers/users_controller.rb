@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   include ActionController::RequestForgeryProtection
   protect_from_forgery unless: -> {request.format.json?}
-  before_action :authenticate_user!
+  before_action :authenticate
   before_action :set_user, only: %i[upload_image]
   before_action :user_params, only: %i[upload_image]
 
@@ -17,6 +17,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def authenticate
+    redirect_to your_path, notice: "You must login first" if !current_user  # if current user doesn't exist it will redirect to your path with notice
+  end
 
   def set_user
     @user = User.find(params[:id] || params[:user_id])
