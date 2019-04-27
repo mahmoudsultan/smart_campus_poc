@@ -1,4 +1,0 @@
-tqdm
-face_recognition
-sklearn
-matplotlib
