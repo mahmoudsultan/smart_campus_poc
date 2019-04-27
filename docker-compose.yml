@@ -17,10 +17,13 @@ services:
     container_name: deepx-api
     environment:
       RAILS_ENV: development
+    command:
+      "./script/start"
     ports:
       - "3000:3000"
     volumes:
-      - ./api/:/app
+      - ./api/:/api
+      - ./api/bundle:/api/bundle
     links:
       - "mysql"
     depends_on:
@@ -29,14 +32,11 @@ services:
   nuxt:
     build: ./frontend/
     container_name: deepx-frontend
-    # restart: always
+    restart: always
     ports:
       - "4000:3000"
     volumes:
       - ./frontend/:/frontend/
       - /frontend/node_modules
-      # - worker/:/worker/
-      # - /worker/node_modules
-      
     command:
       "npm run dev"

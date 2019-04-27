@@ -2,8 +2,8 @@ FROM ruby:2.5.3
 
 MAINTAINER mohamedmahmoud
 
-ENV APP_ROOT /app
-ENV BUNDLE_PATH /usr/local/bundle
+ENV APP_ROOT /api
+ENV BUNDLE_PATH ${APP_ROOT}/bundle
 
 RUN apt-get update -qq && \
     apt-get install -y build-essential libpq-dev nodejs
@@ -11,7 +11,10 @@ RUN apt-get update -qq && \
 WORKDIR $APP_ROOT
 ADD . $APP_ROOT
 
-RUN gem update bundler && \
-    bundle install
+ENV PATH="${BUNDLE_PATH}/bin:${BUNDLE_PATH}/bin/gem:${PATH}"
 
-CMD ["rails", "server", "-b", "0.0.0.0"]
+RUN echo ${PATH}
+
+RUN gem update bundler
+
+# CMD ["rails", "server", "-b", "0.0.0.0"]
