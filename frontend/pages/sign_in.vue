@@ -9,11 +9,11 @@
       v-model="password"
       :append-icon="showPassword ? 'visibility' : 'visibility_off'"
       :type="showPassword ? 'text' : 'password'"
+      @click:append="showPassword = !showPassword"
       name="password"
       required
       label="Password"
       hint="At least 8 characters"
-      @click:append="showPassword = !showPassword"
     />
     <v-btn @click="signIn">
       sign in
