@@ -237,8 +237,8 @@ DEPENDENCIES
   cancancan
   carrierwave (~> 1.0)
   carrierwave-base64
-  devise
   database_cleaner
+  devise
   devise_token_auth
   factory_bot_rails
   faker

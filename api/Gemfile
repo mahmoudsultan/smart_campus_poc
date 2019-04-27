@@ -66,6 +66,3 @@ gem 'devise'
 
 # # Token Authorization 
 gem 'cancancan'
-
-# Allowing CORS for vue
-gem 'rack-cors'
