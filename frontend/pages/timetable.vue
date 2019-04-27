@@ -129,18 +129,16 @@ export default {
     }
   },
   mounted() {
-    // eslint-disable-next-line no-console
-    console.log(this.prof_id)
-    this.$axios
-      .$get('/courses/years')
-      .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
-    this.$axios
-      .$get('/courses/terms')
-      .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
+    // this.$axios
+    //   .$get('/courses/years')
+    //   .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
+    // this.$axios
+    //   .$get('/courses/terms')
+    //   .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
       .$get(
-        `/lectures/${this.prof_id}/${this.current_term}/${this.current_year}`
+        `/lectures/${this.current_term}/${this.current_year}`
       )
       .then(tt => this.fillTimeTableMap(tt))
 

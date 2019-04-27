@@ -1,12 +1,12 @@
 class CoursesController < ApplicationController
   
+  before_action :authenticate_user!, except: [:home]
   load_and_authorize_resource
-  before_action :authenticate_user!
 
 
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
-      format.json { head :forbidden } #, content_type: 'text/html'
+      format.json { head :forbidden }
       format.html { redirect_to main_app.root_url, notice: exception.message }
       format.js   { head :forbidden }
     end
@@ -47,6 +47,9 @@ class CoursesController < ApplicationController
     render json: terms
   end
 
+  def home
+    render json: {}
+  end
 end
 
 

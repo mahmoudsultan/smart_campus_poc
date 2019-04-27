@@ -1,16 +1,16 @@
 
-import { pick } from 'lodash'
-export default function ({ store, app: { $axios } }) {
-  $axios.onResponse((response) => {
-    if (response.headers['access-token']) {
-      pick(response.headers,
-        ['access-token', 'client', 'expiry', 'uid', 'token-type'])
-        .forEach((item, key) => {
-          $axios.setHeader(key, item)
-        })
-    }
-    return response
-  })
+// import { pick } from 'lodash'
+export default function ({ store, app: { $axios }, route, redirect }) {
+  // $axios.onResponse((response) => {
+  //   if (response.headers['access-token']) {
+  //     pick(response.headers,
+  //       ['access-token', 'client', 'expiry', 'uid', 'token-type'])
+  //       .forEach((item, key) => {
+  //         $axios.setHeader(key, item)
+  //       })
+  //   }
+  //   return response
+  // })
 
   // $axios.onRequest((config) => {
   //   const headers = store.getters.auth
@@ -20,14 +20,11 @@ export default function ({ store, app: { $axios } }) {
   //   return config
   // })
 
-  // $axios.onResponseError((error) => {
-  //   if ($router.currentRoute.name !== 'sign_in' && error.response.status === status.UNAUTHORIZED) {
-  //     store.commit('user', null)
-  //     $router.push({ name: 'sign_in' })
-  //   }
-
-  //   return Promise.reject(error)
-  // }
-
-  // )
+  $axios.onResponseError((error) => {
+    if (route.name !== 'sign_in' && error.response.status === 401) {
+      store.commit('user', null)
+      redirect('/sign_in')
+    }
+    return Promise.reject(error)
+  })
 }

@@ -43,10 +43,13 @@ export default {
       this.$axios.post('/auth/sign_in', { email: this.email, password: this.password })
         .then((response) => {
           const authHeaders = pick(response.headers,
-            ['access-token', 'client', 'expiry', 'uid', 'token-type'])
+            ['access-token', 'client', 'uid'])
           this.$store.commit('auth', authHeaders)
           this.$store.commit('user', response.data.data)
-          this.$router.push({ name: 'timetable' })
+          // eslint-disable-next-line no-console
+          console.log(authHeaders)
+          // eslint-disable-next-line no-console
+          console.log(response.data.data)
         })
     }
   }
