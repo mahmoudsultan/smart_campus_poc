@@ -8,7 +8,7 @@
           ref="calendar"
           :now="hackyWeekStartDay"
           :value="hackyWeekStartDay"
-          :day-format="()=>''" 
+          :day-format="()=>''"
           :interval-minutes="slotSize"
           :first-interval="startSlot"
           :dark="true"
@@ -24,8 +24,8 @@
                 :key="event.code"
                 :style="{ top: timeToY(event.startSlot*slotSize) + 'px',
                           height: minutesToPixels( slotSize*(event.endSlot-event.startSlot) ) + 'px' }"
-                @click="open(event)"
                 class="my-event with-time"
+                @click="open(event)"
                 v-html="event.code"
               />
             </template>

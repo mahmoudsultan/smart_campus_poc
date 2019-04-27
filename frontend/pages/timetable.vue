@@ -13,7 +13,7 @@
           ref="calendar"
           :now="hackyWeekStartDay"
           :value="hackyWeekStartDay"
-          :day-format="(t,s)=>''" 
+          :day-format="(t,s)=>''"
           :interval-minutes="cellSize"
           :first-interval="firstSlot"
           :dark="true"
@@ -128,7 +128,7 @@ export default {
       console.log(tt)
       const map = {}
       const pad = n => this.padNumber(n, 2)
-      tt.forEach(e => {
+      tt.forEach((e) => {
         const date = this.dayNameToDate(e.day)
         const dateString = `${date.getFullYear()}-${pad(
           date.getMonth() + 1
@@ -157,8 +157,8 @@ export default {
               <div>${lecture.code}</div>
 
               <div>${this.slotsMap[lecture.startSlot]} to ${
-        this.slotsMap[lecture.endSlot]
-      }</div>
+  this.slotsMap[lecture.endSlot]
+}</div>
       </div>`
     }
   }

@@ -16,10 +16,12 @@ services:
     container_name: deepx-api
     environment:
       RAILS_ENV: development
+    command: ./run-server.sh
     ports:
       - "3000:3000"
     volumes:
-      - ./api/:/app
+      - ./api/:/api
+      - ./api/bundle:/api/bundle
     links:
       - "mysql"
     depends_on:
