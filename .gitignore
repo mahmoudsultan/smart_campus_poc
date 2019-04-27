@@ -91,3 +91,6 @@ sw.*
 
 #tmp files
 tmp/
+
+#bundle directory
+bundle/
