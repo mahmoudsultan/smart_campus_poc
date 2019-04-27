@@ -1,5 +1,7 @@
 FROM node:10.7-alpine
 
+MAINTAINER mohamedmahmoud
+
 ENV APP_ROOT /frontend
 
 RUN mkdir ${APP_ROOT}
