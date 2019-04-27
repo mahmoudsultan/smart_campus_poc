@@ -93,11 +93,9 @@ Lecture.all.each do |lecture|
   end
 end
 
-
-
-
-# seed assigning of users to groups
+# seed assigning of professors to groups
 Group.all.each do |g|
   rand_prof = User.where(role: :professor).find(User.where(role: :professor).pluck(:id).sample)
   GroupUser.create!(:user=>rand_prof, :group=>g)
 end
+
