@@ -168,9 +168,13 @@ export default {
           }
         */
         this.image = attendanceResponse.data.image
-        this.faceBoxes = attendanceResponse.data.face_boxes
+        this.faceBoxes = attendanceResponse.data.face_boxes.map((faceBox, index) => {
+          return { ...faceBox, ...{ id: index } }
+        })
 
-        const studentsInfo = studentsInfoResponse.data
+        const studentsInfo = _.each(studentsInfoResponse.data, (studentInfo) => {
+          studentInfo.image = this.$axios.defaults.baseURL + studentInfo.image.url
+        })
         const studentIds = _.map(studentsInfo, (studentInfo) => {
           return studentInfo.student_id
         })

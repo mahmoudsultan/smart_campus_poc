@@ -48,7 +48,8 @@ export default {
       boxStartCorner: null,
       boxEndCorner: null,
       drawStage: 0,
-      scratchPadCanvas: null
+      scratchPadCanvas: null,
+      offScreenImageCanvas: null
     }
   },
   methods: {
@@ -209,6 +210,7 @@ export default {
   },
   async mounted() {
     await this.drawCanvas()
+    this.buildOffScreenImageCanvas()
 
     const canvas = document.getElementById('attendance-canvas')
     canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)

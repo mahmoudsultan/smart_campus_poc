@@ -1,13 +1,13 @@
 <template>
   <div>
     <attendance-image
-      ref="attendanceImage"
       :image="image"
       :faceBoxes="faceBoxes"
       :drawMode="addingNewAttendance"
       @facebox-click="handleClickedFaceBox"
       @facebox-drawn="receiveFaceBoxCoordinates"
       @facebox-canceled="cancelFaceBoxCoordinates"
+      ref="attendanceImage"
     />
     <v-divider></v-divider>
 
@@ -122,7 +122,12 @@
       :overlay="false"
       transition="dialog-bottom-transition"
     >
-      <manual-identify-wizard  :faceBoxes="faceBoxes" :students="students" />
+      <manual-identify-wizard
+        v-if="showManualIdentifyWizard"
+        :faceBoxes="manualIndentifyFaceBoxes"
+        :students="students"
+        @close="showManualIdentifyWizard = false"
+      />
     </v-dialog>
   </div>
 </template>
@@ -191,6 +196,16 @@ export default {
     },
     numberOfNotRecognized() {
       return _.filter(this.faceBoxes, (faceBox) => { return !faceBox.student_id }).length
+    },
+    manualIndentifyFaceBoxes() {
+      return _.chain(this.faceBoxes)
+        .map((faceBox, index) => {
+          const faceBoxDimensions = this.faceBoxDimensions(faceBox)
+          const faceBoxImage = this.$refs.attendanceImage.getFaceBoxImageBase64(...faceBoxDimensions)
+          return { ...faceBox, ...{ image: faceBoxImage } }
+        })
+        .filter((faceBox) => { return !faceBox.student_id })
+        .value()
     }
   },
   methods: {
@@ -204,7 +219,7 @@ export default {
       if (studentId) {
         const student = this.students[studentId]
         this.showFaceBoxDialog.studentName = student.name
-        this.showFaceBoxDialog.studentImage = this.fullImageUrl(student.image.url)
+        this.showFaceBoxDialog.studentImage = student.image
         this.showFaceBoxDialog.display = true
       } else {
         this.showFaceBoxDialog.display = true
@@ -260,8 +275,13 @@ export default {
     callInjectedSaveMethod() {
       this.confirmAttendanceSheet(this.faceBoxes)
     },
-    fullImageUrl(imageUrl) {
-      return `${this.$axios.defaults.baseURL}${imageUrl}`
+    faceBoxDimensions(faceBox) {
+      const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
+        return Number.parseInt(v)
+      })
+      const width = x2 - x1
+      const height = y2 - y1
+      return [x1, y1, width, height]
     }
   },
   watch: {
