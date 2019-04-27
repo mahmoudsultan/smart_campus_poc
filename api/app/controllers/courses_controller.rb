@@ -1,7 +1,8 @@
 class CoursesController < ApplicationController
   
-  load_and_authorize_resource
   before_action :authenticate_user!
+  load_and_authorize_resource
+  
   # before_action :print_user ,only: [show_lectures]
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
