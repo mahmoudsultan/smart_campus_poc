@@ -23,9 +23,16 @@ module UniSystemApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
+<<<<<<< HEAD
     config.session_store :cookie_store, key: "_YOUR_APP_session_#{Rails.env}"
     config.middleware.use ActionDispatch::Cookies # Required for all session management
     config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
+=======
+    config.action_dispatch.default_headers = {
+      'Access-Control-Allow-Origin' => 'http://localhost:3000',
+      'Access-Control-Request-Method' => %w{GET POST OPTIONS}.join(",")
+    }
+>>>>>>> master
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

@@ -48,11 +48,13 @@ group :development do
   gem 'rubocop', require: false
 end
 
-group :development, :test do
+group :test do
   # Better readability for tests
   gem 'shoulda-matchers', '~> 3.0'
   # Test Coverage
   gem 'simplecov', require: false
+
+  gem 'database_cleaner'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -64,3 +66,6 @@ gem 'devise'
 
 # # Token Authorization 
 gem 'cancancan'
+
+# Allowing CORS for vue
+gem 'rack-cors'

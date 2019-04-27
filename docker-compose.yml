@@ -16,7 +16,7 @@ services:
     container_name: deepx-api
     environment:
       RAILS_ENV: development
-    command: ./run-server.sh
+    command:  bash -c "chmod +x start_script.sh && ./start_script.sh"
     ports:
       - "3000:3000"
     volumes:
@@ -33,49 +33,7 @@ services:
     ports:
       - "4000:3000"
     volumes:
-      - ./frontend/:/frontend
+      - ./frontend/:/frontend/
+      - /frontend/node_modules
     command:
       "npm run dev"
-
-# mysql:
-#   image: mysql:5.7
-#   ports:
-#     - "3306:3306"
-#   volumes_from:
-#     - dbdata
-#   environment:
-#     - MYSQL_ROOT_PASSWORD=root
-#     - MYSQL_DATABASE=dev
-
-# dbdata:
-#   image: tianon/true
-#   volumes:
-#     - ./tmp/db:/var/lib/mysql
-
-# api:
-#   build: ./api/
-#   environment:
-#     RAILS_ENV: development
-#   ports:
-#     - '3000:3000'
-#   volumes:
-#     - .:/app
-#   command:
-#     "rails s -b 0.0.0.0"
-#   links:
-#     - "mysql"
-
-# nuxt:
-#   build: ./frontend/
-#   restart: always
-#   ports: 
-#     - "4000:3000"
-#   volumes:
-#     - .:/app
-#   command:
-#     "npm run dev"
-
-# appdata:
-#   image: tianon/true
-#   volumes:
-#     - ".:/workspace"

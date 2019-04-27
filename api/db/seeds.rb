@@ -1,17 +1,3 @@
-# frozen_string_literal: true
-
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
-
-# require 'faker'
-# # include Faker
-# I18n.reload!
-
 # seed courses
 courses = ActiveSupport::JSON.decode(File.read('db/seeds/courses.json'))
 
@@ -86,6 +72,28 @@ days.each do |day|
     end
   end
 end
+
+# seed lecture_instances
+
+def rand_time(from, to = Time.now)
+  Time.at(rand_in_range(from.to_f, to.to_f))
+end
+
+def rand_in_range(from, to)
+  rand * (to - from) + from
+  end
+
+week_numbers = (1..14)
+
+Lecture.all.each do |lecture|
+  week_numbers.each do |week|
+    lecture_date = rand_time((14 - week).days.ago)
+    lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
+    LectureInstance.create!(lecture_instance)
+  end
+end
+
+
 
 
 # seed assigning of users to groups

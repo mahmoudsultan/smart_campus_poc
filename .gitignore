@@ -90,4 +90,11 @@ sw.*
 .vscode/
 
 #tmp files
+<<<<<<< HEAD
 tmp/
+=======
+tmp/
+
+#bundle directory
+bundle/
+>>>>>>> master

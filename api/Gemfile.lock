@@ -62,6 +62,7 @@ GEM
     coderay (1.1.2)
     concurrent-ruby (1.1.4)
     crass (1.0.4)
+    database_cleaner (1.7.0)
     devise (4.5.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -237,6 +238,7 @@ DEPENDENCIES
   carrierwave (~> 1.0)
   carrierwave-base64
   devise
+  database_cleaner
   devise_token_auth
   factory_bot_rails
   faker
