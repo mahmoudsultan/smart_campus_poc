@@ -17,7 +17,7 @@ services:
     container_name: deepx-api
     environment:
       RAILS_ENV: development
-    command:  ./start_script.sh
+    command:  bash -c "chmod +x start_script.sh && ./start_script.sh"
     ports:
       - "3000:3000"
     volumes:
