@@ -1,0 +1,13 @@
+cmake
+flask
+dlib
+jsonpickle
+tqdm
+face_recognition
+tqdm
+sklearn
+matplotlib
+opencv-python
+pathlib
+numpy
+GPUtil
