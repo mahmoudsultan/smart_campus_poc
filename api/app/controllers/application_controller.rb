@@ -2,10 +2,18 @@
 
 class ApplicationController < ActionController::API
   include ActionController::MimeResponds
-  include CanCan::ControllerAdditions
   include DeviseTokenAuth::Concerns::SetUserByToken
+  include CanCan::ControllerAdditions
   devise_token_auth_group :member, contains: %i[user admin]
   before_action :configure_permitted_parameters, if: :devise_controller?
+
+  # before_action :print_current_user
+
+  # def print_current_user
+  #   if user_signed_in?
+  #     Rails.logger.debug "UserId: #{current_user.id}"
+  #   end
+  # end
 
   protected
 
