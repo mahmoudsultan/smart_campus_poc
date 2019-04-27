@@ -34,12 +34,12 @@
         </v-btn>
       </v-flex>
     </v-layout>
-    <v-layout row justify-start align-start class="pa-1">
+    <v-layout row justify-start align-start class="pa-1" v-if="numberOfNotRecognized">
       <v-flex xs12 class="text-xs-center">
         <v-icon color="warning" x-large left light>warning</v-icon>
         <p class="subheading text-uppercase font-weight-light">
           There are {{ numberOfNotRecognized }} unrecognized students...
-          <v-btn flat color="primary">Manual Identification</v-btn>
+          <v-btn @click="showManualIdentifyWizard = true" flat color="primary">Manual Identification</v-btn>
         </p>
       </v-flex>
     </v-layout>
@@ -113,6 +113,17 @@
         @assign="assignStudentToFaceBox"
       />
     </v-dialog>
+
+    <v-dialog
+      v-model="showManualIdentifyWizard"
+      scrollable
+      fullscreen
+      persistent
+      :overlay="false"
+      transition="dialog-bottom-transition"
+    >
+      <manual-identify-wizard  :faceBoxes="faceBoxes" :students="students" />
+    </v-dialog>
   </div>
 </template>
 
@@ -121,6 +132,7 @@ import _ from 'lodash'
 
 import AttendanceImage from '@/components/attendance/AttendanceImage'
 import FaceBoxInfo from '@/components/attendance/FaceBoxInfo'
+import ManualIdentifyWizard from '@/components/attendance/ManualIdentifyWizard'
 
 export default {
   props: {
@@ -140,7 +152,8 @@ export default {
   inject: ['confirmAttendanceSheet'],
   components: {
     AttendanceImage,
-    FaceBoxInfo
+    FaceBoxInfo,
+    ManualIdentifyWizard
   },
   data() {
     return {
@@ -168,7 +181,8 @@ export default {
         studentImage: '',
         faceBoxIndex: -1
       },
-      loading: false
+      loading: false,
+      showManualIdentifyWizard: false
     }
   },
   computed: {
