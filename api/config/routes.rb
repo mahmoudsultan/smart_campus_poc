@@ -3,7 +3,7 @@
 Rails.application.routes.draw do
   get '/courses/years/' => 'courses#show_years'
   get '/courses/terms/' => 'courses#show_terms'
-  get '/courses/:id/:term/:year' => 'courses#show_lectures'
+  get '/courses/:term/:year' => 'courses#show_lectures'
   get '/lecture_instances/:lec_id' => 'lecture_instances#get_by_lec_id'
 
   mount_devise_token_auth_for 'User', at: 'auth'
