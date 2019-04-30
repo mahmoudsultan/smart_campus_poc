@@ -68,7 +68,7 @@
         xs12
         class="font-weight-thin"
       >
-        &copy;2018 — <strong>Faculty of Engineering?</strong>
+        &copy;2018 — <strong>Faculty of Engineering</strong>
       </v-flex>
     </v-footer>
   </v-app>
@@ -78,9 +78,10 @@
 export default {
   data() {
     return {
+
       drawer: true,
       user: {
-        name: 'John Doe'
+        name: ''
       },
       items: [
         {
@@ -96,6 +97,14 @@ export default {
       ],
       title: 'University System'
     }
+  },
+  watch: {
+    $route() {
+      if (this.$store.state.user) {
+        this.user.name = this.$store.state.user.name
+      }
+    }
   }
 }
+
 </script>

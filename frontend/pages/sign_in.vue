@@ -1,24 +1,56 @@
 <template>
-  <form>
-    <v-text-field
-      v-model="email"
-      label="E-mail"
-      required
-    />
-    <v-text-field
-      v-model="password"
-      :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-      :type="showPassword ? 'text' : 'password'"
-      @click:append="showPassword = !showPassword"
-      name="password"
-      required
-      label="Password"
-      hint="At least 8 characters"
-    />
-    <v-btn @click="signIn">
-      sign in
-    </v-btn>
-  </form>
+  <v-layout wrap align-center>
+    <form>
+      <v-text-field
+        v-model="email"
+        label="E-mail"
+        required
+      />
+      <v-text-field
+        v-model="password"
+        :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+        :type="showPassword ? 'text' : 'password'"
+        @click:append="()=>{showPassword = !showPassword}"
+        name="password"
+        required
+        label="Password"
+      />
+
+      <v-text-field
+        v-if="newUser"
+        v-model="name"
+        label="Name"
+        required
+      />
+
+      <v-text-field
+        v-if="newUser"
+        v-model="department"
+        label="Department"
+        required
+      />
+
+      <v-select
+        v-if="newUser"
+        v-model="chosenRole"
+        :items="roles"
+        required
+        label="Role"
+      />
+
+      <v-btn v-if="!newUser" @click="signIn">
+        sign in
+      </v-btn>
+
+      <v-btn v-if="newUser" @click="signUp">
+        sign up
+      </v-btn>
+
+      <v-btn v-btn @click="()=>newUser=!newUser" flat small color="primary">
+        {{ newUser?'already a user? sign in':'new user? sign up' }}
+      </v-btn>
+    </form>
+  </v-layout>
 </template>
 
 <script>
@@ -27,31 +59,40 @@ import { pick } from 'lodash'
 export default {
   data: () => ({
     showPassword: false,
+    name: '',
     password: '',
-    email: ''
+    email: '',
+    department: '',
+    roles: ['professor', 'student'],
+    chosenRole: '',
+    newUser: false
   }),
-  computed: {
-
-  },
-  mounted() {
-
-  },
   methods: {
+    updateHeadersAndSetUser(response) {
+      const authHeaders = pick(response.headers,
+        ['access-token', 'client', 'uid'])
+      this.$store.commit('auth', authHeaders)
+      this.$store.commit('user', response.data.data)
+      this.$axios.setHeader('access-token', authHeaders['access-token'])
+      this.$axios.setHeader('uid', authHeaders.uid)
+      this.$axios.setHeader('client', authHeaders.client)
+      this.$router.back()
+    },
+
     signIn() {
-      // eslint-disable-next-line no-console
-      console.log(`sign in with ${this.password}, ${this.email}`)
       this.$axios.post('/auth/sign_in', { email: this.email, password: this.password })
-        .then((response) => {
-          const authHeaders = pick(response.headers,
-            ['access-token', 'client', 'uid'])
-          this.$store.commit('auth', authHeaders)
-          this.$store.commit('user', response.data.data)
-          // eslint-disable-next-line no-console
-          console.log(authHeaders)
-          // eslint-disable-next-line no-console
-          console.log(response.data.data)
-        })
+        .then(this.updateHeadersAndSetUser)
+    },
+
+    signUp() {
+      this.$axios.post('/auth', { email: this.email,
+        password: this.password,
+        name: this.name,
+        department: this.department,
+        role: this.chosenRole })
+        .then(this.updateHeadersAndSetUser)
     }
+
   }
 }
 </script>

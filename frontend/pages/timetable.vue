@@ -129,12 +129,14 @@ export default {
     }
   },
   mounted() {
-    // this.$axios
-    //   .$get('/courses/years')
-    //   .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
-    // this.$axios
-    //   .$get('/courses/terms')
-    //   .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
+    // eslint-disable-next-line no-console
+    console.log(this.$store.state.user)
+    this.$axios
+      .$get('/courses/years')
+      .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
+    this.$axios
+      .$get('/courses/terms')
+      .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
       .$get(
