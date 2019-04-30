@@ -51,6 +51,12 @@
       >
         {{ title }}
       </v-toolbar-title>
+
+      <v-spacer />
+
+      <v-btn @click="logOut" small color="primary">
+        Log out
+      </v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -103,6 +109,19 @@ export default {
       if (this.$store.state.user) {
         this.user.name = this.$store.state.user.name
       }
+    }
+  },
+  methods: {
+    logOut() {
+      this.$axios.delete('/auth/sign_out')
+        .then((response) => {
+          this.$store.commit('auth', {})
+          this.$store.commit('user', null)
+          this.$axios.setHeader('access-token', '')
+          this.$axios.setHeader('uid', '')
+          this.$axios.setHeader('client', '')
+          this.$router.push('/')
+        })
     }
   }
 }
