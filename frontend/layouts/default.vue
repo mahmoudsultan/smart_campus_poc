@@ -81,7 +81,6 @@
 </template>
 
 <script>
-import { resetAuthState } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -109,11 +108,9 @@ export default {
   },
   methods: {
     logOut() {
-      this.$axios.delete('/auth/sign_out')
-        .then((response) => {
-          resetAuthState(this, response)
-          this.$router.push('/')
-        })
+      this.$store.dispatch('auth/logout', { app: this }).then(() => {
+        this.$router.push('/')
+      })
     }
   }
 }

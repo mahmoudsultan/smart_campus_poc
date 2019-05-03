@@ -26,7 +26,9 @@ export default function ({ store, app: { $axios }, route, redirect }) {
     console.log('axiossssssssssssss')
     // eslint-disable-next-line no-console
     console.log(store.state)
-    const authHeaders = store.state.auth
+    const authHeaders = store.state.auth.headers
+    // eslint-disable-next-line no-console
+    console.log(authHeaders)
     for (const header in authHeaders) {
       config.headers[header] = authHeaders[header]
     }
