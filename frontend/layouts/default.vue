@@ -86,9 +86,6 @@ export default {
     return {
 
       drawer: true,
-      user: {
-        name: ''
-      },
       items: [
         {
           icon: 'apps',
@@ -104,11 +101,9 @@ export default {
       title: 'University System'
     }
   },
-  watch: {
-    $route() {
-      if (this.$store.state.user) {
-        this.user.name = this.$store.state.user.name
-      }
+  computed: {
+    user: function () {
+      return this.$store.state.user ? this.$store.state.user : {}
     }
   },
   methods: {
@@ -117,9 +112,7 @@ export default {
         .then((response) => {
           this.$store.commit('auth', {})
           this.$store.commit('user', null)
-          this.$axios.setHeader('access-token', '')
-          this.$axios.setHeader('uid', '')
-          this.$axios.setHeader('client', '')
+          this.$cookies.remove('session')
           this.$router.push('/')
         })
     }

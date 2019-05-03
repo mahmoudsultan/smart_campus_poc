@@ -1,3 +1,4 @@
+// import vueCookie from 'vue-cookie'
 
 // import { pick } from 'lodash'
 export default function ({ store, app: { $axios }, route, redirect }) {
@@ -19,6 +20,23 @@ export default function ({ store, app: { $axios }, route, redirect }) {
   //   config.headers = headers
   //   return config
   // })
+
+  $axios.onRequest((config) => {
+    // eslint-disable-next-line no-console
+    console.log('axiossssssssssssss')
+    // eslint-disable-next-line no-console
+    console.log(store.state)
+    const authHeaders = store.state.auth
+    for (const header in authHeaders) {
+      config.headers[header] = authHeaders[header]
+    }
+    // eslint-disable-next-line no-console
+    console.log('configggg')
+    // eslint-disable-next-line no-console
+    console.log(config)
+
+    return config
+  })
 
   $axios.onResponseError((error) => {
     if (route.name !== 'sign_in' && error.response.status === 401) {

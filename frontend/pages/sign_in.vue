@@ -46,7 +46,7 @@
         sign up
       </v-btn>
 
-      <v-btn v-btn @click="()=>newUser=!newUser" flat small color="primary">
+      <v-btn @click="()=>newUser=!newUser" flat small color="primary">
         {{ newUser?'already a user? sign in':'new user? sign up' }}
       </v-btn>
     </form>
@@ -73,15 +73,23 @@ export default {
         ['access-token', 'client', 'uid'])
       this.$store.commit('auth', authHeaders)
       this.$store.commit('user', response.data.data)
-      this.$axios.setHeader('access-token', authHeaders['access-token'])
-      this.$axios.setHeader('uid', authHeaders.uid)
-      this.$axios.setHeader('client', authHeaders.client)
-      this.$router.back()
+
+      const session = {
+        tokens: authHeaders,
+        user: response.data.data
+      }
+
+      this.$cookies.set('session', JSON.stringify(session))
+      // eslint-disable-next-line no-console
+      console.log(this.$cookie)
+      this.$router.push('/')
     },
 
     signIn() {
       this.$axios.post('/auth/sign_in', { email: this.email, password: this.password })
         .then(this.updateHeadersAndSetUser)
+      // eslint-disable-next-line no-console
+      console.log(this.$store)
     },
 
     signUp() {

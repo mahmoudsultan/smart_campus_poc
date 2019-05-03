@@ -128,9 +128,24 @@ export default {
       return start + residue
     }
   },
+  // fetch({ app: { $cookies, $axios }, store }) {
+  //   const session = $cookies.get('session')
+  //   // eslint-disable-next-line no-console
+  //   console.log(session)
+  //   // eslint-disable-next-line no-console
+  //   console.log('hiiiiiiiiiiii', process.server, process.client)
+  //   if (session) {
+  //     const authHeaders = session.tokens
+  //     store.commit('user', session.user)
+  //     store.commit('auth', authHeaders)
+
+  //     // eslint-disable-next-line no-console
+  //     console.log(store.state)
+  //   }
+  // },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.$store.state.user)
+    console.log(this.$store)
     this.$axios
       .$get('/courses/years')
       .then(ys => ys.forEach(y => this.menu_items.years.push(y)))

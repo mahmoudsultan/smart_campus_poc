@@ -11,3 +11,8 @@ export const mutations = {
     state.auth = value
   }
 }
+export const getters = {
+  isAuthenticated(state) {
+    return state.user && state.auth
+  }
+}

@@ -15,15 +15,16 @@
     "test": "ava"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/pwa": "^2.6.0",
+    "cookie-universal-nuxt": "^2.0.14",
     "cross-env": "^5.2.0",
     "nuxt": "^2.4.0",
+    "vue-cookies": "^1.5.13",
     "vuetify": "^1.5.5",
-    "vuetify-loader": "^1.2.1",
-    "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/pwa": "^2.6.0"
+    "vuetify-loader": "^1.2.1"
   },
   "devDependencies": {
-    
     "nodemon": "^1.18.9",
     "@nuxtjs/eslint-config": "^0.0.1",
     "babel-eslint": "^8.2.1",

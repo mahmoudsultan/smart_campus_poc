@@ -2,6 +2,9 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const pkg = require('./package')
 
 module.exports = {
+  router: {
+    middleware: 'authenticate'
+  },
   mode: 'universal',
   /*
   ** Headers of the page
@@ -52,7 +55,8 @@ module.exports = {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    'cookie-universal-nuxt'
   ],
   /*
   ** Axios module configuration
