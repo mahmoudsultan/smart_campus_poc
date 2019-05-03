@@ -76,6 +76,12 @@ export default {
     signIn() {
       this.$axios.post('/auth/sign_in', { email: this.email, password: this.password })
         .then(this.updateHeadersAndSetUser)
+        .then(() => {
+          this.$axios.get('/users/roles').then((response) => {
+            // eslint-disable-next-line no-console
+            console.log(response.data.roles)
+          })
+        })
       // eslint-disable-next-line no-console
       console.log(this.$store)
     },

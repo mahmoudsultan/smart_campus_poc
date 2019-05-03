@@ -16,6 +16,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def roles
+    roles_json = {roles: Ability.new(current_user).to_list} if user_signed_in? 
+                    else {roles: [{ actions: 'read', subject: 'all' }]}
+
+    render json: roles_json
+  end
+
   private
 
   def authenticate

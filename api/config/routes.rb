@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get '/courses/terms/' => 'courses#show_terms'
   get '/lectures/:term/:year' => 'courses#show_lectures'
   get '/lecture_instances/:lec_id' => 'lecture_instances#get_by_lec_id'
+  get '/users/roles' => 'users#roles'
+
   root to: 'courses#home'
 
   mount_devise_token_auth_for 'User', at: 'auth'

@@ -46,7 +46,8 @@ module.exports = {
   */
   plugins: [
     { src: '@/plugins/vuetify' },
-    { src: '@/plugins/axios' }
+    { src: '@/plugins/axios' },
+    { src: '@/plugins/cancancan' }
   ],
 
   /*
