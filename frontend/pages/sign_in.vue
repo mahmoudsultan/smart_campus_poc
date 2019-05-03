@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { pick } from 'lodash'
+import { setAuthState } from '@/utils/auth'
 
 export default {
   data: () => ({
@@ -69,19 +69,7 @@ export default {
   }),
   methods: {
     updateHeadersAndSetUser(response) {
-      const authHeaders = pick(response.headers,
-        ['access-token', 'client', 'uid'])
-      this.$store.commit('auth', authHeaders)
-      this.$store.commit('user', response.data.data)
-
-      const session = {
-        tokens: authHeaders,
-        user: response.data.data
-      }
-
-      this.$cookies.set('session', JSON.stringify(session))
-      // eslint-disable-next-line no-console
-      console.log(this.$cookie)
+      setAuthState(this, response)
       this.$router.push('/')
     },
 

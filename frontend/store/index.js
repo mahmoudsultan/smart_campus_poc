@@ -1,7 +1,11 @@
-export const state = () => ({
-  user: null,
-  auth: {}
-})
+const getDefaultState = () => {
+  return {
+    user: { name: 'user' },
+    auth: {}
+  }
+}
+
+export const state = getDefaultState
 
 export const mutations = {
   user(state, value) {
@@ -9,6 +13,9 @@ export const mutations = {
   },
   auth(state, value) {
     state.auth = value
+  },
+  resetState(state) {
+    Object.assign(state, getDefaultState())
   }
 }
 export const getters = {
