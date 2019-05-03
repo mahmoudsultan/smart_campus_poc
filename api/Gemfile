@@ -7,7 +7,7 @@ gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Use faker to generate fake data
-gem 'faker'
+gem 'faker', require: false
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -36,6 +36,8 @@ group :test do
   gem 'shoulda-matchers', '~> 3.0'
   # Test Coverage
   gem 'simplecov', require: false
+
+  gem 'database_cleaner'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -43,3 +45,6 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 # Token Authentication
 gem 'devise_token_auth'
+
+# Allowing CORS for vue
+gem 'rack-cors'
