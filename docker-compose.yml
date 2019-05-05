@@ -61,9 +61,8 @@ services:
       --topic dummy_topic &) && (supervisord -n)"
   
   attendance:
-    build: ./attendance-server
+    build: ./attendance-server/
     container_name: deepx-atendance
-    command:  python ./server/server.py
     ports:
       - "50000:50000"
     volumes:

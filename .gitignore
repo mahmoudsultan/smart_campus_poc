@@ -94,3 +94,6 @@ tmp/
 
 #bundle directory
 bundle/
+
+#pycache
+__pycache__/
