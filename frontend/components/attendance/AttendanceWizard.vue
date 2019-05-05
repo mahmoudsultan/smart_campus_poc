@@ -32,6 +32,14 @@
         >
           Confirm
         </v-btn>
+        <v-btn
+          v-if="addingNewAttendance"
+          color="error"
+          block
+          @click="cancelAddingNewAttendance"
+        >
+          Cancel
+        </v-btn>
       </v-flex>
     </v-layout>
     <v-layout row justify-start align-start class="pa-1" v-if="numberOfNotRecognized">
@@ -56,24 +64,13 @@
           <td class="text-xs-left">{{ props.item.studentId }}</td>
           <td class="text-xs-left">{{ props.item.studentName }}</td>
           <td class="text-xs-right">
-            <v-flex xs12>
-              <v-btn round small xs6 sm4 color="info">
-                <v-icon small>edit</v-icon>
-                <v-spacer></v-spacer>
-                <span>Edit</span>
-              </v-btn>
-              <v-btn
-                dark
-                small
-                round
-                xs6
-                sm4
-                color="red">
-                <v-icon small>delete</v-icon>
-                <v-spacer></v-spacer>
-                <span>delete</span>
-              </v-btn>
-            </v-flex>
+            <v-btn
+              dark
+              icon
+              small
+              color="red">
+              <v-icon @click="startDelete(props.item.faceBoxIndex)" small>delete</v-icon>
+            </v-btn>
           </td>
         </tr>
       </template>
@@ -127,7 +124,26 @@
         :faceBoxes="manualIndentifyFaceBoxes"
         :students="students"
         @close="showManualIdentifyWizard = false"
+        @assign="assignStudentFromManualWizardToFaceBox"
       />
+    </v-dialog>
+
+    <v-dialog
+      v-model="deleteDialog.display"
+      persistent
+      max-width="500px"
+      transition="dialog-transition"
+    >
+      <v-card>
+        <v-card-title primary-title>
+          Are you sure you want to delete this item ?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="resetDeleteDialog" color="primary">Cancel</v-btn>
+          <v-btn @click="confirmDelete" color="error">Yes</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-dialog>
   </div>
 </template>
@@ -187,7 +203,11 @@ export default {
         faceBoxIndex: -1
       },
       loading: false,
-      showManualIdentifyWizard: false
+      showManualIdentifyWizard: false,
+      deleteDialog: {
+        display: false,
+        index: null
+      }
     }
   },
   computed: {
@@ -199,16 +219,19 @@ export default {
     },
     manualIndentifyFaceBoxes() {
       return _.chain(this.faceBoxes)
+        .filter((faceBox) => { return !faceBox.student_id })
         .map((faceBox, index) => {
-          const faceBoxDimensions = this.faceBoxDimensions(faceBox)
-          const faceBoxImage = this.$refs.attendanceImage.getFaceBoxImageBase64(...faceBoxDimensions)
+          const faceBoxImage = this.getFaceBoxImage(faceBox)
           return { ...faceBox, ...{ image: faceBoxImage } }
         })
-        .filter((faceBox) => { return !faceBox.student_id })
         .value()
     }
   },
   methods: {
+    getFaceBoxImage(faceBox) {
+      const faceBoxDimensions = this.faceBoxDimensions(faceBox)
+      return this.$refs.attendanceImage.getFaceBoxImageBase64(...faceBoxDimensions)
+    },
     handleClickedFaceBox(faceBoxIndex, clickedPartImage) {
       this.showFaceBoxDialog.faceBoxIndex = faceBoxIndex
       this.showFaceBoxDialog.imagePart = clickedPartImage
@@ -225,19 +248,27 @@ export default {
         this.showFaceBoxDialog.display = true
       }
     },
+    updateAfterFaceBoxesChange() {
+      this.$refs.attendanceImage.drawCanvas()
+      this.updateTable()
+    },
     assignStudentToFaceBox(studentId) {
       this.faceBoxes[this.showFaceBoxDialog.faceBoxIndex].student_id = studentId
       this.showFaceBoxDialog.display = false
       // this.redrawCanvasTrigger = true
-      this.$refs.attendanceImage.drawCanvas()
-      this.updateTable()
+      this.updateAfterFaceBoxesChange()
     },
     startAddingNewAttendance() {
       this.addingNewAttendance = true
       this.newFaceBox = null
     },
+    cancelAddingNewAttendance() {
+      this.addingNewAttendance = false
+      this.newFaceBox = null
+    },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
       this.newFaceBox = {
+        id: this.faceBoxes.length,
         boundaries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
         student_id: null
       }
@@ -249,27 +280,28 @@ export default {
       // Save the facebox and redraw
       // TODO: Make the edit dialog opens up automatically
       this.faceBoxes.push(this.newFaceBox)
-      // this.redrawCanvasTrigger = true
       this.$refs.attendanceImage.drawCanvas()
       this.addingNewAttendance = false
     },
-    async updateTable() {
+    updateTable() {
       this.attendanceItemsLoading = true
       let studentName = ''
-      this.attendanceItems = await Promise.all(_.map(this.faceBoxes, async (faceBox) => {
+      let studentImage = null
+      this.attendanceItems = _.map(this.faceBoxes, (faceBox, index) => {
         if (faceBox.student_id) {
-          studentName = await this.$axios.get(`/students/sid/${faceBox.student_id}`).then((response) => {
-            return response.data.name
-          })
+          studentName = this.students[faceBox.student_id].name
+          studentImage = this.students[faceBox.student_id].image
         } else {
           studentName = 'Not Recognized'
         }
 
         return {
           studentId: faceBox.student_id,
-          studentName: studentName
+          faceBoxIndex: index,
+          studentName,
+          studentImage
         }
-      }))
+      })
       this.attendanceItemsLoading = false
     },
     callInjectedSaveMethod() {
@@ -282,15 +314,30 @@ export default {
       const width = x2 - x1
       const height = y2 - y1
       return [x1, y1, width, height]
-    }
-  },
-  watch: {
-    faceBoxes: async function () {
-      await this.updateTable()
+    },
+    assignStudentFromManualWizardToFaceBox({ faceBoxId, studentId }) {
+      const faceBoxIndex = _.findIndex(this.faceBoxes, { id: faceBoxId })
+      this.faceBoxes[faceBoxIndex].student_id = studentId
+      this.updateAfterFaceBoxesChange()
+    },
+    startDelete(index) {
+      this.deleteDialog.display = true
+      this.deleteDialog.index = index
+    },
+    resetDeleteDialog() {
+      this.deleteDialog.display = false
+      this.deleteDialog.index = null
+    },
+    confirmDelete() {
+      this.faceBoxes.splice(this.deleteDialog.index, 1)
+      this.resetDeleteDialog()
+      this.updateAfterFaceBoxesChange()
     }
   },
   mounted() {
-    this.updateTable()
+    this.$nextTick(function () {
+      this.updateTable()
+    })
   }
 }
 </script>
