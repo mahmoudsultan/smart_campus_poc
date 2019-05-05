@@ -9,7 +9,7 @@ print('Sending request...')
 address = 'http://3.17.65.133:50000/'
 url = address + 'attendance'
 
-image_path = Path('./IMG_20190224_172925.jpg')
+image_path = Path('./IMG_20190224_172925-min.jpg')
 
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
