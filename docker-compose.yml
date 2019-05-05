@@ -59,4 +59,15 @@ services:
       --zookeeper
       localhost:2181 --replication-factor 1 --partitions 1
       --topic dummy_topic &) && (supervisord -n)"
+  
+  attendance:
+    build: ./attendance-server
+    container_name: deepx-atendance
+    command:  python ./server/server.py
+    ports:
+      - "50000:50000"
+    volumes:
+      - ./attendance-server/:/attendance-server
+    depends_on:
+      - "api"
     
