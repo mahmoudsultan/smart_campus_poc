@@ -39,3 +39,24 @@ services:
       - /frontend/node_modules
     command:
       "npm run dev"
+
+  kafka:
+    image: spotify/kafka
+    hostname: kafka
+    container_name: deepx-kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      - "ADVERTISED_HOST=kafka"
+      - "ADVERTISED_PORT=9092"
+      - "AUTO_CREATE_TOPICS=true"
+    command: >
+      bash -c
+      "(sleep 15s &&
+      /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
+      --create
+      --zookeeper
+      localhost:2181 --replication-factor 1 --partitions 1
+      --topic dummy_topic &) && (supervisord -n)"
+    
