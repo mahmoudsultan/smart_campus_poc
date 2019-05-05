@@ -84,7 +84,13 @@ def get_image_from_request(request):
     return img
 
 
-
+def add_embedding_to_student(embedding, student_id):
+    embedding = embedding.reshape((1, -1))
+    current_embeddings = embeddings_dict[student_id]
+    
+    new_embeddings = np.vstack((current_embeddings, embeddings))
+    
+    embeddings_dict[new_embeddings]
 
 app = Flask(__name__)
 embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
@@ -92,6 +98,18 @@ embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
 @app.route('/')
 def index():
     return "<h1> Hello World </h1>"
+
+@app.route('/update_embeddings', methods=['POST'])
+def update_embeddings():
+    r = request
+    req = json.loads(r.data)
+
+    image = get_image_from_request(req)
+    student_id = req['id']
+    
+    embedding = get_embeddings_in_query_image(image, return_locations=False)
+    
+    add_embedding_to_student(embedding, student_id)
 
 @app.route('/attendance', methods=['POST'])
 def test():
