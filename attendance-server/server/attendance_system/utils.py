@@ -154,8 +154,8 @@ def get_people_in_image(knn, known_labels, embds, k=3, threshold=0.5):
 
         data = {}
         data['neighbors'] = {}
-        data['neighbors']['names'] = preds
-        data['neighbors']['distances'] = dist
+        data['neighbors']['names'] = [known_labels[pred_] for pred_ in pred] 
+        data['neighbors']['distances'] = dist.tolist()
 
         if mean_dist > threshold:
             name = 'UNKNOWN'
