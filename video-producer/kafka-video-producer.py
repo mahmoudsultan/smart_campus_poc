@@ -47,7 +47,7 @@ def publish_video(producer, topic, key, continuous_mode=False, sleep=0.5, file_n
     _, buffer = cv2.imencode('.jpg', frame)
     jpg_base64 = (base64.b64encode(buffer)).decode("utf-8")
     # jpg_base64 = base64.encodestring(buffer.tostring())
-#    pixels_list = buffer.flatten().tolist()
+    # pixels_list = buffer.flatten().tolist()
     json = format_json_for_image(key, jpg_base64)
     json_bytes = json.encode('utf-8')
     producer.send(topic, json_bytes).add_callback(on_send_success).add_errback(on_send_error)
@@ -72,11 +72,9 @@ def main(args):
     print('Bootstrap servers not specified... Using default localhost:9092')
   bootstrap_servers = args.bsservers if args.bsservers else 'localhost:9092'
 
-  print(bootstrap_servers)
-
   producer = KafkaProducer(
       bootstrap_servers=bootstrap_servers,
-      api_version=(0, 10, 1)
+      api_version=(0, 10)
     )
   publish_video(producer, topic_name, key, file_name=file_path)
 
