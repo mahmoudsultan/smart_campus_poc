@@ -39,7 +39,7 @@ def get_some_embeddings(embeddings_dict, student_ids):
     return embeddings, labels
 
 def convert_coords(coords):
-    return [coords[0], coords[3], coords[2], coords[1]]
+    return [coords[3], coords[0], coords[1], coords[2]]
 
 def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5, method='cnn'):
     known_embds, known_labels        = get_some_embeddings(embeddings_dict, student_ids)
