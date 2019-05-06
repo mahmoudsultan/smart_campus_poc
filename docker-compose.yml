@@ -40,6 +40,16 @@ services:
     command:
       "npm run dev"
 
+  attendance:
+    build: ./attendance-server/
+    container_name: deepx-atendance
+    ports:
+      - "50000:50000"
+    volumes:
+      - ./attendance-server/:/attendance-server
+    depends_on:
+      - "api"
+
   kafka:
     image: spotify/kafka
     hostname: kafka
@@ -58,15 +68,16 @@ services:
       --create
       --zookeeper
       localhost:2181 --replication-factor 1 --partitions 1
-      --topic dummy_topic &) && (supervisord -n)"
+      --topic vid1 &) && (supervisord -n)"                            # creating a dummy topic
   
-  attendance:
-    build: ./attendance-server/
-    container_name: deepx-atendance
+  producer:
+    build: ./video-producer/
+    container_name: deepx-producer
     ports:
-      - "50000:50000"
+      - "7000:7000"
+    command:
+      "python kafka-video-producer.py -t vid1 -b localhost:9092 -f video.mp4"
     volumes:
-      - ./attendance-server/:/attendance-server
+      - ./video-producer/:/video-producer/
     depends_on:
-      - "api"
-    
+      - "kafka"
