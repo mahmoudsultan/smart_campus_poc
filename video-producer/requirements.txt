@@ -1,0 +1,4 @@
+cmake
+jsonpickle
+opencv-python
+kafka-python

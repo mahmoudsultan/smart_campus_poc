@@ -23,8 +23,9 @@ def load_embeddings(student_dir):
 
 def initialize_embeddings(root_dir):
     embeddings_dict = {}
-    
+    print(f'initializing embedding, root_dir: {root_dir}')
     for student in root_dir.glob('*'):
+        print(student)
         embeddings_ = load_embeddings(student)
         embeddings_dict[student.parts[-1]] = embeddings_
         
@@ -84,16 +85,11 @@ def get_image_from_request(request):
     return img
 
 
-def add_embedding_to_student(embedding, student_id):
-    embedding = embedding.reshape((1, -1))
-    current_embeddings = embeddings_dict[student_id]
-    
-    new_embeddings = np.vstack((current_embeddings, embeddings))
-    
-    embeddings_dict[new_embeddings]
+
 
 app = Flask(__name__)
-embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
+embeddings_dict = initialize_embeddings(Path('server/input_embeddings'))
+# print(f'embeddings dict: {embeddings_dict}')
 
 @app.route('/')
 def index():
