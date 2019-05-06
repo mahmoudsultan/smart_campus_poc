@@ -95,6 +95,18 @@ embeddings_dict = initialize_embeddings(Path('server/input_embeddings'))
 def index():
     return "<h1> Hello World </h1>"
 
+@app.route('/update_embeddings', methods=['POST'])
+def update_embeddings():
+    r = request
+    req = json.loads(r.data)
+
+    image = get_image_from_request(req)
+    student_id = req['id']
+    
+    embedding = get_embeddings_in_query_image(image, return_locations=False)
+    
+    add_embedding_to_student(embedding, student_id)
+
 @app.route('/attendance', methods=['POST'])
 def test():
 
