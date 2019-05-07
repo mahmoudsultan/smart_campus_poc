@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   resources :lecture_instances, only: [] do
     get 'place', to: 'lecture_instances#place'
     get 'students', to: 'lecture_instances#students'
+    get 'attendance_sheet', to: 'lecture_instances#attendance_sheet'
   end
 
   # Upload Image Route

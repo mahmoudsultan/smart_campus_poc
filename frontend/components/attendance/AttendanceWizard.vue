@@ -169,6 +169,10 @@ export default {
     image: {
       type: String,
       required: true
+    },
+    editMode: {
+      type: Boolean,
+      default: false
     }
   },
   inject: ['confirmAttendanceSheet'],
@@ -336,7 +340,13 @@ export default {
       this.deleteDialog.index = null
     },
     confirmDelete() {
-      this.faceBoxes.splice(this.deleteDialog.index, 1)
+      const deletedFaceBox = this.faceBoxes.splice(this.deleteDialog.index, 1)
+
+      if (this.editMode) {
+        // keep track of this deletion if in edit mode
+        this.deletedFaceBoxes.push(deletedFaceBox)
+      }
+
       this.resetDeleteDialog()
       this.updateAfterFaceBoxesChange()
     }
