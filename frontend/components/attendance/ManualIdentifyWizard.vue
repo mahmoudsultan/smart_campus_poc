@@ -149,10 +149,10 @@ export default {
       this.$vuetify.goTo('#chosen_student')
     },
     assignChoosedStudentToOnFocusFaceBox() {
-      const faceBoxId = this.onFocusFaceBox.id
+      const faceBoxIndex = this.onFocusFaceBox.index
       const studentId = this.choosedStudent.student_id
 
-      this.$emit('assign', { faceBoxId, studentId })
+      this.$emit('assign', { faceBoxIndex, studentId })
 
       this.showSucessAssignmentMessage(this.choosedStudent)
       this.moveOnFocusFaceBoxLeft()

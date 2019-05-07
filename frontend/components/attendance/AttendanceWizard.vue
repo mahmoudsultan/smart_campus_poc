@@ -220,8 +220,11 @@ export default {
     },
     manualIndentifyFaceBoxes() {
       return _.chain(this.faceBoxes)
-        .filter((faceBox) => { return !faceBox.student_id })
         .map((faceBox, index) => {
+          return { ...faceBox, ...{ index: index } }
+        })
+        .filter((faceBox) => { return !faceBox.student_id })
+        .map((faceBox) => {
           const faceBoxImage = this.getFaceBoxImage(faceBox)
           return { ...faceBox, ...{ image: faceBoxImage } }
         })
@@ -316,8 +319,7 @@ export default {
       const height = y2 - y1
       return [x1, y1, width, height]
     },
-    assignStudentFromManualWizardToFaceBox({ faceBoxId, studentId }) {
-      const faceBoxIndex = _.findIndex(this.faceBoxes, { id: faceBoxId })
+    assignStudentFromManualWizardToFaceBox({ faceBoxIndex, studentId }) {
       this.faceBoxes[faceBoxIndex].student_id = studentId
       this.updateAfterFaceBoxesChange()
     },
