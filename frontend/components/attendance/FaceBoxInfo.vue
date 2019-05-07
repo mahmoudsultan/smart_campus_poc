@@ -59,6 +59,15 @@
         <v-btn
           depressed
           ripple
+          @click="triggerDeleteFaceBox"
+          color="error"
+        >
+          <v-icon small left dark>delete</v-icon>
+          delete
+        </v-btn>
+        <v-btn
+          depressed
+          ripple
           color="primary"
           @click="enableEdit"
         >
@@ -144,6 +153,9 @@ export default {
     },
     assignStudent() {
       this.$emit('assign', this.recievedStudentAfterSearch.studentId)
+    },
+    triggerDeleteFaceBox() {
+      this.$emit('delete')
     }
   },
   computed: {

@@ -108,6 +108,7 @@
         :studentImage="showFaceBoxDialog.studentImage"
         @close="showFaceBoxDialog.display = false"
         @assign="assignStudentToFaceBox"
+        @delete="deleteFaceBoxOpened"
       />
     </v-dialog>
 
@@ -319,6 +320,10 @@ export default {
       const faceBoxIndex = _.findIndex(this.faceBoxes, { id: faceBoxId })
       this.faceBoxes[faceBoxIndex].student_id = studentId
       this.updateAfterFaceBoxesChange()
+    },
+    deleteFaceBoxOpened() {
+      this.startDelete(this.showFaceBoxDialog.faceBoxIndex)
+      this.showFaceBoxDialog.display = false
     },
     startDelete(index) {
       this.deleteDialog.display = true
