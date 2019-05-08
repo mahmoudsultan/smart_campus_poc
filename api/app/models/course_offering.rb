@@ -3,6 +3,8 @@
 class CourseOffering < ApplicationRecord
   belongs_to :course
   has_many :groups
+  has_many :lectures
+
 
   enum term: %i[fall spring summer]
 

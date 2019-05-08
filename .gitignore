@@ -86,4 +86,14 @@ sw.*
 #node_modules
 /node_modules
 
-.vscode
+#vscode
+.vscode/
+
+#tmp files
+tmp/
+
+#bundle directory
+bundle/
+
+#pycache
+__pycache__/
