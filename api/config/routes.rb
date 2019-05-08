@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   scope 'attendance' do
     post 'new', to: 'attendances#new'
     post 'save', to: 'attendances#save'
+    post 'update', to: 'attendances#update'
   end
 
   resources :students, only: %i[index create update destroy] do

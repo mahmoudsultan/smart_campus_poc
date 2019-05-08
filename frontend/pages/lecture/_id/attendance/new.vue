@@ -52,6 +52,7 @@
               :image="this.image"
               :faceBoxes="this.faceBoxes"
               :students="this.studentsInfoObj"
+              @save="confirmAttendanceSheet"
             />
           </v-stepper-content>
           <v-stepper-content step="3">
@@ -101,11 +102,6 @@ import AttendanceWizard from '@/components/attendance/AttendanceWizard'
 export default {
   components: {
     AttendanceWizard
-  },
-  provide() {
-    return {
-      confirmAttendanceSheet: this.confirmAttendanceSheet
-    }
   },
   data() {
     return {
@@ -190,7 +186,11 @@ export default {
     },
     confirmAttendanceSheet(faceBoxes) {
       this.loading = true
-      this.$axios.post('attendance/save', { lecture_instance_id: this.$route.params.id, face_boxes: faceBoxes }).then((response) => {
+      this.$axios.post('attendance/save', {
+        lecture_instance_id: this.$route.params.id,
+        face_boxes: faceBoxes,
+        image: this.image
+      }).then((response) => {
         this.step = 3
         this.saved = true
       }).catch((err) => {
@@ -201,6 +201,7 @@ export default {
     }
   },
   mounted: async function () {
+    console.log('Hello') // eslint-disable-line
     await this.$axios.get(`lecture_instances/${this.$route.params.id}/place`).then((response) => {
       this.lectureLocation = response.data.name
       this.lectureLocationId = response.data.id

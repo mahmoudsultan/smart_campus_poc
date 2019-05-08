@@ -85,7 +85,7 @@
           ripple
           block
           color="primary"
-          @click="callInjectedSaveMethod"
+          @click="emitSaveEvent"
         >
           Confirm
         </v-btn>
@@ -175,7 +175,6 @@ export default {
       default: false
     }
   },
-  inject: ['confirmAttendanceSheet'],
   components: {
     AttendanceImage,
     FaceBoxInfo,
@@ -212,7 +211,8 @@ export default {
       deleteDialog: {
         display: false,
         index: null
-      }
+      },
+      deletedFaceBoxes: []
     }
   },
   computed: {
@@ -276,7 +276,6 @@ export default {
     },
     receiveFaceBoxCoordinates(boxStartCorner, boxEndCorner) {
       this.newFaceBox = {
-        id: this.faceBoxes.length,
         boundaries: `${boxStartCorner[0]},${boxStartCorner[1]},${boxEndCorner[0]},${boxEndCorner[1]}`,
         student_id: null
       }
@@ -312,8 +311,8 @@ export default {
       })
       this.attendanceItemsLoading = false
     },
-    callInjectedSaveMethod() {
-      this.confirmAttendanceSheet(this.faceBoxes)
+    emitSaveEvent() {
+      this.$emit('save', this.faceBoxes, this.deletedFaceBoxes)
     },
     faceBoxDimensions(faceBox) {
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
@@ -344,7 +343,7 @@ export default {
 
       if (this.editMode) {
         // keep track of this deletion if in edit mode
-        this.deletedFaceBoxes.push(deletedFaceBox)
+        this.deletedFaceBoxes.push(deletedFaceBox[0])
       }
 
       this.resetDeleteDialog()

@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_190_419_180_802) do
+ActiveRecord::Schema.define(version: 20_190_507_235_838) do
   create_table 'activity_logs', options: 'ENGINE=InnoDB DEFAULT CHARSET=utf8', force: :cascade do |t|
     t.datetime 'date'
     t.integer 'state'
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20_190_419_180_802) do
     t.bigint 'lecture_instance_id'
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
+    t.string 'image'
     t.index ['lecture_instance_id'], name: 'index_attendance_sheets_on_lecture_instance_id'
   end
 

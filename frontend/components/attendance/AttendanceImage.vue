@@ -162,6 +162,7 @@ export default {
       return new Promise((resolve, reject) => {
         const img = new window.Image()
         img.src = this.image
+        img.crossOrigin = 'Anonymous'
 
         img.onload = () => {
           resolve(img)
@@ -171,6 +172,7 @@ export default {
     buildOffScreenCanvas() {
       const canvas = document.getElementById('attendance-canvas')
       const offScreenCanvas = document.createElement('canvas')
+
       offScreenCanvas.height = canvas.height
       offScreenCanvas.width = canvas.width
       return offScreenCanvas
