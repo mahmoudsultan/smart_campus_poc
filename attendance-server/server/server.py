@@ -84,11 +84,26 @@ def get_image_from_request(request):
 
     return img
 
+def add_embedding_to_student(embedding, student_id):
+    student_dir = embeddings_path/student
 
+    if student_dir.exists():
+        embds = load_embeddings(student_dir)
+
+        embds = np.vstack((embds, embedding))
+    else:
+        student_dir.mkdir()
+        embeddings_path = student_dir/'embeddings'
+
+        embedding = embedding.reshape((-1, 1))
+
+        with open(str(embeddings_path), 'wb') as f:
+            pickle.dump(embedding, f)
 
 
 app = Flask(__name__)
-embeddings_dict = initialize_embeddings(Path('server/input_embeddings'))
+embeddings_path = Path('./input_embeddings')
+embeddings_dict = initialize_embeddings(embeddings_path)
 # print(f'embeddings dict: {embeddings_dict}')
 
 @app.route('/')
