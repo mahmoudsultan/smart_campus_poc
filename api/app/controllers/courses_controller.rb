@@ -1,16 +1,9 @@
 class CoursesController < ApplicationController
   
-<<<<<<< HEAD
-  before_action :authenticate_user!, except: [:home]
-  load_and_authorize_resource
-
-
-=======
   before_action :authenticate_user!
   load_and_authorize_resource
   
   # before_action :print_user ,only: [show_lectures]
->>>>>>> 7d68fd9a140ef12c76d5be984530351d206dedbd
   rescue_from CanCan::AccessDenied do |exception|
     respond_to do |format|
       format.json { head :forbidden }
