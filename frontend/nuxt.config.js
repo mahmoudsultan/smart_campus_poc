@@ -2,6 +2,11 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const pkg = require('./package')
 
 module.exports = {
+  env: {
+    // routes that need no authentication
+    noAuth: ['/']
+  },
+
   router: {
     middleware: 'authenticate'
   },

@@ -145,7 +145,7 @@ export default {
   // },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.$store)
+    console.log(this.$ability)
     this.$axios
       .$get('/courses/years')
       .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
@@ -180,8 +180,7 @@ export default {
     },
     fillTimeTableMap(tt) {
       this.timeTableMap = {}
-      // eslint-disable-next-line no-console
-      console.log(tt)
+
       const pad = n => this.padNumber(n, 2)
       tt.forEach((e) => {
         const date = this.dayNumberToDate(e.day)
