@@ -6,7 +6,8 @@ import os
 
 print('Sending request...')
 
-address = 'http://3.17.65.133:50000/'
+address = 'http://192.168.43.229:50000/'
+# address = 'http://3.17.65.133:50000/'
 url = address + 'attendance'
 
 image_path = Path('./IMG_20190224_172925-min.jpg')
@@ -21,5 +22,5 @@ request_body = {'image': base64.encodebytes(img).decode('utf-8'), 'ids': ['taw2a
 
 response = requests.post(url, json.dumps(request_body), headers=headers)
 response = json.loads(response.json())
-for k in response.keys():
-    print('Found {} at {}'.format(k, response[k]))
+for elem in response['face_boxes']:
+    print(elem)
