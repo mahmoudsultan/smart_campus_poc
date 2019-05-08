@@ -216,22 +216,22 @@ end
 # end
 
 
-# names = ['amr', 'ezz', 'fatma', 'magdy', 'menna', 'nada', 'rana', 'aly', 'taw2am']
-# names.each do |name|
+names = ['amr', 'ezz', 'fatma', 'magdy', 'menna', 'nada', 'rana', 'aly', 'taw2am']
+names.each do |name|
   
-#   id = User.where(student_id: name).ids[0]
-#   image_encoded = Base64.encode64(File.read(Rails.root.join('db/seeds/' + name + '.jpg')))
-#   image_encoded = "data:image/jpeg;base64," + image_encoded
+  id = User.where(student_id: name).ids[0]
+  image_encoded = Base64.encode64(File.read(Rails.root.join('db/seeds/' + name + '.jpg')))
+  image_encoded = "data:image/jpeg;base64," + image_encoded
   
-#   uri= URI('http://localhost:3000/users/' + id.to_s + '/image')
+  uri= URI('http://localhost:3000/users/' + id.to_s + '/image')
   
-#   http = Net::HTTP.new(uri.host, uri.port)
-#   req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json'})
+  http = Net::HTTP.new(uri.host, uri.port)
+  req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json'})
   
-#   req.body = {image: image_encoded}.to_json
-#   res = http.request(req)
+  req.body = {image: image_encoded}.to_json
+  res = http.request(req)
 
-#   puts "response #{res.body}"
+  puts "response #{res.body}"
   
-# end
+end
 
