@@ -52,6 +52,7 @@
               :image="this.image"
               :faceBoxes="this.faceBoxes"
               :students="this.studentsInfoObj"
+              :nearestStudentsInfo="this.nearestStudentsInfo"
               @save="confirmAttendanceSheet"
             />
           </v-stepper-content>
@@ -126,6 +127,7 @@ export default {
       image: '',
       faceBoxes: [],
       studentsInfoObj: {},
+      nearestStudentsInfo: {},
       downloadLoading: false,
       saved: false
     }
@@ -168,6 +170,16 @@ export default {
         // this.faceBoxes = attendanceResponse.data.face_boxes.map((faceBox, index) => {
         //   return { ...faceBox, ...{ id: index } }
         // })
+
+        // this.studentsIdsFromAttendance = attendanceResponse.data.face_boxes.map((faceBox) => {
+        //   return faceBox.student_id
+        // })
+
+        // this.nearestStudentsIds = attendanceResponse.data.face_boxes.map((faceBox) => {
+        //   return faceBox.neighbors.ids  
+        // })
+
+        // this.nearestStudentsInfo = _.zipObject(studentsIdsFromAttendance, nearestStudentsIds)
 
         const studentsInfo = _.each(studentsInfoResponse.data, (studentInfo) => {
           studentInfo.image = this.$axios.defaults.baseURL + studentInfo.image.url

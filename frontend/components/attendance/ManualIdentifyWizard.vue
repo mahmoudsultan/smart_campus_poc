@@ -75,6 +75,20 @@
           </v-flex>
           <v-flex xs12 md6>
             <v-subheader>Or Choose by Image: </v-subheader>
+              <v-container fullscreen style="max-height: 90vh; overflow: scroll;"  fluid grid-list-sm>
+              <v-layout row wrap>
+                <v-flex v-for="student in choosedStudentNeighbors" :key="student.student_id" xs4>
+                  <img
+                    @click="chooseStudentByImage(student)"
+                    :src="student.image"
+                    class="student-image"
+                    :alt="student.name"
+                    width="100%"
+                    height="100%"
+                  >
+                </v-flex>
+              </v-layout>
+            </v-container>
             <v-container fullscreen style="max-height: 90vh; overflow: scroll;"  fluid grid-list-sm>
               <v-layout row wrap>
                 <v-flex v-for="student in students" :key="student.student_id" xs4>
@@ -100,13 +114,15 @@
 export default {
   props: {
     faceBoxes: Array,
-    students: Object
+    students: Object,
+    nearestStudentsInfo: Object
   },
   data() {
     return {
       showDialog: true,
       onFocusFaceBoxIndex: 0,
       choosedStudent: null,
+      choosedStudentNeighbors: null,
       showSuccess: false,
       successMessage: ''
     }
@@ -146,6 +162,7 @@ export default {
     },
     chooseStudentByImage(student) {
       this.choosedStudent = student
+      this.choosedStudentNeighbors = this.getNearestStudentsInfo(student)
       this.$vuetify.goTo('#chosen_student')
     },
     assignChoosedStudentToOnFocusFaceBox() {
@@ -157,6 +174,7 @@ export default {
       this.showSucessAssignmentMessage(this.choosedStudent)
       this.moveOnFocusFaceBoxLeft()
       this.choosedStudent = null
+      this.choosedStudentNeighbors = null
     },
     moveOnFocusFaceBox(move) {
       this.onFocusFaceBoxIndex = (this.onFocusFaceBoxIndex + move) % this.faceBoxes.length
@@ -166,6 +184,16 @@ export default {
     },
     moveOnFocusFaceBoxLeft() {
       this.moveOnFocusFaceBox(-1)
+    },
+    getNearestStudentsInfo(student) {
+      const studentId = student.student_id
+      const nearestStudentsIds = this.nearestStudentsInfo.studentId
+
+      const nearStudentsInfo = this.nearestStudentsIds.map(nearID => {
+        return this.students.nearID
+      })
+
+      return nearStudentsInfo
     }
   },
   watch: {
