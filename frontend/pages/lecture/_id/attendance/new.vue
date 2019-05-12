@@ -176,7 +176,7 @@ export default {
         // })
 
         // this.nearestStudentsIds = attendanceResponse.data.face_boxes.map((faceBox) => {
-        //   return faceBox.neighbors.ids  
+        //   return faceBox.neighbors.ids
         // })
 
         // this.nearestStudentsInfo = _.zipObject(studentsIdsFromAttendance, nearestStudentsIds)
