@@ -10,6 +10,9 @@ class Ability
       if user.role == 'professor'
         can [:show_terms,:show_years, :show_lectures], Course, user_id: user.id
         can :show_roles, User, user_id: user.id
+      elsif user.role == 'student'
+        can [:show_terms,:show_years, :show_lectures], Course, user_id: user.id
+        can :show_roles, User, user_id: user.id
       else
         can :read, :all
       end
