@@ -175,7 +175,7 @@ export default {
         item.text = year
       }
       this.$axios
-        .$get(`/lectures/${this.prof_id}/${term}/${year}`)
+        .$get(`/lectures/${term}/${year}`)
         .then(tt => this.fillTimeTableMap(tt))
     },
     fillTimeTableMap(tt) {

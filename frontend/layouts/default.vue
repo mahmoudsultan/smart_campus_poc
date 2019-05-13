@@ -103,7 +103,9 @@ export default {
   },
   computed: {
     user: function () {
-      return this.$store.state.user ? this.$store.state.user : {}
+      // eslint-disable-next-line no-console
+      console.log(this.$store.state.auth.user)
+      return this.$store.state.auth.user
     }
   },
   methods: {

@@ -36,14 +36,17 @@ function setHeaders(response, store, commit) {
     ['access-token', 'client', 'uid'])
 
   commit('headers', authHeaders)
-  store.$axios.get('/users/roles').then((response) => {
+  store.$axios.get('/users/roles').then((rolesResponse) => {
     const session = {
       headers: authHeaders,
       user: response.data.data,
-      roles: response.data.roles
+      roles: rolesResponse.data.roles
     }
     // eslint-disable-next-line no-console
-    console.log(session.roles)
+    console.log('sessionsssssssssssssssssss')
+
+    // eslint-disable-next-line no-console
+    console.log(session)
     commit('setSession', session)
 
     store.$cookies.set('session', JSON.stringify(session))
