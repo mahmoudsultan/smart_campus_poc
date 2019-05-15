@@ -48,6 +48,8 @@ Rails.application.routes.draw do
     get 'place', to: 'lecture_instances#place'
     get 'students', to: 'lecture_instances#students'
     get 'attendance_sheet', to: 'lecture_instances#attendance_sheet'
+    
+    resources 'attendance_issues', only: %i[index create]
   end
 
   # Upload Image Route

@@ -4,7 +4,7 @@ class FaceBox < ApplicationRecord
   enum state: %i[recognized detected alleged]
 
   belongs_to :user, optional: true
-  belongs_to :attendance_sheet
+  belongs_to :attendance_sheet, optional: true
 
 
   validates :boundaries, presence: true
