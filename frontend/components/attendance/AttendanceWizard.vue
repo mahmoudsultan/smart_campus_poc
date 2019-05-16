@@ -124,6 +124,7 @@
         v-if="showManualIdentifyWizard"
         :faceBoxes="manualIndentifyFaceBoxes"
         :students="students"
+        :nearestStudentsInfo="nearestStudentsInfo"
         @close="showManualIdentifyWizard = false"
         @assign="assignStudentFromManualWizardToFaceBox"
       />
@@ -165,6 +166,10 @@ export default {
     students: {
       type: Object,
       required: true
+    },
+    nearestStudentsInfo: {
+      type: Object,
+      required: false
     },
     image: {
       type: String,
