@@ -116,4 +116,19 @@ User.all.each do |user|
   GroupUser.create!(group_user)
 end
 puts 'Users enters the system, Prepare for Errors!'
+
+# seed attendance sheets and faceboxes
+
+states = %i[recognized detected alleged]
+LectureInstance.all.each do |inst|
+  users = LectureInstance.joins({lecture: {group: {group_users: :user}}}).where(id: inst.id,users: {role: :student}).select('users.id')
+  sheet = AttendanceSheet.create(lecture_instance_id: inst.id)
+  users.each do |user|
+    FaceBox.create!(user_id: user.id, attendance_sheet:sheet, state:states.sample, boundaries: '(1,1)')
+  end
+end
+
+puts 'Now users have some attendance points and some are gonna fail.'
+puts 'I am pretending to be like my friend up there. So if you like my way please subscribe.'
+
 puts 'This was fun... Goodbye, Visit Soon when you get stuck and need to drop the database!'
