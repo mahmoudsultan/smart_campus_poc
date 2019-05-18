@@ -20,7 +20,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title>
-            {{ user.name }}
+            {{ user.name | user.role}}
           </v-list-tile-title>
         </v-list-tile>
 

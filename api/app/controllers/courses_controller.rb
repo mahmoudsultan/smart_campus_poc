@@ -36,8 +36,8 @@ class CoursesController < ApplicationController
       "INNER JOIN `lectures` ON `lectures`.`course_offering_id` = `course_offerings`.`id`"\
       "INNER JOIN `klasses` ON `klasses`.`id` = `lectures`.`klass_id`"\
       "INNER JOIN `buildings` ON `buildings`.`id` = `klasses`.`building_id`").where(
-        "`users`.`uid`=? AND `users`.`role`=(?) AND `course_offerings`.`term`=? "\
-        " AND `course_offerings`.`year`=?", uid , role, params[:term], params[:year]
+        "`users`.`uid`=?  AND `course_offerings`.`term`=? "\
+        " AND `course_offerings`.`year`=?", uid , params[:term], params[:year]
       ).select('users.id as user_id, users.name as user_name,courses.code,courses.title,lectures.day,'\
                'lectures.start_timeslot,lectures.end_timeslot,'\
                'buildings.name as building_name,klasses.name as klass_name,klasses.floor,klasses.capacity,'\

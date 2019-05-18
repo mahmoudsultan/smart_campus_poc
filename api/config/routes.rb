@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/lectures/:term/:year' => 'courses#show_lectures'
   get '/lecture_instances/:lec_id' => 'lecture_instances#get_by_lec_id'
   get '/users/roles' => 'users#show_roles'
+  get '/lecture_instances/status/:lec_id' => 'lecture_instances#get_attended_lectures_by_student'
 
   root to: 'courses#home'
 

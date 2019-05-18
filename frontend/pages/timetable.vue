@@ -145,6 +145,10 @@ export default {
   // },
   mounted() {
     // eslint-disable-next-line no-console
+    console.log('userrrrrrrrrrrrrrrrrrr')
+    // eslint-disable-next-line no-console
+    console.log(this.$store.state)
+    // eslint-disable-next-line no-console
     console.log(this.$ability)
     this.$axios
       .$get('/courses/years')
