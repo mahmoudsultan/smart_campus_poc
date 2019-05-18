@@ -104,15 +104,14 @@ export default {
     }
     const lectureInstances = (await this.$axios.get(`/lecture_instances/${lecId}`)).data
 
-    // eslint-disable-next-line no-console
-    console.log(lectureInstances)
     lectureInstances.forEach((li) => {
       const d = new Date(li.date)
-      this.lecture_instances.push({
-        week_number: li.week_number,
-        date: `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
-      })
+      const result = Object.assign({}, li)
+      delete result.date
+      result.date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
+      this.lecture_instances.push(result)
     })
+
     this.user = this.$store.state.auth.user
 
     if (this.user.role === 'student') {
@@ -122,12 +121,6 @@ export default {
         sortable: true,
         value: 'state'
       })
-
-      const status = await this.$axios.get(`/lecture_instances/status/${lecId}`)
-      // eslint-disable-next-line no-console
-      console.log('statussssssssssssssss')
-      // eslint-disable-next-line no-console
-      console.log(status)
     } else {
       this.headers.push(
         { text: 'Attendence Sheet' })

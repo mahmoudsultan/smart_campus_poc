@@ -2,4 +2,5 @@
 
 class AttendanceSheet < ApplicationRecord
   belongs_to :lecture_instance
+  has_many :face_boxes
 end

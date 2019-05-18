@@ -50,7 +50,7 @@
 # end
 # puts 'And you know what? Klasses are created too!'
 
-# seed users
+# # seed users
 # users = ActiveSupport::JSON.decode(File.read('db/seeds/user.json'))
 
 # users.each_with_index do |a, i|
@@ -89,11 +89,11 @@
 #   rand * (to - from) + from
 # end
 
-# week_numbers = (1..14)
+# week_numbers = (1..7)
 
 # Lecture.all.each do |lecture|
 #   week_numbers.each do |week|
-#     lecture_date = rand_time((14 - week).days.ago)
+#     lecture_date = rand_time((7 - week).days.ago)
 #     lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
 #     LectureInstance.create!(lecture_instance)
 #   end
@@ -116,7 +116,7 @@ puts 'And here we seed some faceboxes'
 # seed attendance sheets
 states = %i[recognized detected alleged]
 LectureInstance.all.each do |inst|
-  users = LectureInstance.joins({lecture: {group: {group_users: :user}}}).where(id: inst.id,users: {role: :student}).select('users.id')
+  users = LectureInstance.joins({lecture: {group: {group_users: :user}}}).where(id: inst.id,users: {role: User.roles[:student]}).select('users.id')
   sheet = AttendanceSheet.create(lecture_instance_id: inst.id)
   users.each do |user|
     FaceBox.create!(user_id: user.id, attendance_sheet:sheet, state:states.sample, boundaries: '(1,1)')
