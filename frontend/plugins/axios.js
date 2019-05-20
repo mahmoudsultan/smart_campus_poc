@@ -42,7 +42,6 @@ export default function ({ store, app: { $axios }, route, redirect }) {
 
   $axios.onResponseError((error) => {
     if (route.name !== 'sign_in' && error.response.status === 401) {
-      store.commit('user', null)
       redirect('/sign_in')
     }
     return Promise.reject(error)

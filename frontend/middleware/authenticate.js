@@ -1,10 +1,13 @@
+export default function ({ route, redirect, store, app: { $axios, $cookies } }) {
+  if (route.name === 'sign_in' || process.env.noAuth.includes(route.path) || store.getters['auth/isAuthenticated']) {
+    return
+  }
 
-export default function ({ store, app: { $axios, $cookies } }) {
-  if (store.state.isAuthenticated) return
   const session = $cookies.get('session')
-  // eslint-disable-next-line no-console
-  console.log(store)
+
   if (session) {
     store.commit('auth/setSession', session)
+  } else {
+    redirect('/sign_in')
   }
 }

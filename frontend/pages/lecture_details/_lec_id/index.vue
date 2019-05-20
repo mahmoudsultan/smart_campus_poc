@@ -59,9 +59,12 @@
               {{ props.item.date }}
             </td>
             <td class="text-xs-left">
-              <v-btn color="primary" fab small dark>
+              <v-btn v-if="user.role==='professor'" color="primary" fab small dark>
                 <v-icon>edit</v-icon>
               </v-btn>
+              <template v-if="user.role==='student'">
+                {{ props.item.state }}
+              </template>
             </td>
           </template>
         </v-data-table>
@@ -74,6 +77,8 @@
 export default {
   data: () => ({
     lecture: {},
+    // user: this.$store.state.auth.user.role,
+    user: {},
     lecture_instances: [],
     headers: [
       {
@@ -87,28 +92,39 @@ export default {
         align: 'left',
         sortable: true,
         value: 'date'
-      },
-      { text: 'Attendence Sheet' }
+      }
     ]
   }),
-  mounted() {
+  async mounted() {
     const lecId = this.$route.params.lec_id
     // eslint-disable-next-line no-console
     console.log(lecId)
     if (localStorage.getItem(lecId)) {
       this.lecture = JSON.parse(localStorage.getItem(lecId))
     }
-    this.$axios.get(`/lecture_instances/${lecId}`).then((res) => {
-      // eslint-disable-next-line no-console
-      console.log(res.data)
-      res.data.forEach((li) => {
-        const d = new Date(li.date)
-        this.lecture_instances.push({
-          week_number: li.week_number,
-          date: `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
-        })
-      })
+    const lectureInstances = (await this.$axios.get(`/lecture_instances/${lecId}`)).data
+
+    lectureInstances.forEach((li) => {
+      const d = new Date(li.date)
+      const result = Object.assign({}, li)
+      delete result.date
+      result.date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
+      this.lecture_instances.push(result)
     })
+
+    this.user = this.$store.state.auth.user
+
+    if (this.user.role === 'student') {
+      this.headers.push({
+        text: 'State',
+        align: 'left',
+        sortable: true,
+        value: 'state'
+      })
+    } else {
+      this.headers.push(
+        { text: 'Attendence Sheet' })
+    }
   }
 }
 </script>

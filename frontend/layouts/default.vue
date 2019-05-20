@@ -20,7 +20,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title>
-            {{ user.name }}
+            {{ user.name | user.role}}
           </v-list-tile-title>
         </v-list-tile>
 
@@ -103,7 +103,9 @@ export default {
   },
   computed: {
     user: function () {
-      return this.$store.state.user ? this.$store.state.user : {}
+      // eslint-disable-next-line no-console
+      console.log(this.$store.state.auth.user)
+      return this.$store.state.auth.user
     }
   },
   methods: {

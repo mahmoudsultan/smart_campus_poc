@@ -24,6 +24,7 @@ export const mutations = {
     state.headers = headers
     state.user = user
     state.roles = roles
+    ability.update(roles)
   },
   destroySession(state) {
     Object.assign(state, getDefaultState())
@@ -33,22 +34,21 @@ export const mutations = {
 function setHeaders(response, store, commit) {
   const authHeaders = pick(response.headers,
     ['access-token', 'client', 'uid'])
-  // eslint-disable-next-line no-console
-  console.log('apppppppppppp')
-  // eslint-disable-next-line no-console
-  console.log(store.app.$ability)
-  store.$axios.get('/users/roles').then((response) => {
-    // eslint-disable-next-line no-console
-    console.log(response)
-    ability.update(response.data.roles)
+
+  commit('headers', authHeaders)
+  store.$axios.get('/users/roles').then((rolesResponse) => {
     const session = {
       headers: authHeaders,
       user: response.data.data,
-      roles: ability
+      roles: rolesResponse.data.roles
     }
     // eslint-disable-next-line no-console
-    console.log(ability)
+    console.log('sessionsssssssssssssssssss')
+
+    // eslint-disable-next-line no-console
+    console.log(session)
     commit('setSession', session)
+
     store.$cookies.set('session', JSON.stringify(session))
   })
 }
@@ -61,6 +61,8 @@ export const actions = {
         .then((response) => {
           setHeaders(response, this, commit)
           resolve()
+        }).catch((error) => {
+          reject(error)
         })
     })
   },
@@ -82,9 +84,15 @@ export const actions = {
     this.$cookies.remove('session')
   }
 }
+function isEmpty(obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) { return false }
+  }
+  return true
+}
 
 export const getters = {
   isAuthenticated(state) {
-    return state.user && state.auth
+    return !isEmpty(state.headers)
   }
 }

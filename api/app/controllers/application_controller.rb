@@ -7,6 +7,8 @@ class ApplicationController < ActionController::API
   devise_token_auth_group :member, contains: %i[user admin]
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+ 
+
   protected
 
   def configure_permitted_parameters
