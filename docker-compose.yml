@@ -11,6 +11,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=dev
+
   api:
     build: ./api/
     container_name: deepx-api
@@ -26,6 +27,7 @@ services:
       - "mysql"
     depends_on:
       - "mysql"
+
   nuxt:
     build: ./frontend/
     container_name: deepx-frontend

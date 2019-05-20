@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  get 'admin/sign_up'
+  post 'admin/create_user' => 'admin#create_user'
   get '/courses/years/' => 'courses#show_years'
   get '/courses/terms/' => 'courses#show_terms'
   get '/lectures/:term/:year' => 'courses#show_lectures'

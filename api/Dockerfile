@@ -8,9 +8,6 @@ ENV BUNDLE_PATH ${APP_ROOT}/bundle
 RUN apt-get update -qq && \
     apt-get install -y build-essential libpq-dev nodejs
 
-ENV APP_ROOT /api
-ENV BUNDLE_PATH $APP_ROOT/bundle
-
 WORKDIR $APP_ROOT
 
 ENV PATH="$BUNDLE_PATH:$BUNDLE_PATH/bin:$BUNDLE_PATH/gems/bin:${PATH}"
