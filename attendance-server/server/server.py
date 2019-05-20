@@ -91,6 +91,7 @@ def add_embedding_to_student(embedding, student_id):
         embds = load_embeddings(student_dir)
 
         embds = np.vstack((embds, embedding))
+        embeddings_dict[student_id] = embds
     else:
         student_dir.mkdir()
         embeddings_path = student_dir/'embeddings'
@@ -99,6 +100,8 @@ def add_embedding_to_student(embedding, student_id):
 
         with open(str(embeddings_path), 'wb') as f:
             pickle.dump(embedding, f)
+
+        embeddings_dict[student_id] = embeddings
 
 
 app = Flask(__name__)
