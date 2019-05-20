@@ -44,7 +44,7 @@
             ref="calendar"
             :now="hackyWeekStartDay"
             :value="hackyWeekStartDay"
-            :day-format="(t,s)=>''" 
+            :day-format="(t,s)=>''"
             :interval-minutes="cellSize"
             :first-interval="firstSlot"
             :dark="true"
@@ -165,7 +165,7 @@ export default {
       // eslint-disable-next-line no-console
       console.log(tt)
       const pad = n => this.padNumber(n, 2)
-      tt.forEach(e => {
+      tt.forEach((e) => {
         const date = this.dayNumberToDate(e.day)
         const dateString = `${date.getFullYear()}-${pad(
           date.getMonth() + 1
@@ -198,9 +198,9 @@ export default {
               <div>${lecture.title}</div>
 
               <div>${this.slotsMap[lecture.start_timeslot]} to ${
-        this.slotsMap[lecture.end_timeslot]
-      }</div>
-      </div>`
+  this.slotsMap[lecture.end_timeslot]
+}</div>
+    </div>`
     }
   }
 }

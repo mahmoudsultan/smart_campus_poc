@@ -8,7 +8,7 @@
           ref="calendar"
           :now="hackyWeekStartDay"
           :value="hackyWeekStartDay"
-          :day-format="()=>''" 
+          :day-format="()=>''"
           :interval-minutes="slotSize"
           :first-interval="startSlot"
           :dark="true"

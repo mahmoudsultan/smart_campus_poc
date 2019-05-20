@@ -1,14 +1,17 @@
 from flask import Flask, request, Response, jsonify
 
 from attendance_system.utils import *
-import numpy as np
-import cv2 as cv
-import base64
+# from utils import *
 import jsonpickle
-import pickle
 import json
 from pathlib import Path
-import GPUtil
+
+# from attendance_system.utils import *
+import pickle
+import base64
+import cv2 as cv
+# from pathlib import Path
+import numpy as np
 
 def load_embeddings(student_dir):
     embeddings_path = student_dir/'embeddings'
@@ -20,8 +23,9 @@ def load_embeddings(student_dir):
 
 def initialize_embeddings(root_dir):
     embeddings_dict = {}
-    
+    print(f'initializing embedding, root_dir: {root_dir}')
     for student in root_dir.glob('*'):
+        print(student)
         embeddings_ = load_embeddings(student)
         embeddings_dict[student.parts[-1]] = embeddings_
         
@@ -44,7 +48,7 @@ def get_some_embeddings(embeddings_dict, student_ids):
     return embeddings, labels
 
 def convert_coords(coords):
-    return [coords[0], coords[3], coords[2], coords[1]]
+    return [coords[3], coords[0], coords[1], coords[2]]
 
 def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5, method='cnn'):
     known_embds, known_labels        = get_some_embeddings(embeddings_dict, student_ids)
@@ -52,40 +56,74 @@ def _get_people_in_image(img, embeddings_dicts, student_ids, k=3, threshold=0.5,
     
     knn = get_knn_model(k, known_embds, known_labels)
     
-    predictions = get_people_in_image(knn, known_labels, unknown_embds, k=k, threshold=threshold)
+    results = get_people_in_image(knn, known_labels, unknown_embds, k=k, threshold=threshold)
     
-    ret_val = {}
-    
-    for pred, loc in zip(predictions, unknown_locations):
-        if pred == "unknown":
-            continue
 
-        ret_val[pred] = convert_coords(list(loc))
-        
+    predictions_list = []
+    
+    for result, location in zip(results, unknown_locations):
+        predicted_name = result['prediction']
+        converted_location = convert_coords(list(location))
+
+        predictions_list.append({ "boundaries": converted_location,
+                        "student_id": predicted_name,
+                        "neighbors": result["neighbors"]})
+
+    
+    ret_val = { "face_boxes": predictions_list, "k": k, "threshold": threshold }
     return ret_val
 
 
 def convert_dict_to_JSON(dict):
-    lst = []
-    for key in dict.keys():
-        lst.append({"boundaries":dict[key], "student_id":key})
-    new_dict = {"face_boxes": lst}
-    return json.dumps(new_dict)
+    return json.dumps(dict)
+
+def get_image_from_request(request):
+    img_bytes = base64.decodebytes(request['image'].encode())
+    img = cv.imdecode(np.frombuffer(img_bytes, np.uint8), -1)
+    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+
+    return img
+
+def add_embedding_to_student(embedding, student_id):
+    student_dir = embeddings_path/student
+
+    if student_dir.exists():
+        embds = load_embeddings(student_dir)
+
+        embds = np.vstack((embds, embedding))
+        embeddings_dict[student_id] = embds
+    else:
+        student_dir.mkdir()
+        embeddings_path = student_dir/'embeddings'
+
+        embedding = embedding.reshape((-1, 1))
+
+        with open(str(embeddings_path), 'wb') as f:
+            pickle.dump(embedding, f)
+
+        embeddings_dict[student_id] = embeddings
+
 
 app = Flask(__name__)
-embeddings_dict = initialize_embeddings(Path('./input_embeddings'))
-
-try:
-    _ = GPUtil.getGPUs()
-    gpu_available = true
-except:
-    gpu_available = false
-
-print(embeddings_dict)
+embeddings_path = Path('./input_embeddings')
+embeddings_dict = initialize_embeddings(embeddings_path)
+# print(f'embeddings dict: {embeddings_dict}')
 
 @app.route('/')
 def index():
     return "<h1> Hello World </h1>"
+
+@app.route('/update_embeddings', methods=['POST'])
+def update_embeddings():
+    r = request
+    req = json.loads(r.data)
+
+    image = get_image_from_request(req)
+    student_id = req['id']
+    
+    embedding = get_embeddings_in_query_image(image, return_locations=False)
+    
+    add_embedding_to_student(embedding, student_id)
 
 @app.route('/attendance', methods=['POST'])
 def test():
@@ -94,18 +132,17 @@ def test():
     print('Received request')
     req = json.loads(r.data)
     
-    img_bytes = base64.decodebytes(req['image'].encode())
-    print(f'len(img_bytes) = {len(img_bytes)}')
-    img = cv.imdecode(np.frombuffer(img_bytes, np.uint8), -1)
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-    
+    img = get_image_from_request(req)
+
     print('Getting Predictions...')
     ids = req['ids']
-    print(f'ids: {ids}')
+    print(f'IDS: {ids}')
     predictions = _get_people_in_image(img, embeddings_dict, ids, method='cnn')
     print(predictions) 
+    
     response = convert_dict_to_JSON(predictions)
     print(response)    
+    
     response_pickled = jsonpickle.encode(response)
     print('Sending response')
     return jsonify(response)
