@@ -1,9 +1,7 @@
 <template>
   <v-container fluid grid-list-xs class="ma-0 pa-0">
-    <v-layout xs12 v-resize="drawCanvas" column>
+    <v-layout v-resize="drawCanvas" xs12 column>
       <v-flex id="canvas-container" class="parent">
-<<<<<<< HEAD
-=======
         <v-tooltip bottom class="layer">
           <!-- eslint-disable-next-line -->
           <template v-slot:activator="{ on }">
@@ -13,15 +11,14 @@
           </template>
           <span>Redraw Faceboxes</span>
         </v-tooltip>
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
         <div>
-          <v-img id="attendance-image" :src="image"/>
+          <v-img id="attendance-image" :src="image" />
         </div>
         <div class="layer">
-          <canvas id="draw-canvas"></canvas>
+          <canvas id="draw-canvas"/>
         </div>
         <div class="layer">
-          <canvas id="attendance-canvas"></canvas>
+          <canvas id="attendance-canvas"/>
         </div>
       </v-flex>
     </v-layout>
@@ -36,13 +33,10 @@ export default {
     image: String,
     faceBoxes: Array,
     drawMode: Boolean
-<<<<<<< HEAD
-=======
     // redraw: {
     //   type: Boolean,
     //   required: false
     // }
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
   },
   data() {
     return {
@@ -54,13 +48,21 @@ export default {
       boxStartCorner: null,
       boxEndCorner: null,
       drawStage: 0,
-<<<<<<< HEAD
-      scratchPadCanvas: null
-=======
       scratchPadCanvas: null,
       offScreenImageCanvas: null
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
     }
+  },
+  async mounted() {
+    await this.drawCanvas()
+    this.buildOffScreenImageCanvas()
+
+    const canvas = document.getElementById('attendance-canvas')
+    canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
+    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
+
+    this.scratchPadCanvas = document.getElementById('draw-canvas')
+
+    document.addEventListener('keyup', this.handleKeyUp)
   },
   methods: {
     async drawCanvas() {
@@ -84,19 +86,11 @@ export default {
     },
     updateScratchPadCanvasWidthAndHeight() {
       const attendanceImage = document.getElementById('attendance-image')
-<<<<<<< HEAD
-=======
-
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
       this.scratchPadCanvas.width = attendanceImage.clientWidth
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
     faceBoxDimensions(faceBox) {
-<<<<<<< HEAD
-      const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
-=======
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
         return Number.parseInt(v) * this.ratio
       })
       const width = x2 - x1
@@ -105,11 +99,7 @@ export default {
       return [x1, y1, width, height]
     },
     faceBoxDimensionsNotRatioed(faceBox) {
-<<<<<<< HEAD
-      const [x1, y1, x2, y2] = _.map(faceBox.boundries.split(','), (v) => {
-=======
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
         return Number.parseInt(v)
       })
       const width = x2 - x1
@@ -132,12 +122,9 @@ export default {
 
       canvas.getContext('2d').drawImage(this.offScreenCanvas, 0, 0)
     },
-<<<<<<< HEAD
-=======
     canvasCoordsToImageCoords([x, y]) {
       return [x / this.ratio, y / this.ratio]
     },
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
     handleMouseDownOnCanvas(event) {
       const clickX = event.layerX
       const clickY = event.layerY
@@ -150,12 +137,8 @@ export default {
         } else {
           this.boxEndCorner = [clickX, clickY]
           this.drawStage = 2
-<<<<<<< HEAD
-          this.$emit('facebox-drawn', this.boxStartCorner, this.boxEndCorner)
-=======
           this.$emit('facebox-drawn', this.canvasCoordsToImageCoords(this.boxStartCorner),
             this.canvasCoordsToImageCoords(this.boxEndCorner))
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
         }
       } else {
         this.buildOffScreenImageCanvas()
@@ -164,11 +147,7 @@ export default {
         if (faceBoxIndex !== -1) {
           const [x, y, width, height] = this.faceBoxDimensionsNotRatioed(faceBox)
           this.$emit('facebox-click', faceBoxIndex,
-<<<<<<< HEAD
-            this.getFaceBoxImageData(x, y, width, height))
-=======
             this.getFaceBoxImageBase64(x, y, width, height))
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
         }
       }
     },
@@ -194,10 +173,7 @@ export default {
       return new Promise((resolve, reject) => {
         const img = new window.Image()
         img.src = this.image
-<<<<<<< HEAD
-=======
         img.crossOrigin = 'Anonymous'
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
 
         img.onload = () => {
           resolve(img)
@@ -207,10 +183,6 @@ export default {
     buildOffScreenCanvas() {
       const canvas = document.getElementById('attendance-canvas')
       const offScreenCanvas = document.createElement('canvas')
-<<<<<<< HEAD
-=======
-
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
       offScreenCanvas.height = canvas.height
       offScreenCanvas.width = canvas.width
       return offScreenCanvas
@@ -226,8 +198,6 @@ export default {
     getFaceBoxImageData(x, y, width, height) {
       return this.offScreenImageCanvas.getContext('2d').getImageData(x, y, width, height)
     },
-<<<<<<< HEAD
-=======
     getFaceBoxImageBase64(x, y, width, height) {
       const imageData = this.getFaceBoxImageData(x, y, width, height)
       const canvas = document.createElement('canvas')
@@ -237,7 +207,6 @@ export default {
 
       return canvas.toDataURL('image/png')
     },
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
     handleKeyUp(event) {
       if (event.key === 'Escape') {
         this.boxStartCorner = null
@@ -246,28 +215,10 @@ export default {
         const ctx = this.scratchPadCanvas.getContext('2d')
         ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
       }
-<<<<<<< HEAD
-=======
     },
     async refreshFaceBoxes() {
       await this.drawCanvas()
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
     }
-  },
-  async mounted() {
-    await this.drawCanvas()
-<<<<<<< HEAD
-=======
-    this.buildOffScreenImageCanvas()
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
-
-    const canvas = document.getElementById('attendance-canvas')
-    canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
-    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
-
-    this.scratchPadCanvas = document.getElementById('draw-canvas')
-
-    document.addEventListener('keyup', this.handleKeyUp)
   },
   watch: {
     boxEndCorner: function (val) {
@@ -275,14 +226,6 @@ export default {
       const ctx = this.scratchPadCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.scratchPadCanvas.width, this.scratchPadCanvas.height)
 
-<<<<<<< HEAD
-      const [x1, y1] = this.boxStartCorner
-      const [x2, y2] = this.boxEndCorner
-      const width = x2 - x1
-      const height = y2 - y1
-      ctx.strokeStyle = '#ffffff'
-      ctx.strokeRect(x1, y1, width, height)
-=======
       if (val != null) {
         const [x1, y1] = this.boxStartCorner
         const [x2, y2] = this.boxEndCorner
@@ -291,7 +234,6 @@ export default {
         ctx.strokeStyle = '#ffffff'
         ctx.strokeRect(x1, y1, width, height)
       }
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
     },
     drawMode: function (val) {
       if (!val) {
@@ -305,8 +247,6 @@ export default {
         this.scratchPadCanvas.style.cursor = 'crosshair'
       }
     }
-<<<<<<< HEAD
-=======
     // redraw: async function (val) {
     //   if (val) {
     //     // eslint-disable-next-line
@@ -315,7 +255,6 @@ export default {
     //     this.redraw = false
     //   }
     // }
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
   }
 }
 </script>
@@ -346,8 +285,6 @@ canvas {
 #draw-canvas {
   z-index: 3000;
 }
-<<<<<<< HEAD
-=======
 
 .refresh-btn {
   position: absolute;
@@ -357,5 +294,4 @@ canvas {
   opacity: 0.8;
 }
 
->>>>>>> 310f6bc0acc216c41741b036f96d59b3080c969b
 </style>
