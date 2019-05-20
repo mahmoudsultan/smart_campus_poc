@@ -13,8 +13,8 @@ RSpec.describe CoursesController, type: :controller do
           users.each do |id|
             terms.each do |term|
               years.each do |year|
-                get :show_lectures, params: {id: id, term: term, year: year}
-                expect(response).to have_http_status(:success)
+                get :show_lectures, params: {pid: profid, term: term, year: year}
+                expect(response).to have_http_status(:unauthorized)
               end
             end
           end

@@ -2,6 +2,14 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 const pkg = require('./package')
 
 module.exports = {
+  env: {
+    // routes that need no authentication
+    noAuth: ['/']
+  },
+
+  router: {
+    middleware: 'authenticate'
+  },
   mode: 'universal',
   /*
   ** Headers of the page
@@ -42,7 +50,9 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '@/plugins/vuetify' }
+    { src: '@/plugins/vuetify' },
+    { src: '@/plugins/axios' },
+    { src: '@/plugins/cancancan' }
   ],
 
   /*
@@ -51,7 +61,8 @@ module.exports = {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    'cookie-universal-nuxt'
   ],
   /*
   ** Axios module configuration

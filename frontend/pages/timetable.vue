@@ -9,15 +9,15 @@
           <v-breadcrumbs-item
             slot="item"
             slot-scope="{ item }"
-            exact
             :to="item.to"
+            exact
           >
             <v-menu open-on-hover top offset-y>
               <template v-slot:activator="{ on }">
                 <v-btn
+                  v-on="on"
                   color="primary"
                   dark
-                  v-on="on"
                 >
                   {{ item.text }}
                 </v-btn>
@@ -60,9 +60,9 @@
                   :to="{name: 'lecture_details-lec_id', params:{lec_id:lec.lec_id}}"
                   :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
                             height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
-                  class="my-event with-time"
                   @click="open(lec)"
                   v-html="lectureToHtml(lec)"
+                  class="my-event with-time"
                 />
                 </nuxt-link>
               </template>
@@ -128,9 +128,28 @@ export default {
       return start + residue
     }
   },
+  // fetch({ app: { $cookies, $axios }, store }) {
+  //   const session = $cookies.get('session')
+  //   // eslint-disable-next-line no-console
+  //   console.log(session)
+  //   // eslint-disable-next-line no-console
+  //   console.log('hiiiiiiiiiiii', process.server, process.client)
+  //   if (session) {
+  //     const authHeaders = session.tokens
+  //     store.commit('user', session.user)
+  //     store.commit('auth', authHeaders)
+
+  //     // eslint-disable-next-line no-console
+  //     console.log(store.state)
+  //   }
+  // },
   mounted() {
     // eslint-disable-next-line no-console
-    console.log(this.prof_id)
+    console.log('userrrrrrrrrrrrrrrrrrr')
+    // eslint-disable-next-line no-console
+    console.log(this.$store.state)
+    // eslint-disable-next-line no-console
+    console.log(this.$ability)
     this.$axios
       .$get('/courses/years')
       .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
@@ -139,7 +158,9 @@ export default {
       .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
-      .$get(`/courses/${this.uid}/${this.current_term}/${this.current_year}`)
+      .$get(
+        `/lectures/${this.current_term}/${this.current_year}`
+      )
       .then(tt => this.fillTimeTableMap(tt))
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
@@ -157,13 +178,12 @@ export default {
         item.text = year
       }
       this.$axios
-        .$get(`/courses/${this.uid}/${term}/${year}`)
+        .$get(`/lectures/${term}/${year}`)
         .then(tt => this.fillTimeTableMap(tt))
     },
     fillTimeTableMap(tt) {
       this.timeTableMap = {}
-      // eslint-disable-next-line no-console
-      console.log(tt)
+
       const pad = n => this.padNumber(n, 2)
       tt.forEach((e) => {
         const date = this.dayNumberToDate(e.day)
@@ -200,7 +220,7 @@ export default {
               <div>${this.slotsMap[lecture.start_timeslot]} to ${
   this.slotsMap[lecture.end_timeslot]
 }</div>
-    </div>`
+      </div>`
     }
   }
 }

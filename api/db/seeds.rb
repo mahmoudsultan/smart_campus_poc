@@ -50,19 +50,13 @@ klasses.each do |klass|
 end
 puts 'And you know what? Klasses are created too!'
 
-
 # seed users
 users = ActiveSupport::JSON.decode(File.read('db/seeds/user.json'))
 
-student_id = 1
 users.each_with_index do |a, i|
   a[:email] = "aaaaa#{i}@gmail.com"
   a[:password] = '123456789'
   a[:role] = (rand(2) == 1 ? 'professor' : 'student')
-  if a[:role] == 'student'
-    a[:student_id] = student_id
-    student_id += 1
-  end
   User.create!(a)
 end
 puts "At this point I don't have to tell you that everything is going smooth."
@@ -70,7 +64,7 @@ puts "At this point I don't have to tell you that everything is going smooth."
 # seed lectures
 days = %i[saturday sunday monday tuesday wednesday thrusday friday]
 slots = (1..9)
-slot_size = (0..4)
+slot_size = (0..4) 
 
 days.each do |day|
   i = 0
@@ -85,40 +79,21 @@ days.each do |day|
 end
 puts 'Oh my days! Lectures... Lectures are indeed created! '
 
-
-# seed assigning of professors to groups
-Group.all.each do |g|
-  rand_prof = User.where(role: :professor).find(User.where(role: :professor).pluck(:id).sample)
-  GroupUser.create!(:user=>rand_prof, :group=>g)
-end
-
-
-# seed assigning of students to groups
-students = User.where(role: :student)
-students.each do |stud|
-  j = 0
-  25.times do
-    rand_group = Group.offset(j).first
-    j+=1
-    GroupUser.create!(:user=>stud, :group=>rand_group)
-  end
-end
-
-
 # seed lecture_instances
+
 def rand_time(from, to = Time.now)
   Time.at(rand_in_range(from.to_f, to.to_f))
 end
 
 def rand_in_range(from, to)
   rand * (to - from) + from
-  end
+end
 
-week_numbers = (1..14)
+week_numbers = (1..7)
 
 Lecture.all.each do |lecture|
   week_numbers.each do |week|
-    lecture_date = rand_time((14 - week).days.ago)
+    lecture_date = rand_time((7 - week).days.ago)
     lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
     LectureInstance.create!(lecture_instance)
   end
@@ -137,18 +112,14 @@ User.all.each do |user|
 end
 puts 'Users enters the system, Prepare for Errors!'
 
-# seed attendance sheets and faceboxes
-
+puts 'And here we seed some faceboxes'
+# seed attendance sheets
 states = %i[recognized detected alleged]
 LectureInstance.all.each do |inst|
-  users = LectureInstance.joins({lecture: {group: {group_users: :user}}}).where(id: inst.id,users: {role: :student}).select('users.id')
+  users = LectureInstance.joins({lecture: {group: {group_users: :user}}}).where(id: inst.id,users: {role: User.roles[:student]}).select('users.id')
   sheet = AttendanceSheet.create(lecture_instance_id: inst.id)
   users.each do |user|
     FaceBox.create!(user_id: user.id, attendance_sheet:sheet, state:states.sample, boundaries: '(1,1)')
   end
 end
-
-puts 'Now users have some attendance points and some are gonna fail.'
-puts 'I am pretending to be like my friend up there. So if you like my way please subscribe.'
-
 puts 'This was fun... Goodbye, Visit Soon when you get stuck and need to drop the database!'

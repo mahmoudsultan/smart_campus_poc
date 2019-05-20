@@ -20,7 +20,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title>
-            {{ user.name }}
+            {{ user.name | user.role}}
           </v-list-tile-title>
         </v-list-tile>
 
@@ -51,6 +51,12 @@
       >
         {{ title }}
       </v-toolbar-title>
+
+      <v-spacer />
+
+      <v-btn @click="logOut" small color="primary">
+        Log out
+      </v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -68,7 +74,7 @@
         xs12
         class="font-weight-thin"
       >
-        &copy;2018 — <strong>Faculty of Engineering?</strong>
+        &copy;2018 — <strong>Faculty of Engineering</strong>
       </v-flex>
     </v-footer>
   </v-app>
@@ -78,10 +84,8 @@
 export default {
   data() {
     return {
+
       drawer: true,
-      user: {
-        name: 'John Doe'
-      },
       items: [
         {
           icon: 'apps',
@@ -96,6 +100,21 @@ export default {
       ],
       title: 'University System'
     }
+  },
+  computed: {
+    user: function () {
+      // eslint-disable-next-line no-console
+      console.log(this.$store.state.auth.user)
+      return this.$store.state.auth.user
+    }
+  },
+  methods: {
+    logOut() {
+      this.$store.dispatch('auth/logout', { app: this }).then(() => {
+        this.$router.push('/')
+      })
+    }
   }
 }
+
 </script>
