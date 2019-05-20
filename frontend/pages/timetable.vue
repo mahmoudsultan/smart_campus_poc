@@ -88,7 +88,7 @@ export default {
     cellSpacing: 10,
     current_term: 'fall',
     current_year: 2018,
-    prof_id: 83,
+    uid: 2,
 
     menu_items: {
       years: [],
@@ -139,11 +139,8 @@ export default {
       .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
 
     this.$axios
-      .$get(
-        `/lectures/${this.prof_id}/${this.current_term}/${this.current_year}`
-      )
+      .$get(`/courses/${this.uid}/${this.current_term}/${this.current_year}`)
       .then(tt => this.fillTimeTableMap(tt))
-
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
@@ -160,7 +157,7 @@ export default {
         item.text = year
       }
       this.$axios
-        .$get(`/lectures/${this.prof_id}/${term}/${year}`)
+        .$get(`/courses/${this.uid}/${term}/${year}`)
         .then(tt => this.fillTimeTableMap(tt))
     },
     fillTimeTableMap(tt) {

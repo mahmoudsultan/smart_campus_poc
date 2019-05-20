@@ -50,6 +50,7 @@ klasses.each do |klass|
 end
 puts 'And you know what? Klasses are created too!'
 
+
 # seed users
 users = ActiveSupport::JSON.decode(File.read('db/seeds/user.json'))
 
@@ -84,8 +85,27 @@ days.each do |day|
 end
 puts 'Oh my days! Lectures... Lectures are indeed created! '
 
-# seed lecture_instances
 
+# seed assigning of professors to groups
+Group.all.each do |g|
+  rand_prof = User.where(role: :professor).find(User.where(role: :professor).pluck(:id).sample)
+  GroupUser.create!(:user=>rand_prof, :group=>g)
+end
+
+
+# seed assigning of students to groups
+students = User.where(role: :student)
+students.each do |stud|
+  j = 0
+  25.times do
+    rand_group = Group.offset(j).first
+    j+=1
+    GroupUser.create!(:user=>stud, :group=>rand_group)
+  end
+end
+
+
+# seed lecture_instances
 def rand_time(from, to = Time.now)
   Time.at(rand_in_range(from.to_f, to.to_f))
 end
