@@ -145,18 +145,28 @@ def get_knn_model(k, face_encodings, labels):
     return knn
 
 def get_people_in_image(knn, known_labels, embds, k=3, threshold=0.5):
-    predictions = []
+    results = []
+
     distances, preds = knn.kneighbors(embds, n_neighbors=k)
 
     for dist, pred, face_emb in zip(distances, preds, embds):
-        mean_dist = sum(dist)/len(dist)
+        mean_dist = sum(dist) / len(dist)
+
+        data = {}
+        data['neighbors'] = {}
+        data['neighbors']['names'] = [known_labels[pred_] for pred_ in pred] 
+        data['neighbors']['distances'] = dist.tolist()
+
         if mean_dist > threshold:
-            name='unknown'
+            name = 'UNKNOWN'
         else:
             name = known_labels[pred[0]]
+        
+        data['prediction'] = name
 
-        predictions.append(name)
-    return predictions
+        results.append(data)
+
+    return results
 
 def display_results(img, locations=None, names=None, detection_model=None, border_color=(0, 0, 255)):
     img = img.copy()

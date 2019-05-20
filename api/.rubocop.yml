@@ -9,7 +9,9 @@ AllCops:
   Exclude:
     - 'bin/*'
     - 'db/migrate/*'
+    - 'db/seeds.rb'
 
 Metrics/BlockLength:
   Exclude:
     - 'db/schema.rb'
+    - 'spec/**/*'

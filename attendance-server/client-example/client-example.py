@@ -6,18 +6,21 @@ import os
 
 print('Sending request...')
 
-address = 'http://13.59.94.81:50000/'
+address = 'http://192.168.43.229:50000/'
+# address = 'http://3.17.65.133:50000/'
 url = address + 'attendance'
 
-image_path = Path('./input_images/IMG_20190224_172925.jpg')
+image_path = Path('./IMG_20190224_172925-min.jpg')
 
 content_type = 'image/jpeg'
 headers = {'content-type': content_type}
 
-with open(image_path, 'rb') as f:
+with open(str(image_path), 'rb') as f:
     img = f.read()
 
-response = requests.post(url, data=base64.encodebytes(img), headers=headers)
+request_body = {'image': base64.encodebytes(img).decode('utf-8'), 'ids': ['taw2am', 'magdy', 'aly', 'ezz', 'rana', 'nada', 'menna', 'fatma']}
+
+response = requests.post(url, json.dumps(request_body), headers=headers)
 response = json.loads(response.json())
-for k in response.keys():
-    print(f'Found {k} at {response[k]}')
+for elem in response['face_boxes']:
+    print(elem)

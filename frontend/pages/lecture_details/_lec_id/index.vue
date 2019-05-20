@@ -98,10 +98,10 @@ export default {
     if (localStorage.getItem(lecId)) {
       this.lecture = JSON.parse(localStorage.getItem(lecId))
     }
-    this.$axios.get(`/lecture_instances/${lecId}`).then(res => {
+    this.$axios.get(`/lecture_instances/${lecId}`).then((res) => {
       // eslint-disable-next-line no-console
       console.log(res.data)
-      res.data.forEach(li => {
+      res.data.forEach((li) => {
         const d = new Date(li.date)
         this.lecture_instances.push({
           week_number: li.week_number,

@@ -7,4 +7,10 @@ class FaceBox < ApplicationRecord
   belongs_to :attendance_sheet
 
   validates :boundaries, presence: true
+
+  def serializable_hash(options = nil)
+    super(options).merge(
+      student_id: user&.student_id
+    )
+  end
 end

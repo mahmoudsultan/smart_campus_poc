@@ -39,3 +39,45 @@ services:
       - /frontend/node_modules
     command:
       "npm run dev"
+
+  attendance:
+    build: ./attendance-server/
+    container_name: deepx-atendance
+    ports:
+      - "50000:50000"
+    volumes:
+      - ./attendance-server/:/attendance-server
+    depends_on:
+      - "api"
+
+  kafka:
+    image: spotify/kafka
+    hostname: kafka
+    container_name: deepx-kafka
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      - "ADVERTISED_HOST=kafka"
+      - "ADVERTISED_PORT=9092"
+      - "AUTO_CREATE_TOPICS=true"
+    command: >
+      bash -c
+      "(sleep 15s &&
+      /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
+      --create
+      --zookeeper
+      localhost:2181 --replication-factor 1 --partitions 1
+      --topic vid1 &) && (supervisord -n)"                            # creating a dummy topic
+  
+  producer:
+    build: ./video-producer/
+    container_name: deepx-producer
+    ports:
+      - "7000:7000"
+    command:
+      "python kafka-video-producer.py -t vid1 -b localhost:9092 -f video.mp4"
+    volumes:
+      - ./video-producer/:/video-producer/
+    depends_on:
+      - "kafka"
