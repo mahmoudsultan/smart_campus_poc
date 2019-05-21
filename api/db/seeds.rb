@@ -52,11 +52,15 @@ puts 'And you know what? Klasses are created too!'
 
 # seed users
 users = ActiveSupport::JSON.decode(File.read('db/seeds/user.json'))
-
+student_id=0
 users.each_with_index do |a, i|
   a[:email] = "aaaaa#{i}@gmail.com"
   a[:password] = '123456789'
   a[:role] = (rand(2) == 1 ? 'professor' : 'student')
+  if a[:role] == 'student'
+    a[:student_id] = student_id
+    student_id+=1
+  end
   User.create!(a)
 end
 puts "At this point I don't have to tell you that everything is going smooth."
