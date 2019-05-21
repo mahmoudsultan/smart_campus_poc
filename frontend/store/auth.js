@@ -36,6 +36,7 @@ function setHeaders(response, store, commit) {
     ['access-token', 'client', 'uid'])
 
   commit('headers', authHeaders)
+
   store.$axios.get('/users/roles').then((rolesResponse) => {
     const session = {
       headers: authHeaders,
@@ -59,6 +60,10 @@ export const actions = {
     return new Promise((resolve, reject) => {
       this.$axios.post('/auth/sign_in', { email: email, password: password })
         .then((response) => {
+          // eslint-disable-next-line no-console
+          console.log('headerssss')
+          // eslint-disable-next-line no-console
+          console.log(response.headers)
           setHeaders(response, this, commit)
           resolve()
         }).catch((error) => {

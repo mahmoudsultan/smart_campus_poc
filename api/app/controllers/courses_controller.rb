@@ -54,9 +54,6 @@ class CoursesController < ApplicationController
     render json: terms
   end
 
-<<<<<<< HEAD
-end
-=======
   def home
     render json: {}
   end
@@ -77,4 +74,3 @@ end
 # AND `course_offerings`.`term`='fall'  AND `course_offerings`.`year`='2018');
 
 # CourseOffering.joins({ lectures: {klass: :building} }, :course, groups: { group_users: :user } ).where(users: { id: 57 },course_offerings: { term: params[:term], year: params[:year] }).select('users.id as user_id','courses.code','lectures.id as lec_id')
->>>>>>> 8-devise_token_auth

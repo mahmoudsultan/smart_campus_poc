@@ -280,10 +280,10 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
+  cancancan
   carrierwave (~> 1.0)
   carrierwave-base64
   database_cleaner
-  cancancan
   devise
   devise_token_auth
   factory_bot_rails
