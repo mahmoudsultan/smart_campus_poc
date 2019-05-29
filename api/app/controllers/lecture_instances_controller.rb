@@ -23,6 +23,7 @@ class LectureInstancesController < ApplicationController
         lecture_instances = LectureInstance.where(lecture: params[:lec_id])
                             .select(%i[id date week_number])
     elsif current_user.role == 'student'
+        puts 'student'
         lecture_instances = FaceBox.joins({attendance_sheet: :lecture_instance},:user)
                         .where(lecture_instances: {lecture_id: params[:lec_id]}, 
                         users: {uid: request.headers[:uid]})
@@ -30,6 +31,8 @@ class LectureInstancesController < ApplicationController
                                 'lecture_instances.date', 'lecture_instances.week_number')
     
     end
+
+    puts lecture_instances.as_json
     render json: lecture_instances , status: :ok
   end
 

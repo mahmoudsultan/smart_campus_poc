@@ -1,19 +1,14 @@
 class CoursesController < ApplicationController
-  
   before_action :print_user
   before_action :authenticate_user!, except: [:home]
   load_and_authorize_resource
   rescue_from CanCan::AccessDenied do |exception|
-    respond_to do |format|
-      format.json { head :forbidden }
-      format.html { head :forbidden }
-      format.js   { head :forbidden }
-    end
+    render json: {error: 'access denied'}, status: :forbidden
   end
 
 
   def print_user
-    puts current_user
+    puts current_user.as_json
   
   end
 
