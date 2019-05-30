@@ -20,7 +20,7 @@
             />
           </v-list-tile-avatar>
           <v-list-tile-title>
-            {{ user.name | user.role}}
+            {{ user.name | user.role }}
           </v-list-tile-title>
         </v-list-tile>
 
@@ -54,7 +54,7 @@
 
       <v-spacer />
 
-      <v-btn @click="logOut" small color="primary">
+      <v-btn v-if="isAuthenticated" @click="logOutWrapper" small color="primary">
         Log out
       </v-btn>
     </v-toolbar>
@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -88,13 +89,18 @@ export default {
       drawer: true,
       items: [
         {
+          icon: 'fa-lock',
+          title: 'sign in',
+          to: '/sign_in'
+        },
+        {
           icon: 'apps',
-          title: 'Welcome',
+          title: 'Home',
           to: '/'
         },
         {
           icon: 'bubble_chart',
-          title: 'timetable',
+          title: 'Timetable',
           to: '/timetable'
         }
       ],
@@ -106,11 +112,14 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.$store.state.auth.user)
       return this.$store.state.auth.user
-    }
+    },
+    ...mapGetters({ isAuthenticated: 'auth/isAuthenticated' })
   },
   methods: {
-    logOut() {
-      this.$store.dispatch('auth/logout', { app: this }).then(() => {
+    ...mapActions({ logOut: 'auth/logout' }),
+
+    logOutWrapper() {
+      this.logOut().then(() => {
         this.$router.push('/')
       })
     }
