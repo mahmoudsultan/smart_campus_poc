@@ -1,51 +1,54 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      clipped
-      fixed
-      hide-overlay
-    >
-      <v-list expand>
-        <v-list-tile
-          avatar
-        >
-          <v-list-tile-avatar
-            color="white"
+    <template v-if="isAuthenticated">
+      <v-navigation-drawer
+        v-model="drawer"
+        app
+        clipped
+        fixed
+        hide-overlay
+      >
+        <v-list expand>
+          <v-list-tile
+            avatar
           >
-            <v-img
-              src="https://source.unsplash.com/600x320/?face,human"
-              contain
-            />
-          </v-list-tile-avatar>
-          <v-list-tile-title>
-            {{ user.name | user.role }}
-          </v-list-tile-title>
-        </v-list-tile>
+            <v-list-tile-avatar
+              color="white"
+            >
+              <v-img
+                src="https://source.unsplash.com/600x320/?face,human"
+                contain
+              />
+            </v-list-tile-avatar>
+            <v-list-tile-title>
+              {{ user.name | user.role }}
+            </v-list-tile-title>
+          </v-list-tile>
 
-        <v-list-tile
-          v-for="item in items"
-          :to="item.to"
-          :key="item.title"
-          no-action
-        >
-          <v-list-tile-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title
-            v-text="item.title"
-          />
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
+          <v-list-tile
+            v-for="item in items"
+            :to="item.to"
+            :key="item.title"
+            no-action
+          >
+            <v-list-tile-action>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title
+              v-text="item.title"
+            />
+          </v-list-tile>
+        </v-list>
+      </v-navigation-drawer>
+    </template>
+
     <v-toolbar
       app
       clipped-left
       fixed
       color="primary white--text"
     >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer" color="white--text" />
+      <v-toolbar-side-icon v-if="Authenticated" @click.stop="drawer = !drawer" color="white--text" />
       <v-toolbar-title
         class="font-weight-thin"
       >
