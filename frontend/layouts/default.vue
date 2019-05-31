@@ -48,7 +48,7 @@
       fixed
       color="primary white--text"
     >
-      <v-toolbar-side-icon v-if="Authenticated" @click.stop="drawer = !drawer" color="white--text" />
+      <v-toolbar-side-icon v-if="isAuthenticated" @click.stop="drawer = !drawer" color="white--text" />
       <v-toolbar-title
         class="font-weight-thin"
       >
