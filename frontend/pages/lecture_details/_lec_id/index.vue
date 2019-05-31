@@ -59,9 +59,14 @@
               {{ props.item.date }}
             </td>
             <td class="text-xs-left">
-              <v-btn v-if="user.role==='professor'" color="primary" fab small dark>
-                <v-icon>edit</v-icon>
-              </v-btn>
+              <nuxt-link
+                :to="{name: 'lecture-id-attendance', params:{id:lecture.id}}"
+                v-if="user.role==='professor'"
+              >
+                <v-btn color="primary" fab small dark>
+                  <v-icon>assignment</v-icon>
+                </v-btn>
+              </nuxt-link>
               <template v-if="user.role==='student'">
                 {{ props.item.state }}
               </template>
@@ -77,7 +82,6 @@
 export default {
   data: () => ({
     lecture: {},
-    // user: this.$store.state.auth.user.role,
     user: {},
     lecture_instances: [],
     headers: [
@@ -97,11 +101,10 @@ export default {
   }),
   async mounted() {
     const lecId = this.$route.params.lec_id
-    // eslint-disable-next-line no-console
-    console.log(lecId)
     if (localStorage.getItem(lecId)) {
       this.lecture = JSON.parse(localStorage.getItem(lecId))
     }
+    this.lecture.id = lecId
     const lectureInstances = (await this.$axios.get(`/lecture_instances/${lecId}`)).data
 
     lectureInstances.forEach((li) => {
