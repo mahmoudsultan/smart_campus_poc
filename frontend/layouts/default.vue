@@ -77,7 +77,7 @@
         xs12
         class="font-weight-thin"
       >
-        &copy;2018 — <strong>Faculty of Engineering</strong>
+        &copy;{{ currentYear }} — <strong>Faculty of Engineering</strong>
       </v-flex>
     </v-footer>
   </v-app>
@@ -92,17 +92,12 @@ export default {
       drawer: true,
       items: [
         {
-          icon: 'fa-lock',
-          title: 'sign in',
-          to: '/sign_in'
-        },
-        {
-          icon: 'apps',
+          icon: 'person',
           title: 'Home',
           to: '/'
         },
         {
-          icon: 'bubble_chart',
+          icon: 'event',
           title: 'Timetable',
           to: '/timetable'
         }
@@ -111,6 +106,9 @@ export default {
     }
   },
   computed: {
+    currentYear() {
+      return new Date().getFullYear()
+    },
     user: function () {
       // eslint-disable-next-line no-console
       console.log(this.$store.state.auth.user)

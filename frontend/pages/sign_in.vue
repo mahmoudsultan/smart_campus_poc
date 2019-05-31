@@ -62,7 +62,7 @@
                   </v-btn>
 
                   <v-btn @click="()=>newUser=!newUser" flat small color="primary">
-                    {{ newUser?'already a user? sign in':'new user? sign up' }}
+                    {{ signUpToggleText }}
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -102,6 +102,9 @@ export default {
     newUser: false
   }),
   computed: {
+    signUpToggleText() {
+      return this.newUser ? 'already a user? sign in' : 'new user? sign up'
+    },
     formTitle() {
       return this.newUser ? 'Sign Up' : 'Sign In'
     },
