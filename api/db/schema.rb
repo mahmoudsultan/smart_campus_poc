@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_07_235838) do
+ActiveRecord::Schema.define(version: 2019_05_31_160043) do
 
   create_table "activity_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.datetime "date"
@@ -68,6 +68,15 @@ ActiveRecord::Schema.define(version: 2019_05_07_235838) do
     t.datetime "updated_at", null: false
     t.string "image"
     t.index ["lecture_instance_id"], name: "index_attendance_sheets_on_lecture_instance_id"
+  end
+
+  create_table "avatars", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "image"
+    t.bigint "user_id"
+    t.boolean "is_main"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_avatars_on_user_id"
   end
 
   create_table "buildings", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -219,6 +228,7 @@ ActiveRecord::Schema.define(version: 2019_05_07_235838) do
   add_foreign_key "attendance_issues", "face_boxes"
   add_foreign_key "attendance_issues", "users"
   add_foreign_key "attendance_sheets", "lecture_instances"
+  add_foreign_key "avatars", "users"
   add_foreign_key "count_logs", "klasses"
   add_foreign_key "course_offerings", "courses"
   add_foreign_key "face_boxes", "attendance_sheets"

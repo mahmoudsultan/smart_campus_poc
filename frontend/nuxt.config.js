@@ -4,7 +4,7 @@ const pkg = require('./package')
 module.exports = {
   env: {
     // routes that need no authentication
-    noAuth: ['/']
+    noAuth: []
   },
 
   router: {
