@@ -1,93 +1,107 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
+  <v-container
+    fill-height
+    fluid
+    grid-list-xl
   >
-    <v-flex
-      xs12
-      sm8
-      md6
+    <v-layout
+      justify-center
+      wrap
     >
-      <div class="text-xs-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-            >documentation</a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              title="chat"
-            >discord</a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              title="contribute"
-            >issue board</a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-          >Nuxt Documentation</a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-          >Nuxt GitHub</a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            flat
-            nuxt
-            to="/inspire"
+      <v-flex
+        xs12
+        md8
+      >
+        <v-form>
+          <v-container py-0>
+            <v-layout wrap>
+              <v-flex
+                xs12
+                md4
+              >
+                <v-text-field
+                  :value="user.department"
+                  label="Department"
+                  disabled
+                />
+              </v-flex>
+              <v-flex
+                xs12
+                md4
+              >
+                <v-text-field
+                  :value="user.name"
+                  label="Name"
+                />
+              </v-flex>
+              <v-flex
+                xs12
+                md4
+              >
+                <v-text-field
+                  :value="user.email"
+                  label="Email"
+                />
+              </v-flex>
+
+              <v-flex
+                xs12
+                text-xs-right
+              >
+                <v-btn
+                  class="mx-0 font-weight-light"
+                  color="success"
+                >
+                  Update Profile
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-form>
+        </material-card>
+      </v-flex>
+      <v-flex
+        xs12
+        md4
+      >
+        <material-card class="v-card-profile">
+          <v-avatar
+            slot="offset"
+            class="mx-auto d-block"
+            size="130"
           >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+            <img
+              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
+            >
+          </v-avatar>
+          <v-card-text class="text-xs-center">
+            <h4 class="card-title font-weight-light">
+              {{ user.name }}
+            </h4>
+            <h4 class="category text-gray font-weight-light">
+              {{ user.role }}
+            </h4>
+            <h4 class="category text-gray font-weight-light">
+              {{ user.department }}
+            </h4>
+          </v-card-text>
+        </material-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    Logo,
-    VuetifyLogo
+  computed: {
+    ...mapGetters({ 'user': 'auth/user' })
+  },
+  mounted() {
+    // eslint-disable-next-line no-console
+    console.log(this.user)
   }
-  // ,
-  // beforeCreate() {
-  //   const existingSession = this.$cookie.get('session')
 
-  //   if (existingSession && existingSession.length) {
-  //     const session = JSON.parse(existingSession)
-  //     this.$store.commit('user', session.user)
-  //     this.$store.commit('auth', session.tokens)
-  //   }
-  // }
 }
 </script>

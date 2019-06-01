@@ -91,5 +91,8 @@ function isEmpty(obj) {
 export const getters = {
   isAuthenticated(state) {
     return !isEmpty(state.headers)
+  },
+  user(state) {
+    return state.user
   }
 }
