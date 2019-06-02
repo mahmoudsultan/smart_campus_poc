@@ -1,5 +1,4 @@
 class Avatar < ApplicationRecord
   belongs_to :user
-  mount_base64_uploader :avatar, AvatarUploader, file_name: ->(a) { "#{a.user.id}-#{a.id}" }
-
+  mount_base64_uploader :image, AvatarUploader, file_name: ->(a) { "#{rand(1000)}" }
 end

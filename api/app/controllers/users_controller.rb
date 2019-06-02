@@ -39,11 +39,6 @@ class UsersController < ApplicationController
   end
 
   private
-
-  # def authenticate
-  #   redirect_to root_path, notice: "You must login first" if !current_user  
-  # end
-
   def set_user
     @user = User.find(params[:id] || params[:user_id])
   end
