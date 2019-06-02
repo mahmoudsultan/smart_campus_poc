@@ -51,7 +51,7 @@
               :image="image"
               :students="studentsInfoObj"
               :issues="issues"
-              @updateCount="updateIssuesCount"
+              @updatecount="updateIssuesCount"
             />
           </v-tab-item>
         </v-tabs>
@@ -153,6 +153,7 @@ export default {
       const studentsInfo = _.each(studentsInfoResponse.data, (studentInfo) => {
         studentInfo.image = this.$axios.defaults.baseURL + studentInfo.image.url
       })
+
       const studentIds = _.map(studentsInfo, (studentInfo) => {
         return studentInfo.student_id
       })

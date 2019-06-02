@@ -27,11 +27,12 @@
       <div v-else>
         <v-layout v-if="issueMade" row wrap>
           <v-flex xs12>
-            <v-card color="warning">
+            <v-card :color="(issueMade.state === 'resolved') ? 'success' : 'warning'">
               <v-card-text class="">
                 <v-icon>info</v-icon>
                 <span class="body-2 text-uppercase font-weight-black">
                   You've already made an issue in this Attendance sheet
+                  Issue Status: {{ issueMade.state }}
                 </span>
               </v-card-text>
             </v-card>
@@ -129,7 +130,7 @@ export default {
 
     await Promise.all([attendanceSheetRequest, attendanceIssueByStudent]).then(([attendanceSheetRequestResponse, attendanceIssueByStudentResponse]) => {
       if (attendanceIssueByStudentResponse.data.length) {
-        this.issueMade = attendanceSheetRequestResponse.data
+        this.issueMade = attendanceIssueByStudentResponse.data[0]
       }
 
       this.image = this.$axios.defaults.baseURL + attendanceSheetRequestResponse.data.image.url

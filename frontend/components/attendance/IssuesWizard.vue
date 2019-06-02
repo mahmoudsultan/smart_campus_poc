@@ -90,6 +90,7 @@ export default {
       this.$axios.post(`lecture_instances/${this.$route.params.id}/attendance_issues/${issue.id}/resolve`)
         .then(() => {
           issue.state = 'resolved'
+          this.$emit('updatecount')
         }).catch((err) => {
           console.error(err) // eslint-disable-line
         })

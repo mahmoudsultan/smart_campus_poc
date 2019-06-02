@@ -300,10 +300,15 @@ export default {
       this.attendanceItemsLoading = true
       let studentName = ''
       let studentImage = null
+
       this.attendanceItems = _.map(this.faceBoxes, (faceBox, index) => {
         if (faceBox.student_id) {
-          studentName = this.students[faceBox.student_id].name
-          studentImage = this.students[faceBox.student_id].image
+          try {
+            studentName = this.students[faceBox.student_id].name
+            studentImage = this.students[faceBox.student_id].image
+          } catch (error) {
+            studentName = ''
+          }
         } else {
           studentName = 'Not Recognized'
         }
@@ -315,6 +320,7 @@ export default {
           studentImage
         }
       })
+
       this.attendanceItemsLoading = false
     },
     emitSaveEvent() {

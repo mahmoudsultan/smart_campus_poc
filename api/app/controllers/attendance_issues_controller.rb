@@ -6,7 +6,7 @@ class AttendanceIssuesController < ApplicationController
 
   def index
     student_issue = @attendance_sheet.issues.where(user: @student)
-    render json: student_issue
+    render json: student_issue, methods: %i[state]
   end
 
   def create
@@ -62,7 +62,7 @@ class AttendanceIssuesController < ApplicationController
 
   def set_student
     # TODO: Set user using current_user
-    @student = User.find 5
+    @student = User.find 4
   end
 
   def set_issue
