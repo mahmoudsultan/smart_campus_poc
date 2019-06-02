@@ -49,7 +49,14 @@ Rails.application.routes.draw do
     get 'students', to: 'lecture_instances#students'
     get 'attendance_sheet', to: 'lecture_instances#attendance_sheet'
     
-    resources 'attendance_issues', only: %i[index create]
+    resources 'attendance_issues', only: %i[index create] do
+      collection do
+        scope ':attendance_issue_id' do
+          post 'resolve'
+          post 'reject'
+        end
+      end
+    end
   end
 
   # Upload Image Route

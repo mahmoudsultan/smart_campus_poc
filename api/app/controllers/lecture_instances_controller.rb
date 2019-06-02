@@ -18,8 +18,8 @@ class LectureInstancesController < ApplicationController
   end
 
   def attendance_sheet
-    attendance_sheet = @lecture_instance.attendance_sheets.includes(:face_boxes).last
-    render json: attendance_sheet, include: %i[face_boxes], methods: %i[image], status: :ok
+    attendance_sheet = @lecture_instance.attendance_sheets.eager_load(:face_boxes, issues: :face_box).last
+    render json: attendance_sheet, include: {face_boxes: {}, issues: {include: :face_box}}, methods: %i[image_base64], status: :ok
   end
 
   def get_by_lec_id

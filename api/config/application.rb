@@ -23,6 +23,14 @@ module UniSystemApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: %i[get post options]
+      end
+    end
+
     config.autoload_paths << Rails.root.join('app').join('services')
     config.action_dispatch.default_headers = {
       'Access-Control-Allow-Origin' => 'http://localhost:3000',
@@ -38,16 +46,5 @@ module UniSystemApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.attendance_api = 'http://3.16.108.175:50000/attendance'
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-    
-        resource '*',
-          headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options, :head],
-          expose: ['access-token', 'expiry', 'token-type', 'uid', 'client']
-      end
-    end
   end
 end

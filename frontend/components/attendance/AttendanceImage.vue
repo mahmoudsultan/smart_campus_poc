@@ -12,6 +12,7 @@
           <span>Redraw Faceboxes</span>
         </v-tooltip>
         <div>
+<<<<<<< HEAD
           <v-img id="attendance-image" :src="image" />
         </div>
         <div class="layer">
@@ -19,6 +20,15 @@
         </div>
         <div class="layer">
           <canvas id="attendance-canvas"/>
+=======
+          <v-img :id="attendanceImageId" :src="image"/>
+        </div>
+        <div class="layer">
+          <canvas :id="drawCanvasId"></canvas>
+        </div>
+        <div class="layer">
+          <canvas :id="attendanceCanvasId"></canvas>
+>>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
         </div>
       </v-flex>
     </v-layout>
@@ -32,7 +42,11 @@ export default {
   props: {
     image: String,
     faceBoxes: Array,
-    drawMode: Boolean
+    drawMode: Boolean,
+    allColor: {
+      type: String,
+      required: false
+    }
     // redraw: {
     //   type: Boolean,
     //   required: false
@@ -52,6 +66,7 @@ export default {
       offScreenImageCanvas: null
     }
   },
+<<<<<<< HEAD
   async mounted() {
     await this.drawCanvas()
     this.buildOffScreenImageCanvas()
@@ -63,6 +78,24 @@ export default {
     this.scratchPadCanvas = document.getElementById('draw-canvas')
 
     document.addEventListener('keyup', this.handleKeyUp)
+=======
+  computed: {
+    attendanceImageId() {
+      return 'attendance-image' + this._uid
+    },
+    drawCanvasId() {
+      return 'draw-canvas' + this._uid
+    },
+    attendanceCanvasId() {
+      return 'attendance-canvas' + this._uid
+    },
+    detectedColor() {
+      return this.allColor || this.detectedRGBA
+    },
+    recognizedColor() {
+      return this.allColor || this.recognizedRGBA
+    }
+>>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
   },
   methods: {
     async drawCanvas() {
@@ -71,12 +104,14 @@ export default {
       }
       this.updateCanvasWidthAndHeight()
       this.offScreenCanvas = this.buildOffScreenCanvas()
-      this.drawFaceBoxes()
+      if (this.offScreenCanvas.height && this.offScreenCanvas.width) {
+        this.drawFaceBoxes()
+      }
     },
     updateCanvasWidthAndHeight() {
       // Update canvas width
-      const attendanceImage = document.getElementById('attendance-image')
-      const canvas = document.getElementById('attendance-canvas')
+      const attendanceImage = document.getElementById(this.attendanceImageId)
+      const canvas = document.getElementById(this.attendanceCanvasId)
       canvas.width = attendanceImage.clientWidth
       // Image class height is initially zero so the 1 is needed
       // to avoid Rendering a zero-height canvas exception
@@ -85,7 +120,12 @@ export default {
       this.ratio = canvas.width / this.imageObj.width
     },
     updateScratchPadCanvasWidthAndHeight() {
+<<<<<<< HEAD
       const attendanceImage = document.getElementById('attendance-image')
+=======
+      const attendanceImage = document.getElementById(this.attendanceImageId)
+
+>>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
       this.scratchPadCanvas.width = attendanceImage.clientWidth
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
@@ -109,15 +149,15 @@ export default {
       return [x1, y1, width, height]
     },
     drawFaceBoxes() {
-      const canvas = document.getElementById('attendance-canvas')
+      const canvas = document.getElementById(this.attendanceCanvasId)
       const offScreenCtx = this.offScreenCanvas.getContext('2d')
 
       this.faceBoxes.forEach((faceBox) => {
         const [x1, y1, width, height] = this.faceBoxDimensions(faceBox)
         if (faceBox.student_id) {
-          offScreenCtx.strokeStyle = this.recognizedRGBA
+          offScreenCtx.strokeStyle = this.recognizedColor
         } else {
-          offScreenCtx.strokeStyle = this.detectedRGBA
+          offScreenCtx.strokeStyle = this.detectedColor
         }
         offScreenCtx.strokeRect(x1, y1, width, height)
       })
@@ -183,7 +223,7 @@ export default {
       })
     },
     buildOffScreenCanvas() {
-      const canvas = document.getElementById('attendance-canvas')
+      const canvas = document.getElementById(this.attendanceCanvasId)
       const offScreenCanvas = document.createElement('canvas')
 
       offScreenCanvas.height = canvas.height
@@ -223,6 +263,21 @@ export default {
       await this.drawCanvas()
     }
   },
+<<<<<<< HEAD
+=======
+  async mounted() {
+    await this.drawCanvas()
+    this.buildOffScreenImageCanvas()
+
+    const canvas = document.getElementById(this.attendanceCanvasId)
+    canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
+    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
+
+    this.scratchPadCanvas = document.getElementById(this.drawCanvasId)
+
+    document.addEventListener('keyup', this.handleKeyUp)
+  },
+>>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
   watch: {
     boxEndCorner: function (val) {
       // Clear Canvas and Draw New Rectangle

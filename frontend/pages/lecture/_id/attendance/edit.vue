@@ -13,14 +13,48 @@
             ></v-progress-circular>
           </v-flex>
         </v-layout>
-        <attendance-wizard
-          v-if="!loading"
-          editMode
-          :image="this.image"
-          :faceBoxes="this.faceBoxes"
-          :students="this.studentsInfoObj"
-          @save="confirmAttendanceSheetEdit"
-        />
+        <v-tabs
+          centered
+          color="primary"
+          dark
+          icons-and-text
+          @change="updateEditTab"
+        >
+          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tab href="#tab-1" @click="tab = 1">
+            Edit
+            <v-icon>edit</v-icon>
+          </v-tab>
+
+          <v-tab href="#tab-2" @click="tab = 2">
+            Issues
+            <v-badge color="info">
+              <span slot="badge" dark>{{ numberOfIssues }}</span> <!--slot can be any component-->
+              <v-icon>warning</v-icon>
+            </v-badge>
+          </v-tab>
+
+          <v-tab-item value="tab-1">
+            <attendance-wizard
+              v-if="!loading && tab === 1"
+              editMode
+              :image="this.image"
+              :faceBoxes="this.faceBoxes"
+              :students="this.studentsInfoObj"
+              @save="confirmAttendanceSheetEdit"
+            />
+          </v-tab-item>
+
+          <v-tab-item value="tab-2">
+            <issues-wizard
+              v-if="!loading && tab === 2"
+              :image="image"
+              :students="studentsInfoObj"
+              :issues="issues"
+              @updateCount="updateIssuesCount"
+            />
+          </v-tab-item>
+        </v-tabs>
         </v-container>
     </v-card>
   </div>
@@ -29,10 +63,12 @@
 <script>
 import _ from 'lodash'
 import AttendanceWizard from '@/components/attendance/AttendanceWizard'
+import IssuesWizard from '@/components/attendance/IssuesWizard'
 
 export default {
   components: {
-    AttendanceWizard
+    AttendanceWizard,
+    IssuesWizard
   },
   data() {
     return {
@@ -54,7 +90,10 @@ export default {
       updateRequestLoading: false,
       image: '',
       faceBoxes: [],
-      studentsInfoObj: {}
+      studentsInfoObj: {},
+      issues: [],
+      tab: 1,
+      numberOfIssues: 0
     }
   },
   methods: {
@@ -71,11 +110,24 @@ export default {
         edited_face_boxes: editedFaceBoxes,
         deleted_face_boxes: deletedFaceBoxes
       }).then(() => {
-        console.log('Hello World') // eslint-disable-line
         this.updateRequestLoading = false
       }).catch((err) => {
         console.log(err) // eslint-disable-line
       })
+    },
+    updateEditTab(e) {
+      if (e === 'tab-1') {
+        this.loading = true
+        this.$axios.get(`lecture_instances/${this.$route.params.id}/attendance_sheet`)
+          .then((attendanceSheetRequestResponse) => {
+            this.faceBoxes = attendanceSheetRequestResponse.data.face_boxes
+            this.issues = attendanceSheetRequestResponse.data.issues
+            this.loading = false
+          })
+      }
+    },
+    updateIssuesCount(count) {
+      this.numberOfIssues = count
     }
   },
   mounted: async function () {
@@ -92,8 +144,11 @@ export default {
           image: 'full url'
         }
       */
-      this.image = this.$axios.defaults.baseURL + attendanceSheetRequestResponse.data.image.url
+      // this.image = this.$axios.defaults.baseURL + attendanceSheetRequestResponse.data.image.url
+      this.image = attendanceSheetRequestResponse.data.image_base64
       this.faceBoxes = attendanceSheetRequestResponse.data.face_boxes
+      this.issues = attendanceSheetRequestResponse.data.issues
+      this.numberOfIssues = _.filter(this.issues, (issue) => { return issue.state === 'pending' }).length
 
       const studentsInfo = _.each(studentsInfoResponse.data, (studentInfo) => {
         studentInfo.image = this.$axios.defaults.baseURL + studentInfo.image.url

@@ -1,6 +1,7 @@
 <template>
   <div>
     <attendance-image
+      key="attendance-wizard"
       :image="image"
       :faceBoxes="faceBoxes"
       :drawMode="addingNewAttendance"
