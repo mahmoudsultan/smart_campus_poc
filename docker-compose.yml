@@ -76,7 +76,7 @@ services:
     ports:
       - "7000:7000"
     command:
-      "python kafka-video-producer.py -t vid1 -b localhost:9092 -f video.mp4"
+      "python kafka-video-producer.py -t vid1 -b localhost:9092 -f test_video.mp4"
     volumes:
       - ./video-producer/:/video-producer/
     depends_on:
