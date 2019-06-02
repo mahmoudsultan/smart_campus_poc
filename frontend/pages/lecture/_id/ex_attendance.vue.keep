@@ -111,7 +111,7 @@ export default {
       attendanceSheet: {
         faceBoxes: [
           {
-            boundries: '254,437,300,498',
+            boundaries: '254,437,300,498',
             student_id: 4000
           },
           {

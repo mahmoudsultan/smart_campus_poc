@@ -320,6 +320,7 @@ export default {
       this.$emit('save', this.faceBoxes, this.deletedFaceBoxes)
     },
     faceBoxDimensions(faceBox) {
+      console.log('faceBoxDimension()', faceBox) // eslint-disable-line
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
         return Number.parseInt(v)
       })

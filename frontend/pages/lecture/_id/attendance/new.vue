@@ -150,9 +150,9 @@ export default {
         Then pass those data to the AttendanceWizard component
       */
 
-      // const attendanceRequest = this.$axios.post('attendance/new',
-      //   { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId })
-      const attendanceRequest = this.$axios.get('http://localhost:8080')
+      const attendanceRequest = this.$axios.post('attendance/new',
+        { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId })
+      // const attendanceRequest = this.$axios.get('http://localhost:8080')
       const studentsInfoRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/students`)
 
       Promise.all([attendanceRequest, studentsInfoRequest]).then(([attendanceResponse, studentsInfoResponse]) => {
@@ -167,6 +167,7 @@ export default {
         */
         this.image = attendanceResponse.data.image
         this.faceBoxes = attendanceResponse.data.face_boxes
+        console.log(this.faceBoxes) // eslint-disable-line
         // this.faceBoxes = attendanceResponse.data.face_boxes.map((faceBox, index) => {
         //   return { ...faceBox, ...{ id: index } }
         // })
