@@ -16,7 +16,8 @@ module Custom
               status: 'success',
               data:   resource_with_avatar
             }
-          end
+        end
+
         def render_create_success
             render json: {
               status: 'success',
@@ -26,13 +27,15 @@ module Custom
 
         def update 
             super do |resource| 
-                existing_avatars_b64 = resource.avatars.map &-> (a) {Base64.encode64(a.image.read)}
+
+                existing_avatars_b64 = resource.avatars.map &-> (a) { {image: Base64.encode64(a.image.read), id: a.id} }
                 @avatars.each do |avatar| 
                     not_found = true
                     # check if we have this image alread, equality checks probably aren't
                     # the best for images tho, yet this is a quick solution.
                     existing_avatars_b64.each do |existing_avatar_b64|
-                        if existing_avatar_b64 == avatar[:image].split(',')[1..].join
+                        arriving_b64 = avatar[:image].split(',')[1..-1].join
+                        if ( (avatar[:id] && avatar[:id] == existing_avatar_b64.id) || (existing_avatar_b64[:image] == arriving_b64) )
                             not_found = false
                         end
                     end
@@ -43,10 +46,11 @@ module Custom
         end
 
         def account_update_params
-            params = params.permit(*params_for_resource(:account_update))
-            @avatars = params[:avatars]
-            params.except(:avatars)
-          end
+            filtered_params = params.permit(*params_for_resource(:account_update))
+            @avatars = filtered_params[:avatars] || []
+            filtered_params.except(:avatars)
+            
+        end
 
         def create 
             super do |resource| 
@@ -72,5 +76,7 @@ module Custom
                 @resource.email = params_sans_avatar[:email]
             end
         end
+
     end
+    
 end

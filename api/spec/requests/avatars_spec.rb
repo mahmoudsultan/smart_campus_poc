@@ -35,8 +35,44 @@ RSpec.describe 'Avatars', type: :request do
         res = JSON.parse(response.body)
         expect(res['data']['avatars'].length).to eq(professor[:avatars].length)
     end
+  end
 
+  context 'updating user images on post' do
+    let(:avatars) {
+        [build(:avatarJpg), build(:avatarPng)]
+    }
+    let(:prof) {
+        user_attr = attributes_for(:prof)
+        user_attr[:avatars] = avatars
+        user = User.create(user_attr)  
+        user
+      }
+    let(:headers) {
+        post '/auth/sign_in', params: {email: prof.email, password: prof.password}
+        response.headers.slice('access-token', 'uid', 'client', 'expiry')
+    }
 
+    
+    it 'accepts the new images' do
+        update_body = prof.attributes
+        update_body[:avatars] = [attributes_for(:avatarJpeg)]
+        put '/auth', params: update_body, headers: headers
+        expect(prof.avatars.count).to eq(avatars.length + 1)
+    end
+
+    it 'rejects existing images' do
+        update_body = prof.attributes
+        update_body[:avatars] = [attributes_for(:avatarJpg)]
+        put '/auth', params: update_body, headers: headers
+        expect(prof.avatars.count).to eq(avatars.length)
+
+    
+    end
 
   end
+
+
+  context 'returns user images' do 
+  end
+
 end
