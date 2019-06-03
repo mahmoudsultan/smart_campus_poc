@@ -1,70 +1,90 @@
 <template>
-  <v-dialog :fullscreen="$vuetify.breakpoint.xs" v-model="show" width="500" transition="dialog-bottom-transition">
-    <v-card>
-      <v-toolbar dark color="primary">
-        <v-btn @click="show = false" icon dark>
-          <v-icon>close</v-icon>
-        </v-btn>
-        <v-toolbar-title>Select an Avatar</v-toolbar-title>
-        <v-spacer />
-      </v-toolbar>
-      <v-layout v-if="avatars" row wrap>
-        <v-flex
-          v-for="avatar in avatars"
-          :key="avatar.id"
-          xs4
-          sm3
-          d-flex
-        >
-          <v-card tile flat class="d-flex">
-            <v-card-text class="d-flex">
+  <v-card>
+    <v-layout row wrap>
+      <v-flex
+        v-for="avatar in avatars"
+        :key="avatar.id"
+        xs4
+        sm3
+        d-flex
+      >
+        <v-card tile flat class="d-flex">
+          <v-card-text class="d-flex">
+            <v-badge overlap class="avatar-picker-avatar">
+              <template
+                v-slot:badge
+              >
+                <v-icon @click="removeAvatar(avatar)">
+                  close
+                </v-icon>
+              </template>
+
               <v-avatar
                 @click="selectAvatar(avatar)"
-                :class="{ 'current': avatar.id === currentAvatar }"
                 size="96"
-                class="avatar-picker-avatar"
               >
                 <img :src="avatar.image">
               </v-avatar>
-            </v-card-text>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-card>
-  </v-dialog>
+            </v-badge>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+    <v-card-text>
+      {{ avatars.length == 0? 'You have not uploaded any images yet' : '' }}
+      <v-card-text>
+        <v-card-actions>
+          <vue-base64-file-upload
+            @load="onLoad"
+          /></vue-base64-file-upload>
+        </v-card-actions>
+      </v-card-text>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import VueBase64FileUpload from '@/components/VueBase64FileUpload'
+
 export default {
+  name: 'AvatarPicker',
+  components: { VueBase64FileUpload },
   props: {
-    currentAvatar: {
-      type: String,
+    avatars: {
+      type: Array,
       required: true
     },
-    value: Boolean
-  },
-
-  computed: {
-    ...mapGetters({ 'user': 'auth/user' }),
-    avatars() {
-      return this.user.avatars
-    },
-
-    show: {
-      get() {
-        return this.value
-      },
-      set(value) {
-        this.$emit('input', value)
-      }
+    accept: {
+      type: String,
+      default: 'image/png,image/jpeg,image/jpg'
     }
   },
   methods: {
+    onLoad(base64Image) {
+      this.$emit('load', base64Image)
+    },
+    removeAvatar(avatar) {
+      // eslint-disable-next-line no-console
+      console.log('remove')
+
+      this.$emit('remove', avatar.id)
+    },
     selectAvatar(avatar) {
-      this.$emit('selected', avatar.id)
-      this.show = false
+      // eslint-disable-next-line no-console
+      console.log('select')
+      this.$emit('select', avatar.id)
     }
   }
 }
 </script>
+<style lang="stylus">
+.avatar-picker-avatar {
+    cursor: pointer;
+    opacity: .5;
+    transition: all .1s ease-in-out;
+
+    &:hover, &.current {
+        opacity: 1;
+    }
+}
+</style>

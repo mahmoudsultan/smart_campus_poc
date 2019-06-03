@@ -1,35 +1,26 @@
 <template>
-  <div class="vue-base64-file-upload">
-    <img
-      v-show="previewImage && !disablePreview"
-      :src="previewImage"
-      :class="imageClass"
+  <v-btn color="info">
+    <input
+      @change="onChange"
+      :accept="accept"
+      class="file-input"
+      type="file"
     >
-    <div :style="wrapperStyles" class="vue-base64-file-upload-wrapper">
-      <input
-        @change="onChange"
-        :style="fileInputStyles"
-        :accept="accept"
-        type="file"
-      >
-      <input
-        :class="inputClass"
-        :style="textInputStyles"
-        :value="fileName || file && file.name"
-        :placeholder="placeholder"
-        type="text"
-        disabled
-      >
-    </div>
-  </div>
+    {{ inputText }}
+  </v-btn>
 </template>
 
 <script>
+
 // same code at https://github.com/dhhb/vue-base64-file-upload/blob/master/src/index.js
 export default {
   name: 'VueBase64FileUpload',
 
   props: {
+    inputText: {
+      type: String,
+      default: 'Add a new Image'
+    },
     imageClass: {
       type: String,
       default: ''
@@ -95,13 +86,6 @@ export default {
       }
     },
 
-    textInputStyles() {
-      return {
-        'width': '100%',
-        'cursor': 'pointer'
-      }
-    },
-
     previewImage() {
       return this.preview || this.defaultPreview
     }
@@ -152,3 +136,17 @@ export default {
 }
 
 </script>
+<style>
+.file-input {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+  outline: none;
+  cursor: hand
+}
+</style>

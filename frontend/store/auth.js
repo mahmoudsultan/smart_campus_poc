@@ -28,6 +28,17 @@ export const mutations = {
   },
   destroySession(state) {
     Object.assign(state, getDefaultState())
+  },
+  addAvatar(state, imageB64) {
+    const startOffset = 10000
+    const ids = state.user.avatars.map(a => a.id)
+
+    const id = startOffset + (ids.length ? Math.max(...ids) : 0)
+
+    state.user.avatars.push({ id: id, image: imageB64 })
+  },
+  deleteAvatar(state, id) {
+    state.user.avatars = state.user.avatars.filter(a => a.id !== id)
   }
 
 }
