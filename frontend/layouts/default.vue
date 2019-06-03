@@ -110,8 +110,6 @@ export default {
       return new Date().getFullYear()
     },
     user: function () {
-      // eslint-disable-next-line no-console
-      console.log(this.$store.state.auth.user)
       return this.$store.state.auth.user
     },
     ...mapGetters({ isAuthenticated: 'auth/isAuthenticated' })
@@ -121,7 +119,7 @@ export default {
 
     logOutWrapper() {
       this.logOut().then(() => {
-        this.$router.push('/')
+        this.$router.push('/sign_in')
       })
     }
   }

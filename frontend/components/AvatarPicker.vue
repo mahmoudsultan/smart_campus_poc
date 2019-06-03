@@ -24,7 +24,7 @@
                 size="96"
                 class="avatar-picker-avatar"
               >
-                <img :src="'/avatars/' + (avatar.path)">
+                <img :src="avatar.image">
               </v-avatar>
             </v-card-text>
           </v-card>
@@ -48,7 +48,7 @@ export default {
   computed: {
     ...mapGetters({ 'user': 'auth/user' }),
     avatars() {
-      return this.user.image.url
+      return this.user.avatars
     },
 
     show: {
@@ -60,11 +60,6 @@ export default {
       }
     }
   },
-
-  async mounted() {
-    await this.$store.dispatch('fetchAvatars')
-  },
-
   methods: {
     selectAvatar(avatar) {
       this.$emit('selected', avatar.id)

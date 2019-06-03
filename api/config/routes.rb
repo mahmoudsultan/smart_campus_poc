@@ -12,7 +12,8 @@ Rails.application.routes.draw do
   root to: 'courses#home'
 
   mount_devise_token_auth_for 'User', at: 'auth'  , controllers: {
-      registrations:  'custom/registrations'
+      registrations:  'custom/registrations',
+      sessions:  'custom/sessions'
     }
   as :user do
     # Define routes for User within this block.

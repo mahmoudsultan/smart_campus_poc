@@ -72,7 +72,26 @@ RSpec.describe 'Avatars', type: :request do
   end
 
 
-  context 'returns user images' do 
+  context 'on signin' do
+    let(:avatars) {
+        [build(:avatarJpg), build(:avatarPng)]
+    }
+
+    let(:prof) {
+        user_attr = attributes_for(:prof)
+        user_attr[:avatars] = avatars
+        user = User.create(user_attr)  
+        user
+      }
+
+    it 'returns user avatars' do
+        post '/auth/sign_in', params: {email: prof.email, password: prof.password}
+        body = JSON.parse(response.body)
+        expect(response).to have_http_status(200)
+        puts body.keys
+        expect(body['data']['avatars']).to_not be_nil
+    end
+
   end
 
 end
