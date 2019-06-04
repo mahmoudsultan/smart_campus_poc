@@ -107,8 +107,7 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-// import AvatarPicker from '~/components/AvatarPicker'
-// import VueBase64FileUpload from '@/components/VueBase64FileUpload'
+
 import AvatarPicker from '@/components/AvatarPicker'
 export default {
   components: { AvatarPicker },
@@ -124,20 +123,21 @@ export default {
   },
   mounted() {
     this.fetchAvatars()
-    // eslint-disable-next-line no-console
-    console.log(this.user)
-    this.mainAvatar = (!this.user.avatars.length && this.user.avatars[0])
+
+    this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
   },
   methods: {
     ...mapMutations({ 'addAvatar': 'auth/addAvatar', 'deleteAvatar': 'auth/deleteAvatar' }),
     ...mapActions({ 'sendUpdates': 'auth/sendUpdates', 'fetchAvatars': 'auth/fetchAvatars' }),
+
     loadAvatar(dataUri) {
       this.addAvatar(dataUri)
-      // this.avatars = this.user.avatars
     },
     removeAvatar(id) {
       this.deleteAvatar(id)
-      // this.avatars = this.user.avatars
+      if (id === this.mainAvatar.id) {
+        this.mainAvatar = null
+      }
     },
     selectAvatar(id) {
       this.mainAvatar = this.user.avatars.filter(a => id === a.id)[0]

@@ -7,7 +7,8 @@ const getDefaultState = () => {
   return {
     user: { name: 'User', role: '-', avatars: [] },
     headers: {},
-    roles: []
+    roles: [],
+    deletedAvatarsIds: []
   }
 }
 
@@ -33,6 +34,7 @@ export const mutations = {
   destroySession(state) {
     Object.assign(state, getDefaultState())
     this.$cookies.remove('session')
+    removeFromLocalStorage('avatar')
   },
   addAvatar(state, imageB64) {
     const startOffset = 10000
@@ -40,12 +42,16 @@ export const mutations = {
 
     const id = startOffset + (ids.length ? Math.max(...ids) : 0)
 
-    state.user.avatars.push({ id: id, image: imageB64 })
+    state.user.avatars.push({ id: id, image: imageB64, isLocal: true })
   },
   setAvatarsList(state, avatars) {
     state.user.avatars = avatars
   },
   deleteAvatar(state, id) {
+    const avatarObj = state.user.avatars.filter(a => a.id === id)[0]
+    if (!avatarObj.hasOwnProperty('isLocal')) {
+      state.deletedAvatarsIds.push(avatarObj.id)
+    }
     state.user.avatars = state.user.avatars.filter(a => a.id !== id)
   }
 
@@ -105,23 +111,27 @@ export const actions = {
         role: role })
         .then((response) => {
           dispatch('setHeaders', response)
-          resolve()
+          resolve(response)
         }).catch((error) => {
           reject(error)
         })
     })
   },
   sendUpdates({ commit, state }) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      const updateResponse = await this.$axios.put('/auth', state.user)
+      const deletedAvatarsObj = { data: JSON.stringify({ avatars: state.deletedAvatarsIds }) }
+      const deletedIds = (await this.$axios.delete('/users/avatars', deletedAvatarsObj)).data.ids
       // eslint-disable-next-line no-console
-      console.log(state.user)
-      this.$axios.put('/auth', state.user)
-        .then((response) => {
-          commit('setSession', { headers: state.headers, user: response.data.data, roles: state.roles })
-          resolve()
-        }).catch((err) => {
-          reject(err)
-        })
+      console.log(deletedIds)
+      const newUser = updateResponse.data.data
+
+      newUser.avatars = newUser.avatars.filter(a => deletedIds.indexOf(a.id) === -1)
+      // eslint-disable-next-line no-console
+      console.log(newUser)
+      commit('setSession', { headers: state.headers, user: newUser, roles: state.roles })
+      state.deletedAvatars = []
+      resolve(newUser)
     })
   },
   logout({ commit }) {
@@ -151,6 +161,14 @@ function getFromLocalStorage(key) {
   }
 }
 
+function removeFromLocalStorage(key) {
+  if (process.client) {
+    localStorage.removeItem(key)
+    return true
+  } else {
+    return false
+  }
+}
 export const getters = {
   isAuthenticated(state) {
     return !isEmpty(state.headers)
