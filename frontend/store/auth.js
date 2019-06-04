@@ -5,7 +5,7 @@ export const ability = new Ability()
 
 const getDefaultState = () => {
   return {
-    user: { name: 'User', role: '-' },
+    user: { name: 'User', role: '-', avatars: [] },
     headers: {},
     roles: []
   }
@@ -25,9 +25,14 @@ export const mutations = {
     state.user = user
     state.roles = roles
     ability.update(roles)
+    const userNoAvatars = JSON.parse(JSON.stringify(user))
+    userNoAvatars.avatars = []
+    saveToLocalStorage('avatars', JSON.stringify(user.avatars))
+    this.$cookies.set('session', JSON.stringify({ headers: headers, user: userNoAvatars, roles: roles }))
   },
   destroySession(state) {
     Object.assign(state, getDefaultState())
+    this.$cookies.remove('session')
   },
   addAvatar(state, imageB64) {
     const startOffset = 10000
@@ -37,6 +42,9 @@ export const mutations = {
 
     state.user.avatars.push({ id: id, image: imageB64 })
   },
+  setAvatarsList(state, avatars) {
+    state.user.avatars = avatars
+  },
   deleteAvatar(state, id) {
     state.user.avatars = state.user.avatars.filter(a => a.id !== id)
   }
@@ -44,11 +52,27 @@ export const mutations = {
 }
 
 export const actions = {
+  trySetSession({ commit }) {
+    return new Promise((resolve, reject) => {
+      const session = this.$cookies.get('session')
+      if (session) {
+        session.avatars = getFromLocalStorage('avatars')
+        commit('setSession', session)
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+  },
+  fetchAvatars({ commit }) {
+    commit('setAvatarsList', JSON.parse(getFromLocalStorage('avatars')))
+  },
   setHeaders({ commit }, response) {
     const authHeaders = pick(response.headers,
       ['access-token', 'client', 'uid'])
 
     commit('headers', authHeaders)
+
     const store = this
     store.$axios.get('/users/roles').then((rolesResponse) => {
       const session = {
@@ -57,8 +81,6 @@ export const actions = {
         roles: rolesResponse.data.roles
       }
       commit('setSession', session)
-
-      store.$cookies.set('session', JSON.stringify(session))
     })
   },
 
@@ -74,7 +96,7 @@ export const actions = {
         })
     })
   },
-  signUp({ dispatch, commit }, { email, password, name, department, role }) {
+  signUp({ dispatch }, { email, password, name, department, role }) {
     return new Promise((resolve, reject) => {
       this.$axios.post('/auth', { email: email,
         password: password,
@@ -84,12 +106,26 @@ export const actions = {
         .then((response) => {
           dispatch('setHeaders', response)
           resolve()
+        }).catch((error) => {
+          reject(error)
+        })
+    })
+  },
+  sendUpdates({ commit, state }) {
+    return new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-console
+      console.log(state.user)
+      this.$axios.put('/auth', state.user)
+        .then((response) => {
+          commit('setSession', { headers: state.headers, user: response.data.data, roles: state.roles })
+          resolve()
+        }).catch((err) => {
+          reject(err)
         })
     })
   },
   logout({ commit }) {
     commit('destroySession')
-    this.$cookies.remove('session')
   }
 }
 function isEmpty(obj) {
@@ -97,6 +133,22 @@ function isEmpty(obj) {
     if (obj.hasOwnProperty(key)) { return false }
   }
   return true
+}
+
+function saveToLocalStorage(key, value) {
+  if (process.client) {
+    localStorage.setItem(key, value)
+    return true
+  } else {
+    return false
+  }
+}
+function getFromLocalStorage(key) {
+  if (process.client) {
+    return localStorage.getItem(key)
+  } else {
+    return []
+  }
 }
 
 export const getters = {

@@ -1,13 +1,10 @@
-export default function ({ route, redirect, store, app: { $axios, $cookies } }) {
+export default async function ({ route, redirect, store, app: { $axios, $cookies } }) {
   if (route.name === 'sign_in' || process.env.noAuth.includes(route.path) || store.getters['auth/isAuthenticated']) {
     return
   }
+  const result = await store.dispatch('auth/trySetSession')
 
-  const session = $cookies.get('session')
-
-  if (session) {
-    store.commit('auth/setSession', session)
-  } else {
+  if (!result) {
     redirect('/sign_in')
   }
 }

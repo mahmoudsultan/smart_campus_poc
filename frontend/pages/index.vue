@@ -61,6 +61,7 @@
                 text-xs-right
               >
                 <v-btn
+                  @click="sendUpdates"
                   color="info"
                 >
                   Update Profile
@@ -78,10 +79,15 @@
           slot="offset"
           class="mx-auto d-block"
           size="130"
+          color="indigo"
         >
           <img
+            v-if="mainAvatar"
             :src="mainAvatar.image"
           >
+          <v-icon v-else dark size="130">
+            account_circle
+          </v-icon>
         </v-avatar>
         <v-card-text class="text-xs-center">
           <h4 class="card-title font-weight-light">
@@ -100,7 +106,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 // import AvatarPicker from '~/components/AvatarPicker'
 // import VueBase64FileUpload from '@/components/VueBase64FileUpload'
 import AvatarPicker from '@/components/AvatarPicker'
@@ -108,8 +114,7 @@ export default {
   components: { AvatarPicker },
   data: function () {
     return {
-      mainAvatar: '',
-      avatars: []
+      mainAvatar: ''
     }
   },
 
@@ -118,28 +123,24 @@ export default {
 
   },
   mounted() {
-    this.avatars = this.user.avatars
-    // eslint-disable-next-line no-console
-    console.log(this.avatars)
+    this.fetchAvatars()
     // eslint-disable-next-line no-console
     console.log(this.user)
-    this.mainAvatar = (!this.avatars.length && this.avatars[0]) || { image: '' }
+    this.mainAvatar = (!this.user.avatars.length && this.user.avatars[0])
   },
   methods: {
     ...mapMutations({ 'addAvatar': 'auth/addAvatar', 'deleteAvatar': 'auth/deleteAvatar' }),
-
+    ...mapActions({ 'sendUpdates': 'auth/sendUpdates', 'fetchAvatars': 'auth/fetchAvatars' }),
     loadAvatar(dataUri) {
       this.addAvatar(dataUri)
-      this.avatars = this.user.avatars
+      // this.avatars = this.user.avatars
     },
     removeAvatar(id) {
       this.deleteAvatar(id)
-      this.avatars = this.user.avatars
+      // this.avatars = this.user.avatars
     },
     selectAvatar(id) {
-      this.mainAvatar = this.avatars.filter(a => id === a.id)[0]
-      // eslint-disable-next-line no-console
-      console.log(this.mainAvatar)
+      this.mainAvatar = this.user.avatars.filter(a => id === a.id)[0]
     }
   }
 
