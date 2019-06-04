@@ -15,10 +15,13 @@
             <v-list-tile-avatar
               color="white"
             >
-              <v-img
-                src="https://source.unsplash.com/600x320/?face,human"
-                contain
-              />
+              <img
+                v-if="user.avatars && user.avatars.length"
+                :src="user.avatars[0].image"
+              >
+              <v-icon v-else dark size="35">
+                account_circle
+              </v-icon>
             </v-list-tile-avatar>
             <v-list-tile-title>
               {{ user.name | user.role }}
@@ -88,7 +91,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
-
       drawer: true,
       items: [
         {
@@ -105,15 +107,18 @@ export default {
       title: 'University System'
     }
   },
+
   computed: {
+    ...mapGetters({ isAuthenticated: 'auth/isAuthenticated', 'user': 'auth/user' }),
     currentYear() {
       return new Date().getFullYear()
     },
     user: function () {
       return this.$store.state.auth.user
-    },
-    ...mapGetters({ isAuthenticated: 'auth/isAuthenticated' })
+    }
+
   },
+
   methods: {
     ...mapActions({ logOut: 'auth/logout' }),
 
