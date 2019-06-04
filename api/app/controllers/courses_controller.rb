@@ -1,20 +1,7 @@
 class CoursesController < ApplicationController
-  before_action :print_user
   before_action :authenticate_user!, except: [:home]
   load_and_authorize_resource
-  rescue_from CanCan::AccessDenied do |exception|
-    render json: {error: 'access denied'}, status: :forbidden
-  end
 
-
-  def print_user
-    puts current_user.as_json
-  
-  end
-
-  # def current_user
-  #   @current_user ||= User.find(session[:user_id]) if session[:user_id]
-  # end
 
   def show_lectures
     CourseOffering.connection
@@ -23,8 +10,6 @@ class CoursesController < ApplicationController
     role = current_user.role
     uid = request.headers[:uid]
     
-
-
     q = CourseOffering.joins({ lectures: {klass: :building} }, :course, groups: { group_users: :user } )
     .where(users: { uid: request.headers[:uid] },
       course_offerings: { term: params[:term], year: params[:year] })

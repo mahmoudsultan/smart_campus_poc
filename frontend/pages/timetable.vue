@@ -16,12 +16,12 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   v-on="on"
-                  color="primary"
-                  dark
+                  depressed
                 >
-                  {{ item.text }}
+                  <span class="menu-btn title">
+                    {{ item.text }}
+                  </span>
                 </v-btn>
-                </a>
               </template>
               <v-list>
                 <v-list-tile
@@ -47,7 +47,6 @@
             :day-format="(t,s)=>''"
             :interval-minutes="cellSize"
             :first-interval="firstSlot"
-            :dark="true"
             :short-weekdays="false"
             :weekdays="weekDays"
             color="primary"
@@ -128,40 +127,19 @@ export default {
       return start + residue
     }
   },
-  // fetch({ app: { $cookies, $axios }, store }) {
-  //   const session = $cookies.get('session')
-  //   // eslint-disable-next-line no-console
-  //   console.log(session)
-  //   // eslint-disable-next-line no-console
-  //   console.log('hiiiiiiiiiiii', process.server, process.client)
-  //   if (session) {
-  //     const authHeaders = session.tokens
-  //     store.commit('user', session.user)
-  //     store.commit('auth', authHeaders)
+  async mounted() {
+    const ys = await this.$axios.$get('/courses/years')
+    this.items[0].text = Math.max(...ys.map(y => parseInt(y)))
 
-  //     // eslint-disable-next-line no-console
-  //     console.log(store.state)
-  //   }
-  // },
-  mounted() {
-    // eslint-disable-next-line no-console
-    console.log('userrrrrrrrrrrrrrrrrrr')
-    // eslint-disable-next-line no-console
-    console.log(this.$store.state)
-    // eslint-disable-next-line no-console
-    console.log(this.$ability)
-    this.$axios
-      .$get('/courses/years')
-      .then(ys => ys.forEach(y => this.menu_items.years.push(y)))
-    this.$axios
-      .$get('/courses/terms')
-      .then(ts => ts.forEach(t => this.menu_items.terms.push(t)))
+    ys.forEach(y => this.menu_items.years.push(y))
+    const ts = await this.$axios.$get('/courses/terms')
+    this.items[1].text = ts[ts.length - 1]
+    ts.forEach(t => this.menu_items.terms.push(t))
+    const tt = await this.$axios.$get(
+      `/lectures/${this.current_term}/${this.current_year}`)
 
-    this.$axios
-      .$get(
-        `/lectures/${this.current_term}/${this.current_year}`
-      )
-      .then(tt => this.fillTimeTableMap(tt))
+    this.fillTimeTableMap(tt)
+
     this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
@@ -226,6 +204,9 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+  .menu-btn {
+     text-decoration: underline;
+  }
   .lecture-text > div {
     padding: 10px;
   }

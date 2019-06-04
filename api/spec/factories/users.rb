@@ -15,5 +15,6 @@ FactoryBot.define do
       sequence(:student_id) { |n| n.to_s * 4 }
       role { :student }
     end
+    factory :prof,  traits: [:professor]
   end
 end

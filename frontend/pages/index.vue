@@ -46,11 +46,23 @@
 
               <v-flex
                 xs12
+                md12
+              >
+                <avatar-picker
+                  :avatars="user.avatars"
+                  @select="selectAvatar"
+                  @load="loadAvatar"
+                  @remove="removeAvatar"
+                />
+              </v-flex>
+
+              <v-flex
+                xs12
                 text-xs-right
               >
                 <v-btn
-                  class="mx-0 font-weight-light"
-                  color="success"
+                  @click="sendUpdates"
+                  color="info"
                 >
                   Update Profile
                 </v-btn>
@@ -58,49 +70,78 @@
             </v-layout>
           </v-container>
         </v-form>
-        </material-card>
       </v-flex>
       <v-flex
         xs12
         md4
       >
-        <material-card class="v-card-profile">
-          <v-avatar
-            slot="offset"
-            class="mx-auto d-block"
-            size="130"
+        <v-avatar
+          slot="offset"
+          class="mx-auto d-block"
+          size="130"
+          color="indigo"
+        >
+          <img
+            v-if="mainAvatar"
+            :src="mainAvatar.image"
           >
-            <img
-              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
-            >
-          </v-avatar>
-          <v-card-text class="text-xs-center">
-            <h4 class="card-title font-weight-light">
-              {{ user.name }}
-            </h4>
-            <h4 class="category text-gray font-weight-light">
-              {{ user.role }}
-            </h4>
-            <h4 class="category text-gray font-weight-light">
-              {{ user.department }}
-            </h4>
-          </v-card-text>
-        </material-card>
+          <v-icon v-else dark size="130">
+            account_circle
+          </v-icon>
+        </v-avatar>
+        <v-card-text class="text-xs-center">
+          <h4 class="card-title font-weight-light">
+            {{ user.name }}
+          </h4>
+          <h4 class="category text-gray font-weight-light">
+            {{ user.role }}
+          </h4>
+          <h4 class="category text-gray font-weight-light">
+            {{ user.department }}
+          </h4>
+        </v-card-text>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
+import AvatarPicker from '@/components/AvatarPicker'
 export default {
+  components: { AvatarPicker },
+  data: function () {
+    return {
+      mainAvatar: ''
+    }
+  },
+
   computed: {
     ...mapGetters({ 'user': 'auth/user' })
+
   },
   mounted() {
-    // eslint-disable-next-line no-console
-    console.log(this.user)
+    this.fetchAvatars()
+
+    this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
+  },
+  methods: {
+    ...mapMutations({ 'addAvatar': 'auth/addAvatar', 'deleteAvatar': 'auth/deleteAvatar' }),
+    ...mapActions({ 'sendUpdates': 'auth/sendUpdates', 'fetchAvatars': 'auth/fetchAvatars' }),
+
+    loadAvatar(dataUri) {
+      this.addAvatar(dataUri)
+    },
+    removeAvatar(id) {
+      this.deleteAvatar(id)
+      if (id === this.mainAvatar.id) {
+        this.mainAvatar = null
+      }
+    },
+    selectAvatar(id) {
+      this.mainAvatar = this.user.avatars.filter(a => id === a.id)[0]
+    }
   }
 
 }

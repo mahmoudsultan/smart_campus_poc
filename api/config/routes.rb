@@ -8,10 +8,13 @@ Rails.application.routes.draw do
   get '/lecture_instances/:lec_id' => 'lecture_instances#get_by_lec_id'
   get '/users/roles' => 'users#show_roles'
   get '/lecture_instances/status/:lec_id' => 'lecture_instances#get_attended_lectures_by_student'
-
+  delete '/users/avatars' => 'users#destroy_avatars'
   root to: 'courses#home'
 
-  mount_devise_token_auth_for 'User', at: 'auth'
+  mount_devise_token_auth_for 'User', at: 'auth'  , controllers: {
+      registrations:  'custom/registrations',
+      sessions:  'custom/sessions'
+    }
   as :user do
     # Define routes for User within this block.
     post '/auth/sign_in', to: 'devise_token_auth/sessions#create'
