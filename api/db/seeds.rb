@@ -50,10 +50,10 @@
 # end
 
 # seed klass_topic_maps
-topic_name = 'vid1'
-Klass.all.each do |klass|
-  KlassTopicMap.create!(klass_id: klass.id, topic: topic_name)
-end
+# topic_name = 'vid1'
+# Klass.all.each do |klass|
+#   KlassTopicMap.create!(klass_id: klass.id, topic: topic_name)
+# end
 
 # puts 'And you know what? Klasses are created too!'
 
@@ -92,13 +92,13 @@ end
 
 # # seed lecture_instances
 
-# def rand_time(from, to = Time.now)
-#   Time.at(rand_in_range(from.to_f, to.to_f))
-# end
+def rand_time(from, to = Time.now)
+  Time.at(rand_in_range(from.to_f, to.to_f))
+end
 
-# def rand_in_range(from, to)
-#   rand * (to - from) + from
-# end
+def rand_in_range(from, to)
+  rand * (to - from) + from
+end
 
 # week_numbers = (1..7)
 
@@ -134,3 +134,80 @@ end
 #   end
 # end
 # puts 'This was fun... Goodbye, Visit Soon when you get stuck and need to drop the database!'
+
+
+# For Demo's Sake
+Lecture.transaction do 
+  a = {}
+  a[:email] = "professor0@gmail.com"
+  a[:password] = '123456789'
+  a[:role] = 'professor'
+  a[:department] = "Computer"
+  a[:name] = "Ahmed Elsayed"
+  prof = User.create!(a)
+
+  course = Course.create!(title: "Demo", code: "3346")
+
+  years = (2017..2019).to_a
+  terms = %i[fall spring summer]
+  years.each do |year|
+    terms.each do |term|
+      offering = { course: course, term: term, year: year }
+      CourseOffering.create!(offering)
+    end
+  end
+
+
+  days = %i[saturday sunday monday tuesday wednesday thrusday friday]
+  slots = (1..9)
+  slot_size = (0..4) 
+
+  groups = CourseOffering.includes(:course).all.map do |offering|
+    Group.create!(course_offering: offering, name: 'group' + offering.course.title)
+  end
+
+  students_names = ['magdy', 'ezz', 'aly', 'amr', 'taw2am', 'nada', 'rana', 'menna', 'fatma']
+
+  students = students_names.map do |student|
+    a = {}
+    a[:email] = student + '@gmail.com'
+    a[:password] = '123456789'
+    a[:role] = 'student'
+    a[:department] = "Computer"
+    a[:name] = student
+    a[:student_id] = student
+    User.create!(a)
+  end
+
+  groups.each do |group|
+    group_user = { group_id: group.id, user_id: prof.id }
+    GroupUser.create!(group_user)
+    students.each do |student|
+      group_user = { group_id: group.id, user_id: student.id }
+      GroupUser.create!(group_user)
+    end
+  end
+
+  lectures = []
+  week_numbers = (1..7)
+
+  days.each do |day|
+    i = 0
+    slots.step(3).each do |slot|
+      groups.each do |group|
+        rand_group = group
+        lecture = { course_offering: rand_group.course_offering, klass: Klass.first, group: rand_group, day: day, start_timeslot: slot, end_timeslot: slot + 3 }
+        i += 1
+        lectures << Lecture.create!(lecture)
+      end
+    end
+  end
+
+  lectures.each do |lecture|
+    week_numbers.each do |week|
+      lecture_date = rand_time((7 - week).days.ago)
+      lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
+      LectureInstance.create!(lecture_instance)
+    end
+  end
+end
