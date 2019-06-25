@@ -6,6 +6,8 @@ ENV APP_ROOT /video-producer
 
 WORKDIR ${APP_ROOT}
 
+COPY test_video.mp4 ${APP_ROOT}
+
 ADD requirements.txt ${APP_ROOT}
 
 RUN pip install -r requirements.txt

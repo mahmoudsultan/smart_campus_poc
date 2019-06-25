@@ -27,7 +27,7 @@ def on_send_error(excp):
 def on_send_success(excp):
   print('Frame Sent.')
 
-def publish_video(producer, topic, key, continuous_mode=False, sleep=0.5, file_name='test_video.mp4'):
+def publish_video(producer, topic, key, continuous_mode=True, sleep=0.5, file_name='test_video.mp4'):
   """
   Publish frames from a local video to producer topic
   args:
@@ -39,9 +39,9 @@ def publish_video(producer, topic, key, continuous_mode=False, sleep=0.5, file_n
 
   while(True):
     success, frame = cap.read()
-
     if not success:
       cap = cv2.VideoCapture(file_name)
+      print('Not success')
       continue
 
     _, buffer = cv2.imencode('.jpg', frame)
@@ -70,7 +70,7 @@ def main(args):
 
   if not args.bsservers:
     print('Bootstrap servers not specified... Using default localhost:9092')
-  bootstrap_servers = args.bsservers if args.bsservers else 'localhost:9092'
+  bootstrap_servers = args.bsservers if args.bsservers else 'kafka:9092'
 
   producer = KafkaProducer(
       bootstrap_servers=bootstrap_servers,
