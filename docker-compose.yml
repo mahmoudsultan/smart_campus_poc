@@ -25,8 +25,10 @@ services:
       - ./api/bundle:/api/bundle
     links:
       - "mysql"
+      - "kafka"
     depends_on:
       - "mysql"
+      - "kafka"
 
   nuxt:
     build: ./frontend/
@@ -63,7 +65,7 @@ services:
       - "AUTO_CREATE_TOPICS=true"
     command: >
       bash -c
-      "(sleep 15s &&
+      "(sleep 30s &&
       /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
       --create
       --zookeeper
@@ -76,8 +78,10 @@ services:
     ports:
       - "7000:7000"
     command:
-      "python kafka-video-producer.py -t vid1 -b localhost:9092 -f test_video.mp4"
+      "python kafka-video-producer.py -t vid1 -b kafka:9092 -f test_video.mp4"
     volumes:
       - ./video-producer/:/video-producer/
+    links:
+      - "kafka"
     depends_on:
       - "kafka"
