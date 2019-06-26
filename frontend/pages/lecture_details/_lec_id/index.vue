@@ -60,7 +60,7 @@
             </td>
             <td class="text-xs-left">
               <nuxt-link
-                :to="{name: 'lecture-id-attendance-new', params:{id:lecture.id}}"
+                :to="{name: 'lecture-id-attendance-new', params:{id:props.item.id}}"
                 v-if="user.role==='professor'"
               >
                 <v-btn color="primary" fab small dark>
