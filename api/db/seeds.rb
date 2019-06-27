@@ -1,5 +1,5 @@
 # # frozen_string_literal: true
-
+# require 'net/http'
 # # seed courses
 # courses = ActiveSupport::JSON.decode(File.read('db/seeds/courses.json'))
 
@@ -31,7 +31,7 @@
 # end
 
 # # seed buildings
-# buildings = ['Preparatory Building', 'Electricity Building', 'Mechanical Building', 'SSP Building', 'Administrative Building']
+# buildings = ['Preparatory Building', 'Electricity Building', 'Mechanical Building', 'SSP Building', 'Administrative Building', 'Hogwarts']
 
 # buildings.each do |building|
 #   Building.create!(name: building)
@@ -49,7 +49,7 @@
 #   Klass.create!(klass)
 # end
 
-# seed klass_topic_maps
+# # seed klass_topic_maps
 # topic_name = 'vid1'
 # Klass.all.each do |klass|
 #   KlassTopicMap.create!(klass_id: klass.id, topic: topic_name)
@@ -92,19 +92,19 @@
 
 # # seed lecture_instances
 
-# def rand_time(from, to = Time.now)
-#   Time.at(rand_in_range(from.to_f, to.to_f))
-# end
+def rand_time(from, to = Time.now)
+  Time.at(rand_in_range(from.to_f, to.to_f))
+end
 
-# def rand_in_range(from, to)
-#   rand * (to - from) + from
-# end
+def rand_in_range(from, to)
+  rand * (to - from) + from
+end
 
 # week_numbers = (1..7)
 
 # Lecture.all.each do |lecture|
 #   week_numbers.each do |week|
-#     lecture_date = rand_time((7 - week).days.ago)
+#     lecture_date = rand_time((7 - week).weeks.ago)
 #     lecture_instance = { lecture: lecture, date: lecture_date, week_number: week }
 #     LectureInstance.create!(lecture_instance)
 #   end
@@ -142,11 +142,11 @@
 #   a[:email] = "professor0@gmail.com"
 #   a[:password] = '123456789'
 #   a[:role] = 'professor'
-#   a[:department] = "Computer"
-#   a[:name] = "Ahmed Elsayed"
+#   a[:department] = "Magic"
+#   a[:name] = "Dumbeldore"
 #   prof = User.create!(a)
 
-#   course = Course.create!(title: "Demo", code: "3346")
+#   course = Course.create!(title: "Defense Against The Dark Arts", code: "CC490N")
 
 #   years = (2017..2019).to_a
 #   terms = %i[fall spring summer]
@@ -179,6 +179,9 @@
 #     User.create!(a)
 #   end
 
+# building = Building.where(name: "Hogwarts")[0]
+# klass = Klass.create({name: "Great Hall", floor: 0, capacity: 1000, projector: true, building_id: building.id})
+# KlassTopicMap.create!(klass_id: klass.id, topic: 'vid1')
 #   groups.each do |group|
 #     group_user = { group_id: group.id, user_id: prof.id }
 #     GroupUser.create!(group_user)
@@ -196,7 +199,7 @@
 #     slots.step(3).each do |slot|
 #       groups.each do |group|
 #         rand_group = group
-#         lecture = { course_offering: rand_group.course_offering, klass: Klass.first, group: rand_group, day: day, start_timeslot: slot, end_timeslot: slot + 3 }
+#         lecture = { course_offering: rand_group.course_offering, klass: klass, group: rand_group, day: day, start_timeslot: slot, end_timeslot: slot + 3 }
 #         i += 1
 #         lectures << Lecture.create!(lecture)
 #       end
@@ -211,29 +214,24 @@
 #     end
 #   end
 # end
-require 'net/http'
 
-names = ['amr', 'ezz', 'fatma', 'magdy', 'menna', 'nada', 'rana', 'aly', 'taw2am']
-# http = Net::HTTP.new('localhost', 3000)
-names.each do |name|
-  
-  id = User.where(student_id: name).ids[0]
-  image_encoded = Base64.encode64(File.read(Rails.root.join('db/seeds/' + name + '.jpg')))
-  image_encoded = "data:image/jpeg;base64," + image_encoded
-  # puts image_encoded
-  # params = {image: image_encoded}.to_json
-  
-  uri= URI('http://localhost:3000/users/' + id.to_s + '/image')
-  
-  http = Net::HTTP.new(uri.host, uri.port)
-  req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json'})
-  
-  req.body = {image: image_encoded}.to_json
-  res = http.request(req)
 
-  puts "response #{res.body}"
+# names = ['amr', 'ezz', 'fatma', 'magdy', 'menna', 'nada', 'rana', 'aly', 'taw2am']
+# names.each do |name|
   
-  # res = Net::HTTP.post_form(URI('http://localhost:3000/users/' + id.to_s + '/image'), 'image'=> image_encoded)
-  # puts res.body
+#   id = User.where(student_id: name).ids[0]
+#   image_encoded = Base64.encode64(File.read(Rails.root.join('db/seeds/' + name + '.jpg')))
+#   image_encoded = "data:image/jpeg;base64," + image_encoded
   
-end
+#   uri= URI('http://localhost:3000/users/' + id.to_s + '/image')
+  
+#   http = Net::HTTP.new(uri.host, uri.port)
+#   req = Net::HTTP::Post.new(uri.path, {'Content-Type' =>'application/json'})
+  
+#   req.body = {image: image_encoded}.to_json
+#   res = http.request(req)
+
+#   puts "response #{res.body}"
+  
+# end
+
