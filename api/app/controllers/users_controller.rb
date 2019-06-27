@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   include ActionController::RequestForgeryProtection
   # protect_from_forgery unless: -> {request.format.json?}
-  before_action :authenticate_user!
+  # before_action :authenticate_user!
   # load_and_authorize_resource
   before_action :set_user, only: %i[upload_image]
   before_action :user_params, only: %i[upload_image]
@@ -11,6 +11,11 @@ class UsersController < ApplicationController
 
 
   def upload_image
+    # puts 'in upload_image'
+    # puts params
+    # avatar = Avatar.create({user_id: @user.id, image: params[:image], is_main: true})
+    # render json: { user: { avatars: @user.avatars } }, status: :ok
+    
     if @user.update user_params
       @user.reload
       render json: { user: { image: @user.image } }, status: :ok
@@ -40,10 +45,11 @@ class UsersController < ApplicationController
 
 
   private
-
+  def set_user
+    @user = User.find(params[:user_id||:id])
+  end
 
   def user_params
-    puts params
-    params.permit(avatars: [])
+    params.permit(:image)
   end
 end
