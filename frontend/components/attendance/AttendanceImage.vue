@@ -12,15 +12,6 @@
           <span>Redraw Faceboxes</span>
         </v-tooltip>
         <div>
-<<<<<<< HEAD
-          <v-img id="attendance-image" :src="image" />
-        </div>
-        <div class="layer">
-          <canvas id="draw-canvas"/>
-        </div>
-        <div class="layer">
-          <canvas id="attendance-canvas"/>
-=======
           <v-img :id="attendanceImageId" :src="image"/>
         </div>
         <div class="layer">
@@ -28,7 +19,6 @@
         </div>
         <div class="layer">
           <canvas :id="attendanceCanvasId"></canvas>
->>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
         </div>
       </v-flex>
     </v-layout>

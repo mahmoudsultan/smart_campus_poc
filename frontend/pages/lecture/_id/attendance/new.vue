@@ -52,10 +52,7 @@
               :image="this.image"
               :faceBoxes="this.faceBoxes"
               :students="this.studentsInfoObj"
-<<<<<<< HEAD
               :nearestStudentsInfo="this.nearestStudentsInfo"
-=======
->>>>>>> eb8f33f... Edit Attendance Page.
               @save="confirmAttendanceSheet"
             />
           </v-stepper-content>
