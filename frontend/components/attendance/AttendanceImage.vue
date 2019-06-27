@@ -56,19 +56,6 @@ export default {
       offScreenImageCanvas: null
     }
   },
-<<<<<<< HEAD
-  async mounted() {
-    await this.drawCanvas()
-    this.buildOffScreenImageCanvas()
-
-    const canvas = document.getElementById('attendance-canvas')
-    canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
-    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
-
-    this.scratchPadCanvas = document.getElementById('draw-canvas')
-
-    document.addEventListener('keyup', this.handleKeyUp)
-=======
   computed: {
     attendanceImageId() {
       return 'attendance-image' + this._uid
@@ -85,7 +72,6 @@ export default {
     recognizedColor() {
       return this.allColor || this.recognizedRGBA
     }
->>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
   },
   methods: {
     async drawCanvas() {
@@ -110,12 +96,8 @@ export default {
       this.ratio = canvas.width / this.imageObj.width
     },
     updateScratchPadCanvasWidthAndHeight() {
-<<<<<<< HEAD
-      const attendanceImage = document.getElementById('attendance-image')
-=======
       const attendanceImage = document.getElementById(this.attendanceImageId)
 
->>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
       this.scratchPadCanvas.width = attendanceImage.clientWidth
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
@@ -253,8 +235,6 @@ export default {
       await this.drawCanvas()
     }
   },
-<<<<<<< HEAD
-=======
   async mounted() {
     await this.drawCanvas()
     this.buildOffScreenImageCanvas()
@@ -267,7 +247,6 @@ export default {
 
     document.addEventListener('keyup', this.handleKeyUp)
   },
->>>>>>> ef0fc05... Attendance Issues. Return Base64 Image in Attendance Sheet.
   watch: {
     boxEndCorner: function (val) {
       // Clear Canvas and Draw New Rectangle

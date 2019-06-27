@@ -62,7 +62,7 @@ class AttendanceIssuesController < ApplicationController
 
   def set_student
     # TODO: Set user using current_user
-    @student = User.find 4
+    @student = current_user
   end
 
   def set_issue

@@ -10,7 +10,7 @@ class FaceBox < ApplicationRecord
   validates :boundaries, presence: true
 
   def serializable_hash(options = nil)
-    user = user.presence # if the relation doesn't have user_id in the
+    # user = user.presence # if the relation doesn't have user_id in the
                          # selection user doesn't exist and is not even nil
     super(options).merge(
       student_id: user&.student_id
