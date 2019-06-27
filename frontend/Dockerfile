@@ -8,6 +8,8 @@ RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 COPY package.json ${APP_ROOT}
 
+RUN npm cache clean --force
+
 RUN npm install
 
 ADD . ${APP_ROOT}

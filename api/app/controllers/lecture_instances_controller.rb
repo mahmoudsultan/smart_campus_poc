@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class LectureInstancesController < ApplicationController
-  before_action :set_lecture_instance, only: %i[place students attendance_sheet]
+  before_action :set_lecture_instance, only: %i[show place students attendance_sheet]
   before_action :authenticate_user!
+
+  def show
+    render json: @lecture_instance, status: :ok
+  end
 
   def place
     render json: @lecture_instance.klass, status: :ok

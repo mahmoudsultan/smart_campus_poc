@@ -108,20 +108,6 @@ export default {
     return {
       step: 1,
       loading: false,
-      breadCrumbItems: [
-        {
-          text: 'Dashboard',
-          href: '/'
-        },
-        {
-          text: 'Lecture Week #3',
-          href: this.lectureHref
-        },
-        {
-          text: 'Take Attendance',
-          disabled: true
-        }
-      ],
       lectureLocation: '',
       lectureLocationLoading: true,
       image: '',
@@ -129,10 +115,27 @@ export default {
       studentsInfoObj: {},
       nearestStudentsInfo: {},
       downloadLoading: false,
-      saved: false
+      saved: false,
+      lectureWeek: 0,
+      lectureInstance: null
     }
   },
   computed: {
+    breadCrumbItems() {
+      return [
+        {
+          text: 'Dashboard',
+          href: '/'
+        },
+        {
+          text: `Lecture Week #${this.lectureWeek}`,
+          href: this.lectureHref
+        },
+        {
+          text: 'Take Attendance',
+          disabled: true
+        }]
+    },
     lectureHref() {
       return `/lecture/${this.$route.params.id}`
     }
@@ -149,7 +152,6 @@ export default {
 
         Then pass those data to the AttendanceWizard component
       */
-
       const attendanceRequest = this.$axios.post('attendance/new',
         { lecture_instance_id: this.$route.params.id, class_id: this.lectureLocationId })
       // const attendanceRequest = this.$axios.get('http://localhost:8080')
@@ -221,6 +223,13 @@ export default {
       this.lectureLocationLoading = false
     }).catch((err) => {
       // TODO:
+      // eslint-disable-next-line
+      console.error(err)
+    })
+    await this.$axios.get(`lecture_instances/${this.$route.params.id}/info`).then((response) => {
+      this.lectureWeek = response.data.week_number
+      this.lectureInstance = response.data
+    }).catch((err) => {
       // eslint-disable-next-line
       console.error(err)
     })
