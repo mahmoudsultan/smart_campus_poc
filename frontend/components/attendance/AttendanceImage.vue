@@ -247,6 +247,9 @@ export default {
 
     document.addEventListener('keyup', this.handleKeyUp)
   },
+  updated() {
+    this.scratchPadCanvas = document.getElementById(this.drawCanvasId)
+  },
   watch: {
     boxEndCorner: function (val) {
       // Clear Canvas and Draw New Rectangle

@@ -12,6 +12,9 @@
               indeterminate
             ></v-progress-circular>
           </v-flex>
+          <v-alert type="success" :value="showUpdatedMessage">
+            Attendance Sheet updated successfully!
+          </v-alert>
         </v-layout>
         <v-tabs
           centered
@@ -93,7 +96,8 @@ export default {
       studentsInfoObj: {},
       issues: [],
       tab: 1,
-      numberOfIssues: 0
+      numberOfIssues: 0,
+      showUpdatedMessage: false
     }
   },
   methods: {
@@ -111,6 +115,10 @@ export default {
         deleted_face_boxes: deletedFaceBoxes
       }).then(() => {
         this.updateRequestLoading = false
+        this.showUpdatedMessage = true
+        setTimeout(() => {
+          this.showUpdatedMessage = false
+        }, 1000)
       }).catch((err) => {
         console.log(err) // eslint-disable-line
       })
