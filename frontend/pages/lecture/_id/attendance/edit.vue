@@ -12,7 +12,7 @@
               indeterminate
             ></v-progress-circular>
           </v-flex>
-          <v-alert type="success" :value="showUpdatedMessage">
+          <v-alert xs12 type="success" :value="showUpdatedMessage">
             Attendance Sheet updated successfully!
           </v-alert>
         </v-layout>

@@ -248,7 +248,13 @@ export default {
     document.addEventListener('keyup', this.handleKeyUp)
   },
   updated() {
+    const canvas = document.getElementById(this.attendanceCanvasId)
+    canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
+    canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)
+
     this.scratchPadCanvas = document.getElementById(this.drawCanvasId)
+
+    document.addEventListener('keyup', this.handleKeyUp)
   },
   watch: {
     boxEndCorner: function (val) {
