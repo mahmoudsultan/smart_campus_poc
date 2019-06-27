@@ -72,20 +72,6 @@ export default {
   },
   data() {
     return {
-      breadCrumbItems: [
-        {
-          text: 'Dashboard',
-          href: '/'
-        },
-        {
-          text: 'Lecture Week #3',
-          href: this.lectureHref
-        },
-        {
-          text: 'Edit Attendance Sheet',
-          disabled: true
-        }
-      ],
       loading: true,
       updateRequestLoading: false,
       image: '',
@@ -93,7 +79,30 @@ export default {
       studentsInfoObj: {},
       issues: [],
       tab: 1,
-      numberOfIssues: 0
+      numberOfIssues: 0,
+      lectureWeek: 0,
+      lectureInstance: null,
+      lectureId: 0
+    }
+  },
+  computed: {
+    breadCrumbItems() {
+      return [
+        {
+          text: 'Dashboard',
+          href: '/'
+        },
+        {
+          text: `Lecture Week #${this.lectureWeek}`,
+          href: this.lectureHref
+        },
+        {
+          text: 'Take Attendance',
+          disabled: true
+        }]
+    },
+    lectureHref() {
+      return `/lecture_details/${this.lectureId}`
     }
   },
   methods: {
@@ -133,7 +142,14 @@ export default {
   mounted: async function () {
     const attendanceSheetRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/attendance_sheet`)
     const studentsInfoRequest = this.$axios.get(`lecture_instances/${this.$route.params.id}/students`)
-
+    await this.$axios.get(`lecture_instances/${this.$route.params.id}/info`).then((response) => {
+      this.lectureWeek = response.data.week_number
+      this.lectureId = response.data.lecture_id
+      this.lectureInstance = response.data
+    }).catch((err) => {
+      // eslint-disable-next-line
+      console.error(err)
+    })
     await Promise.all([attendanceSheetRequest, studentsInfoRequest]).then(([attendanceSheetRequestResponse, studentsInfoResponse]) => {
       /*
         Parse students data to the form:

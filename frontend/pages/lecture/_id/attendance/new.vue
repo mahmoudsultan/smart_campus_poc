@@ -117,7 +117,8 @@ export default {
       downloadLoading: false,
       saved: false,
       lectureWeek: 0,
-      lectureInstance: null
+      lectureInstance: null,
+      lectureId: 0
     }
   },
   computed: {
@@ -137,7 +138,7 @@ export default {
         }]
     },
     lectureHref() {
-      return `/lecture/${this.$route.params.id}`
+      return `/lecture_details/${this.lectureId}`
     }
   },
   methods: {
@@ -228,6 +229,7 @@ export default {
     })
     await this.$axios.get(`lecture_instances/${this.$route.params.id}/info`).then((response) => {
       this.lectureWeek = response.data.week_number
+      this.lectureId = response.data.lecture_id
       this.lectureInstance = response.data
     }).catch((err) => {
       // eslint-disable-next-line
