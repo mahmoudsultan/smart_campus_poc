@@ -79,6 +79,15 @@
                 </v-btn>
               <template v-if="user.role==='student'">
                 {{ props.item.state }}
+                <v-btn
+                  :href="'/lecture/' + props.item.id + '/attendance/issue'"
+                  color="green"
+                  fab
+                  small
+                  :disabled='isEditDisabled(props.item.id)'
+                >
+                  <v-icon>edit</v-icon>
+                </v-btn>
               </template>
             </td>
           </template>
@@ -129,8 +138,6 @@ export default {
         this.attendance_sheets_info.push(li.id)
       }
     })
-
-    console.log(this.attendance_sheets_info) // eslint-disable-line
 
     this.user = this.$store.state.auth.user
 
