@@ -84,7 +84,7 @@ export default {
       return this.students[issue.face_box.student_id].image
     },
     rejectIssue(issue) {
-      this.$axios.post(`lecture_instances/${this.$route.params.id}/attendance_issues/${issue.id}/resolve`)
+      this.$axios.post(`lecture_instances/${this.$route.params.id}/attendance_issues/${issue.id}/reject`)
         .then(() => {
           issue.state = 'rejected'
         }).catch((err) => {
