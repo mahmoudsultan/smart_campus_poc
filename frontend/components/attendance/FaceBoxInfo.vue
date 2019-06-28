@@ -38,7 +38,7 @@
           </v-stepper-content>
           <v-stepper-content step="2">
             <v-img
-              :src="`https://picsum.photos/500/300?image=${10}`"
+              :src="this.recievedStudentAfterSearch.studentImage"
               :lazy-src="`https://picsum.photos/10/6?image=${10}`"
               aspect-ratio="1"
               class="grey lighten-2"
@@ -94,6 +94,9 @@ export default {
     studentId: {
       type: String,
       required: false
+    },
+    students: {
+      type: Object
     }
   },
   data() {
@@ -127,7 +130,7 @@ export default {
         this.recievedStudentAfterSearch.studentId = response.data.student_id
         this.recievedStudentAfterSearch.studentName = response.data.name
         // TODO
-        this.recievedStudentAfterSearch.studentImage = response.data.image
+        this.recievedStudentAfterSearch.studentImage = this.students[this.recievedStudentAfterSearch.studentId].image
 
         this.studentFound = true
         this.searchLoading = false
@@ -136,7 +139,7 @@ export default {
         this.studentFound = false
         this.searchLoading = false
         // eslint-disable-next-line
-        console.err(err)
+        console.error(err)
       })
     },
     defaultSearchStudentObj() {

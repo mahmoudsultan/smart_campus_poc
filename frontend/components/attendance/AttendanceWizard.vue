@@ -107,6 +107,7 @@
         :studentName="showFaceBoxDialog.studentName"
         :studentId="showFaceBoxDialog.studentId"
         :studentImage="showFaceBoxDialog.studentImage"
+        :students="students"
         @close="showFaceBoxDialog.display = false"
         @assign="assignStudentToFaceBox"
         @delete="deleteFaceBoxOpened"
