@@ -59,16 +59,35 @@
               {{ props.item.date }}
             </td>
             <td class="text-xs-left">
-              <nuxt-link
-                :to="{name: 'lecture-id-attendance-new', params:{id:props.item.id}}"
-                v-if="user.role==='professor'"
-              >
-                <v-btn color="primary" fab small dark>
-                  <v-icon>assignment</v-icon>
+                <v-btn
+                  :href="'/lecture/' + props.item.id + '/attendance/new'"
+                  color="blue"
+                  fab
+                  small
+                  dark
+                  v-if="user.role==='professor'">
+                  <v-icon>add</v-icon>
                 </v-btn>
-              </nuxt-link>
+                <v-btn
+                  :href="'/lecture/' + props.item.id + '/attendance/edit'"
+                  color="green"
+                  fab
+                  small
+                  :disabled='isEditDisabled(props.item.id)'
+                  v-if="user.role==='professor'">
+                  <v-icon>edit</v-icon>
+                </v-btn>
               <template v-if="user.role==='student'">
                 {{ props.item.state }}
+                <v-btn
+                  :href="'/lecture/' + props.item.id + '/attendance/issue'"
+                  color="green"
+                  fab
+                  small
+                  :disabled='isEditDisabled(props.item.id)'
+                >
+                  <v-icon>edit</v-icon>
+                </v-btn>
               </template>
             </td>
           </template>
@@ -97,7 +116,8 @@ export default {
         sortable: true,
         value: 'date'
       }
-    ]
+    ],
+    attendance_sheets_info: []
   }),
   async mounted() {
     const lecId = this.$route.params.lec_id
@@ -106,13 +126,17 @@ export default {
     }
     this.lecture.id = lecId
     const lectureInstances = (await this.$axios.get(`/lecture_instances/${lecId}`)).data
-
-    lectureInstances.forEach((li) => {
+    // attendanceSheetInfo = {}
+    lectureInstances.forEach(async (li) => {
       const d = new Date(li.date)
       const result = Object.assign({}, li)
       delete result.date
       result.date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
       this.lecture_instances.push(result)
+      const attendanceSheet = (await this.$axios.get(`/lecture_instances/${li.id}/attendance_sheet`)).data
+      if (attendanceSheet !== null) {
+        this.attendance_sheets_info.push(li.id)
+      }
     })
 
     this.user = this.$store.state.auth.user
@@ -127,6 +151,11 @@ export default {
     } else {
       this.headers.push(
         { text: 'Attendence Sheet' })
+    }
+  },
+  methods: {
+    isEditDisabled: function (lectureInstanceId) {
+      return !this.attendance_sheets_info.includes(lectureInstanceId)
     }
   }
 }
