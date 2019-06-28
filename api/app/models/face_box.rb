@@ -12,8 +12,10 @@ class FaceBox < ApplicationRecord
   def serializable_hash(options = nil)
     # user = user.presence # if the relation doesn't have user_id in the
                          # selection user doesn't exist and is not even nil
+    puts self.state
+    puts self.attributes
     super(options).merge(
-      student_id: user&.student_id
+      student_id: self.user&.student_id
     )
   end
 end

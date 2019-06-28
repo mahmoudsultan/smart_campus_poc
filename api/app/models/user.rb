@@ -21,4 +21,10 @@ class User < ApplicationRecord
 
   validates :name, :department, presence: true
   validates :student_id, presence: true, if: :student?
+
+  def serializable_hash(options = nil)
+    super(options).merge(
+      image: self.image
+    )
+  end
 end
