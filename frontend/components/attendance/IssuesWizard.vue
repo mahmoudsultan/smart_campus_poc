@@ -1,41 +1,46 @@
 <template>
   <div>
-    <v-expansion-panel expand focusable>
-      <v-expansion-panel-content>
-        <div slot="header" class="title text-md-center">View Image</div>
+    <div class="tab-item-wrapper">
+      <v-expansion-panel expand focusable>
+        <v-expansion-panel-content>
+          <div slot="header" class="title text-md-center">View Image</div>
 
-        <attendance-image
-          key="issues-wizard"
-          :image="image"
-          :faceBoxes="faceBoxes"
-          allColor="rgba(247, 202, 24, 1)"
-        />
-      </v-expansion-panel-content>
-    </v-expansion-panel>
-    <v-card v-if="imageLoaded">
-      <v-layout row wrap>
-        <v-card max-width="200" v-for="issue in pendingIssues" :key="issue.id">
-          <v-layout row wrap>
-            <v-flex xs12>
-              <v-container grid-list-xs>
-                <v-layout row wrap justify-center align-center max-height="100">
-                  <v-flex xs6>
-                    <v-img :src="getFaceBoxImageForIssue(issue)" />
-                  </v-flex>
-                  <v-flex xs6>
-                    <v-img :src="getStudentImageForIssue(issue)" />
-                  </v-flex>
-                </v-layout>
-                <v-layout row wrap>
-                  <v-btn @click="resolveIssue(issue)" flat color="success" block>resolve</v-btn>
-                  <v-btn @click="rejectIssue(issue)" flat color="error" block>reject</v-btn>
-                </v-layout>
-              </v-container>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </v-layout>
-    </v-card>
+          <attendance-image
+            key="issues-wizard"
+            :image="image"
+            :faceBoxes="faceBoxes"
+            allColor="rgba(247, 202, 24, 1)"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-card v-if="imageLoaded">
+        <v-layout row wrap>
+          <v-alert type="success" outline xs12 :value="!pendingIssues.length">
+            Attendance Sheet Has No Issues.
+          </v-alert>
+          <v-card max-width="200" v-for="issue in pendingIssues" :key="issue.id">
+            <v-layout row wrap>
+              <v-flex xs12>
+                <v-container grid-list-xs>
+                  <v-layout row wrap justify-center align-center max-height="100">
+                    <v-flex xs6>
+                      <v-img :src="getFaceBoxImageForIssue(issue)" />
+                    </v-flex>
+                    <v-flex xs6>
+                      <v-img :src="getStudentImageForIssue(issue)" />
+                    </v-flex>
+                  </v-layout>
+                  <v-layout row wrap>
+                    <v-btn @click="resolveIssue(issue)" flat color="success" block>resolve</v-btn>
+                    <v-btn @click="rejectIssue(issue)" flat color="error" block>reject</v-btn>
+                  </v-layout>
+                </v-container>
+              </v-flex>
+            </v-layout>
+          </v-card>
+        </v-layout>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -107,12 +112,17 @@ export default {
 
     context.drawImage(imageObj, 0, 0)
     this.imageObj = await this.loadImageObject(canvas.toDataURL('image/png'))
+    console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
 
     this.imageLoaded = true
+    console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
   }
 }
 </script>
 
 <style scoped>
-
+.tab-item-wrapper{
+  /* vuetify sets the v-tabs__container height to 48px */
+  height: calc(100vh - 48px)
+}
 </style>
