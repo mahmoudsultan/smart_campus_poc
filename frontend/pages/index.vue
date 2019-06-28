@@ -127,7 +127,7 @@ export default {
     if (this.user.image.url != null) {
       this.imageUrl = this.user.image.url.split('/')
       // this.imageUrl.splice(0, 2)
-      console.log(this.imageUrl) // eslint-disable-line
+      // console.log(this.imageUrl) // eslint-disable-line
       this.imageUrl = this.imageUrl.join('/')
       this.imageUrl = baseUrl + this.imageUrl
       // this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
@@ -152,8 +152,8 @@ export default {
     },
     selectAvatar(id) {
       this.mainAvatar = this.user.avatars.filter(a => id === a.id)[0]
-      console.log('here') // eslint-disable-line
-      console.log(this.mainAvatar) // eslint-disable-line
+      // console.log('here') // eslint-disable-line
+      // console.log(this.mainAvatar) // eslint-disable-line
       // this.mainAvatar = this.user.image
     }
   }

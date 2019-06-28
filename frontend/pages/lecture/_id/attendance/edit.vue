@@ -129,7 +129,7 @@ export default {
           this.showUpdatedMessage = false
         }, 1000)
       }).catch((err) => {
-        console.log(err) // eslint-disable-line
+        console.error(err) // eslint-disable-line
       })
     },
     updateEditTab(e) {

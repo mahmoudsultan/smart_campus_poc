@@ -10,7 +10,7 @@ export default function ({ store, app: { $axios }, route, redirect }) {
     }
     config.headers['Content-Type'] = 'application/json'
     // eslint-disable-next-line no-console
-    console.log(config)
+    // console.log(config)
     return config
   })
 

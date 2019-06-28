@@ -32,8 +32,9 @@ class AttendanceIssuesController < ApplicationController
       render json: { errors: 'Only pending Issues can be resolved.' }, status: :unprocessible_entity
     else
       AttendanceIssue.transaction do
-        @issue.attendance_sheet.face_boxes << @issue.face_box
-        @issue.face_box.recognized!
+        new_face_box = @issue.face_box.dup
+        @issue.attendance_sheet.face_boxes << new_face_box
+        new_face_box.recognized!
         @issue.resolved!
       end
 

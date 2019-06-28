@@ -75,7 +75,7 @@
         </v-flex>
         <v-flex xs12 md6>
           <v-subheader>Or Choose by Image: </v-subheader>
-            <v-container fullscreen style="max-height: 90vh; overflow: scroll;"  fluid grid-list-sm>
+            <!-- <v-container fullscreen style="max-height: 90vh; overflow: scroll;"  fluid grid-list-sm>
             <v-layout row wrap>
               <v-flex v-for="student in choosedStudentNeighbors" :key="student.student_id" xs4>
                 <img
@@ -88,7 +88,7 @@
                 >
               </v-flex>
             </v-layout>
-          </v-container>
+          </v-container> -->
           <v-container fullscreen style="max-height: 90vh; overflow: scroll;"  fluid grid-list-sm>
             <v-layout row wrap>
               <v-flex v-for="student in students" :key="student.student_id" xs4>
@@ -114,15 +114,15 @@
 export default {
   props: {
     faceBoxes: Array,
-    students: Object,
-    nearestStudentsInfo: Object
+    students: Object
+    // nearestStudentsInfo: Object
   },
   data() {
     return {
       showDialog: true,
       onFocusFaceBoxIndex: 0,
       choosedStudent: null,
-      choosedStudentNeighbors: null,
+      // choosedStudentNeighbors: null,
       showSuccess: false,
       successMessage: ''
     }
@@ -137,6 +137,8 @@ export default {
     },
     onFocusFaceBoxImage() {
       if (this.onFocusFaceBoxIndex < this.faceBoxes.length) {
+        // console.log(this.faceBoxes.length) // eslint-disable-line
+        // console.log(this.onFocusFaceBoxIndex) // eslint-disable-line
         return this.faceBoxes[this.onFocusFaceBoxIndex].image
       } else {
         return null
@@ -162,7 +164,7 @@ export default {
     },
     chooseStudentByImage(student) {
       this.choosedStudent = student
-      this.choosedStudentNeighbors = this.getNearestStudentsInfo(student)
+      // this.choosedStudentNeighbors = this.getNearestStudentsInfo(student)
       this.$vuetify.goTo('#chosen_student')
     },
     assignChoosedStudentToOnFocusFaceBox() {
@@ -174,7 +176,7 @@ export default {
       this.showSucessAssignmentMessage(this.choosedStudent)
       this.moveOnFocusFaceBoxLeft()
       this.choosedStudent = null
-      this.choosedStudentNeighbors = null
+      // this.choosedStudentNeighbors = null
     },
     moveOnFocusFaceBox(move) {
       this.onFocusFaceBoxIndex = (this.onFocusFaceBoxIndex + move) % this.faceBoxes.length
@@ -183,15 +185,17 @@ export default {
       this.moveOnFocusFaceBox(1)
     },
     moveOnFocusFaceBoxLeft() {
-      this.moveOnFocusFaceBox(-1)
-    },
-    getNearestStudentsInfo(student) {
-      const nearStudentsInfo = this.nearestStudentsInfo[student.student_id].map((nearID) => {
-        return this.students.nearID
-      })
-
-      return nearStudentsInfo
+      if (this.onFocusFaceBoxIndex > 0) {
+        this.moveOnFocusFaceBox(-1)
+      }
     }
+    // ,getNearestStudentsInfo(student) {
+    //   const nearStudentsInfo = this.nearestStudentsInfo[student.student_id].map((nearID) => {
+    //     return this.students.nearID
+    //   })
+
+    //   return nearStudentsInfo
+    // }
   },
   watch: {
     faceBoxes: function () {

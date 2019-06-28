@@ -65,13 +65,13 @@ export default {
     },
     removeAvatar(avatar) {
       // eslint-disable-next-line no-console
-      console.log('remove')
+      // console.log('remove')
 
       this.$emit('remove', avatar.id)
     },
     selectAvatar(avatar) {
       // eslint-disable-next-line no-console
-      console.log('select')
+      // console.log('select')
       this.$emit('select', avatar.id)
     }
   }

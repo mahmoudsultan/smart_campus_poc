@@ -129,7 +129,7 @@ export default {
         this.email = ''
         this.password = ''
         // eslint-disable-next-line no-console
-        console.log(err)
+        console.error(err)
       })
     },
 
