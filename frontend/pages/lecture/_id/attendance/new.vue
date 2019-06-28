@@ -170,7 +170,7 @@ export default {
         */
         this.image = attendanceResponse.data.image
         this.faceBoxes = attendanceResponse.data.face_boxes
-        console.log(this.faceBoxes) // eslint-disable-line
+        // console.log(this.faceBoxes) // eslint-disable-line
         // this.faceBoxes = attendanceResponse.data.face_boxes.map((faceBox, index) => {
         //   return { ...faceBox, ...{ id: index } }
         // })
@@ -217,7 +217,7 @@ export default {
     }
   },
   mounted: async function () {
-    console.log('Hello') // eslint-disable-line
+    // console.log('Hello') // eslint-disable-line
     await this.$axios.get(`lecture_instances/${this.$route.params.id}/place`).then((response) => {
       this.lectureLocation = response.data.name
       this.lectureLocationId = response.data.id

@@ -112,10 +112,10 @@ export default {
 
     context.drawImage(imageObj, 0, 0)
     this.imageObj = await this.loadImageObject(canvas.toDataURL('image/png'))
-    console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
+    // console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
 
     this.imageLoaded = true
-    console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
+    // console.log(this.imageObj, this.imageLoaded) // eslint-disable-line
   }
 }
 </script>

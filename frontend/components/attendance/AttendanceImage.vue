@@ -102,7 +102,7 @@ export default {
       this.scratchPadCanvas.height = attendanceImage.clientHeight
     },
     faceBoxDimensions(faceBox) {
-      console.log('faceBoxDimension()', faceBox) // eslint-disable-line
+      // console.log('faceBoxDimension()', faceBox) // eslint-disable-line
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
         return Number.parseInt(v) * this.ratio
       })
@@ -112,7 +112,7 @@ export default {
       return [x1, y1, width, height]
     },
     faceBoxDimensionsNotRatioed(faceBox) {
-      console.log('faceBoxDimensionsNotRatioed()', faceBox) // eslint-disable-line
+      // console.log('faceBoxDimensionsNotRatioed()', faceBox) // eslint-disable-line
       const [x1, y1, x2, y2] = _.map(faceBox.boundaries.split(','), (v) => {
         return Number.parseInt(v)
       })
@@ -247,7 +247,10 @@ export default {
 
     document.addEventListener('keyup', this.handleKeyUp)
   },
-  updated() {
+  async updated() {
+    await this.drawCanvas()
+    this.buildOffScreenImageCanvas()
+
     const canvas = document.getElementById(this.attendanceCanvasId)
     canvas.addEventListener('mousedown', this.handleMouseDownOnCanvas)
     canvas.addEventListener('mousemove', this.handleMouseMoveOnCanvas)

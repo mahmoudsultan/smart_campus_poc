@@ -123,12 +123,12 @@ export const actions = {
       const deletedAvatarsObj = { data: JSON.stringify({ avatars: state.deletedAvatarsIds }) }
       const deletedIds = (await this.$axios.delete('/users/avatars', deletedAvatarsObj)).data.ids
       // eslint-disable-next-line no-console
-      console.log(deletedIds)
+      // console.log(deletedIds)
       const newUser = updateResponse.data.data
 
       newUser.avatars = newUser.avatars.filter(a => deletedIds.indexOf(a.id) === -1)
       // eslint-disable-next-line no-console
-      console.log(newUser)
+      // console.log(newUser)
       commit('setSession', { headers: state.headers, user: newUser, roles: state.roles })
       state.deletedAvatars = []
       resolve(newUser)
