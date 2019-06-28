@@ -2,48 +2,84 @@
   <v-layout>
     <v-flex xs12>
       <v-card>
-        <v-card-title class="justify-center display-3 font-weight-black">
+        <v-card-title class="card-title-bg white--text justify-center display-3 font-weight-black">
           {{ lecture.title }}
         </v-card-title>
 
         <v-divider />
+        <v-layout row wrap>
+          <v-flex xs12 sm6>
+            <v-list>
+              <v-list-tile>
+                <v-layout row wrap>
+                  <v-flex xs6>
+                    <v-list-tile-content class="font-weight-bold">Code:</v-list-tile-content>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-list-tile-content class="align-content-start">
+                      {{ lecture.code }}
+                    </v-list-tile-content>
+                  </v-flex>
+                </v-layout>
+              </v-list-tile>
 
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-content>Code:</v-list-tile-content>
-            <v-list-tile-content class="align-end">
-              {{ lecture.code }}
-            </v-list-tile-content>
-          </v-list-tile>
+              <v-list-tile>
+                <v-layout row wrap>
+                  <v-flex xs6>
+                    <v-list-tile-content class="font-weight-bold">Building:</v-list-tile-content>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-list-tile-content class="align-content-start">
+                      {{ lecture.building_name }}
+                    </v-list-tile-content>
+                  </v-flex>
+                </v-layout>
+              </v-list-tile>
 
-          <v-list-tile>
-            <v-list-tile-content>Building:</v-list-tile-content>
-            <v-list-tile-content class="align-end">
-              {{ lecture.building_name }}
-            </v-list-tile-content>
-          </v-list-tile>
+              <v-list-tile>
+                <v-layout row wrap>
+                  <v-flex xs6>
+                    <v-list-tile-content class="font-weight-bold">Class:</v-list-tile-content>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-list-tile-content class="align-content-start">
+                      {{ lecture.klass_name }}
+                    </v-list-tile-content>
+                  </v-flex>
+                </v-layout>
+              </v-list-tile>
+            </v-list>
+          </v-flex>
+          <v-flex xs12 sm6>
+            <v-list>
+              <v-list-tile>
+                <v-layout row wrap>
+                  <v-flex xs6>
+                    <v-list-tile-content class="font-weight-bold">Start Slot:</v-list-tile-content>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-list-tile-content class="align-content-start">
+                      {{ lecture.start_timeslot }}
+                    </v-list-tile-content>
+                  </v-flex>
+                </v-layout>
+              </v-list-tile>
 
-          <v-list-tile>
-            <v-list-tile-content>Class:</v-list-tile-content>
-            <v-list-tile-content class="align-end">
-              {{ lecture.klass_name }}
-            </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile>
-            <v-list-tile-content>Start Slot:</v-list-tile-content>
-            <v-list-tile-content class="align-end">
-              {{ lecture.start_timeslot }}
-            </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile>
-            <v-list-tile-content>End Slot:</v-list-tile-content>
-            <v-list-tile-content class="align-end">
-              {{ lecture.end_timeslot }}
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
+              <v-list-tile>
+                <v-layout row wrap>
+                  <v-flex xs6>
+                    <v-list-tile-content class="font-weight-bold">End Slot:</v-list-tile-content>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-list-tile-content class="align-content-start">
+                      {{ lecture.end_timeslot }}
+                    </v-list-tile-content>
+                  </v-flex>
+                </v-layout>
+              </v-list-tile>
+            </v-list>
+          </v-flex>
+        </v-layout>
         <v-divider />
 
         <v-data-table
@@ -58,7 +94,7 @@
             <td class="text-xs-left">
               {{ props.item.date }}
             </td>
-            <td class="text-xs-left">
+            <td class="text-xs-center">
                 <v-btn
                   :href="'/lecture/' + props.item.id + '/attendance/new'"
                   color="blue"
@@ -150,7 +186,7 @@ export default {
       })
     } else {
       this.headers.push(
-        { text: 'Attendence Sheet' })
+        { text: 'Attendence Sheet', sortable: false, align: 'center' })
     }
   },
   methods: {
@@ -160,3 +196,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.card-title-bg {
+  background-color: #16d6cf;
+  background-image: linear-gradient(147deg, #16d6cf 0%, #435bb9 74%);
+}
+</style>
