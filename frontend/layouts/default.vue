@@ -16,8 +16,8 @@
               color="white"
             >
               <img
-                v-if="user.avatars && user.avatars.length"
-                :src="user.avatars[0].image"
+                v-if="user.image"
+                :src="this.$axios.defaults.baseURL + user.image.url"
               >
               <v-icon v-else dark size="35">
                 account_circle
@@ -104,7 +104,7 @@ export default {
           to: '/timetable'
         }
       ],
-      title: 'University System'
+      title: 'Alexandria University System'
     }
   },
 
