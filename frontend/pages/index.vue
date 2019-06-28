@@ -124,16 +124,18 @@ export default {
   mounted() {
     this.fetchAvatars()
     const baseUrl = this.$axios.defaults.baseURL
-    this.imageUrl = this.user.image.url.split('/')
-    // this.imageUrl.splice(0, 2)
-    console.log(this.imageUrl) // eslint-disable-line
-    this.imageUrl = this.imageUrl.join('/')
-    this.imageUrl = baseUrl + this.imageUrl
-    // this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
-    this.mainAvatar = true
-    console.log(this.imageUrl) // eslint-disable-line
-    console.log(this.user.image.url) // eslint-disable-line
-    console.log(this.user.image.url) // eslint-disable-line
+    if (this.user.image.url != null) {
+      this.imageUrl = this.user.image.url.split('/')
+      // this.imageUrl.splice(0, 2)
+      console.log(this.imageUrl) // eslint-disable-line
+      this.imageUrl = this.imageUrl.join('/')
+      this.imageUrl = baseUrl + this.imageUrl
+      // this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
+      this.mainAvatar = true
+    }
+    // console.log(this.imageUrl) // eslint-disable-line
+    // console.log(this.user.image.url) // eslint-disable-line
+    // console.log(this.user.image.url) // eslint-disable-line
   },
   methods: {
     ...mapMutations({ 'addAvatar': 'auth/addAvatar', 'deleteAvatar': 'auth/deleteAvatar' }),
