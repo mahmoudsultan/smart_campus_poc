@@ -2,6 +2,7 @@
 
 class LectureInstancesController < ApplicationController
   before_action :set_lecture_instance, only: %i[show place students attendance_sheet]
+  before_action :set_lecture, only: %i[get_by_lec_id]
   before_action :authenticate_user!
 
   def show
@@ -28,11 +29,24 @@ class LectureInstancesController < ApplicationController
                             .select(%i[id date week_number])
     elsif current_user.role == 'student'
         puts 'student'
-        lecture_instances = FaceBox.joins({attendance_sheet: :lecture_instance},:user)
-                        .where(lecture_instances: {lecture_id: params[:lec_id]}, 
-                        users: {uid: request.headers[:uid]})
-                        .select(:state, 'lecture_instances.id', 'lecture_instances.id',
-                                'lecture_instances.date', 'lecture_instances.week_number')
+        # user_lecture_instances = current_user.face_boxes.map(&:lecture_instance).pluck(:id)
+        lecture_instances = @lecture.lecture_instances
+        lecture_instances = lecture_instances.map(&:attributes).each do |lecture_instance|
+          puts lecture_instance
+          attendance_sheet = AttendanceSheet.where(lecture_instance_id: lecture_instance["id"]).last
+          if attendance_sheet
+            lecture_instance[:state] = FaceBox.where(user: current_user, attendance_sheet_id: attendance_sheet.id).last&.state&.capitalize || 'Not Detected'
+            puts lecture_instance[:state]
+          else
+            lecture_instance[:state] = "No Attendance Taken"
+          end
+          lecture_instance
+        end
+        # lecture_instances = FaceBox.joins({attendance_sheet: :lecture_instance},:user)
+        #                 .where(lecture_instances: {lecture_id: params[:lec_id]}, 
+        #                 users: {uid: request.headers[:uid]})
+        #                 .select(:state, 'lecture_instances.id', 'lecture_instances.id',
+        #                         'lecture_instances.date', 'lecture_instances.week_number', 'face_boxes.user_id')
     
     end
 
@@ -50,6 +64,10 @@ class LectureInstancesController < ApplicationController
   end
 
   private
+  def set_lecture
+    @lecture = Lecture.find(params[:lec_id])
+  end
+
 
   def set_lecture_instance
     @lecture_instance = LectureInstance.find(params[:id] || params[:lecture_instance_id])

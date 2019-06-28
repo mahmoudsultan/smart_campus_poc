@@ -82,12 +82,11 @@
           color="indigo"
         >
           <img
-            v-if="mainAvatar"
-            :src="this.imageUrl"
+            :src="imageUrl"
           >
-          <v-icon v-else dark size="130">
+          <!-- <v-icon dark size="130">
             account_circle
-          </v-icon>
+          </v-icon> -->
         </v-avatar>
         <v-card-text class="text-xs-center">
           <h4 class="card-title font-weight-light">
@@ -113,7 +112,8 @@ export default {
   components: { AvatarPicker },
   data: function () {
     return {
-      mainAvatar: ''
+      mainAvatar: '',
+      imageUrl: ''
     }
   },
 
@@ -121,17 +121,23 @@ export default {
     ...mapGetters({ 'user': 'auth/user' })
 
   },
+  watch: {
+    user: function (newVal) {
+      this.imageUrl = this.$axios.defaults.baseURL + newVal.image.url
+    }
+  },
   mounted() {
     this.fetchAvatars()
     const baseUrl = this.$axios.defaults.baseURL
-    if (this.user.image.url != null) {
-      this.imageUrl = this.user.image.url.split('/')
-      // this.imageUrl.splice(0, 2)
-      // console.log(this.imageUrl) // eslint-disable-line
-      this.imageUrl = this.imageUrl.join('/')
-      this.imageUrl = baseUrl + this.imageUrl
-      // this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
-      this.mainAvatar = true
+    console.log(this.user) // eslint-disable-line
+    if (this.user.image != null) {
+      if (this.user.image.url != null) {
+        console.log('heree') // eslint-disable-line
+        this.imageUrl = baseUrl + this.user.image.url
+        console.log(this.imageUrl) // eslint-disable-line
+        // this.mainAvatar = (this.user.avatars && this.user.avatars.length && this.user.avatars[0])
+        this.mainAvatar = true
+      }
     }
     // console.log(this.imageUrl) // eslint-disable-line
     // console.log(this.user.image.url) // eslint-disable-line
@@ -154,7 +160,7 @@ export default {
       this.mainAvatar = this.user.avatars.filter(a => id === a.id)[0]
       // console.log('here') // eslint-disable-line
       // console.log(this.mainAvatar) // eslint-disable-line
-      // this.mainAvatar = this.user.image
+      // this.mainAvatar = this.user.image.url
     }
   }
 
