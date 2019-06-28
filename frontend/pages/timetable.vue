@@ -60,9 +60,20 @@
                   :style="{ top: timeToY(slotsMap[lec.start_timeslot]) + cellSpacing + 'px',
                             height: minutesToPixels(slotsRangeToMinuites(lec.start_timeslot,lec.end_timeslot)) - cellSpacing + 'px' }"
                   @click="open(lec)"
-                  v-html="lectureToHtml(lec)"
                   class="my-event with-time"
-                />
+                >
+                <v-container grid-list-xs>
+                  <v-layout column>
+                    <v-flex xs12>
+                      <span class="font-weight-medium subheading">{{ lec.title }}</span>
+                    </v-flex>
+                    <v-flex class="lecture-time" xs12>
+                      <p>{{ slotsMap[lec.start_timeslot] }}</p>
+                      <p> to </p>
+                      <p>{{ slotsMap[lec.end_timeslot] }}</p>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
                 </nuxt-link>
               </template>
             </template>
@@ -193,7 +204,7 @@ export default {
     },
     lectureToHtml(lecture) {
       return `<div class=lecture-text>
-              <div>${lecture.title}</div>
+              <div>Definse Aganist the Dark Magic</div>
 
               <div>${this.slotsMap[lecture.start_timeslot]} to ${
   this.slotsMap[lecture.end_timeslot]
@@ -211,6 +222,8 @@ export default {
     padding: 10px;
   }
   .my-event {
+    background-color: #16d6cf;
+    background-image: linear-gradient(147deg, #16d6cf 0%, #435bb9 74%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -225,11 +238,19 @@ export default {
     left: 4px;
     margin-right: 8px;
     position: relative;
+    border-radius: 1rem;
 
     &.with-time {
+      white-space: normal;
+      text-decoration: none;
       position: absolute;
       right: 4px;
       margin-right: 0px;
+      border: 2px solid #fff;
     }
+  }
+  .lecture-time p {
+    margin: 0;
+    font-weight: bold;
   }
 </style>
