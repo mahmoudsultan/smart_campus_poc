@@ -78,13 +78,15 @@
               </v-flex>
               <v-flex xs12 sm6 class="pa-1">
                 <v-btn
+                  :href="'/lecture_details/' + this.lectureId"
                   ripple
                   block
                   depressed
                   color="grey lighten-2"
+                  nuxt
                 >
-                  <v-icon left>chevron_left</v-icon>
-                  Back to Lecture
+                    <v-icon left>chevron_left</v-icon>
+                    Back to Lecture
                 </v-btn>
               </v-flex>
             </v-layout>
