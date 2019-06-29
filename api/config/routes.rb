@@ -62,5 +62,9 @@ Rails.application.routes.draw do
   # Upload Image Route
   resources :users, only: [] do
     post 'image', to: 'users#upload_image'
+    collection do
+      get 'statistics', to: 'users#lecturer_statistics'
+      get 'courses', to: 'users#courses'
+    end
   end
 end

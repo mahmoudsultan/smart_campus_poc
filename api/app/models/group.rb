@@ -15,4 +15,8 @@ class Group < ApplicationRecord
   def students
     users.select(&:student?)
   end
+
+  def course
+    course_offering&.course
+  end
 end

@@ -43,6 +43,36 @@ class UsersController < ApplicationController
     render json: {message: e.message}, status: :unprocessable_entity
   end
 
+  def lecturer_statistics
+    # Statistics are number of courses, number of students, and number of lectures
+    # Get all groups that Lecturer is in
+    @user = current_user
+    groups = @user.groups
+    # Get Number of Students in those groups
+    number_of_students = groups.map(&:users).flatten.uniq.length - 1
+
+    # Get Number Of Distinct Courses using Groups
+    courses_codes = groups.map(&:course).map(&:code).uniq
+    number_of_courses = courses_codes.length
+
+    # Get Number Of Lectures through groups
+    number_of_lectures=  groups.map(&:lectures).flatten.uniq.length
+
+    statistics = {
+      courses: number_of_courses,
+      lectures: number_of_lectures,
+      students: number_of_students
+    }
+
+    render json: statistics, status: :ok
+  end
+
+  def courses
+    @user = current_user
+    groups = @user.groups
+    courses = groups.map(&:course_offering).map(&:course).uniq
+    render json: {courses: courses}, status: :ok
+  end
 
   private
   def set_user

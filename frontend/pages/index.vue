@@ -77,16 +77,11 @@
                   </v-card-title>
                   <v-card-text>
                     <p class="text-xs-center">
-                      <v-badge right color="blue-grey darken-4">
-                        <template v-slot:badge>
-                          <span> {{ numberOfIssues }} </span>
-                        </template>
-                        <v-icon
-                          size="90"
-                        >
-                          error
-                        </v-icon>
-                      </v-badge>
+                      <v-icon
+                        size="90"
+                      >
+                        error
+                      </v-icon>
                     </p>
                   </v-card-text>
                 </v-card>
@@ -150,6 +145,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 
 import Timetable from '@/components/profile/Timetable'
 import UpdateProfile from '@/components/profile/UpdateProfile'
@@ -161,17 +157,18 @@ export default {
   },
   data() {
     return {
+      statistics: {},
       labels: [
-        'Week 1',
-        'Week 2',
-        'Week 3',
-        'Week 4',
-        'Week 5',
-        'Week 6',
-        'Week 7',
-        'Week 8',
-        'Week 9',
-        'Week 10'
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        '10'
       ],
       value: [
         200,
@@ -185,29 +182,51 @@ export default {
         390,
         310
       ],
-      selectedCourseForAnalytics: null
+      selectedCourseForAnalytics: null,
+      courses: []
     }
   },
   computed: {
     ...mapGetters({ 'user': 'auth/user' }),
     numberOfCourses() {
-      return 3
+      if (this.statistics.courses === undefined) {
+        return '-'
+      } else {
+        return this.statistics.courses
+      }
     },
     numberOfLectures() {
-      return 10
+      if (this.statistics.lectures === undefined) {
+        return '-'
+      } else {
+        return this.statistics.lectures
+      }
     },
     numberOfStudents() {
-      return 300
-    },
-    numberOfIssues() {
-      return 10
-    },
-    courses() {
-      return [
-        'Demo Course 1',
-        'Demo Course 2',
-        'Demo Course 3'
-      ]
+      if (this.statistics.students === undefined) {
+        return '-'
+      } else {
+        return this.statistics.students
+      }
+    }
+  },
+  watch: {
+    selectedCourseForAnalytics: async (course) => {
+      const response = (await this.$axios.get(`course/${course}/attendance_statistics`)).data
+      this.values = response.values
+      this.labels = response.labels
+    }
+  },
+  async mounted() {
+    if (this.user.role === 'professor') {
+      // Get Statistics
+      const statisticsRequest = this.$axios.get('users/statistics')
+      const coursesRequest = this.$axios.get('users/courses')
+
+      await Promise.all([statisticsRequest, coursesRequest]).then(([statisticsResponse, coursesResponse]) => {
+        this.statistics = statisticsResponse.data
+        this.courses = _.map(coursesResponse.data.courses, (c) => { return c.title })
+      })
     }
   }
 }

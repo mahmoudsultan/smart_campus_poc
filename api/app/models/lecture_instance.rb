@@ -8,4 +8,8 @@ class LectureInstance < ApplicationRecord
   has_many :attendance_sheets
 
   validates :lecture, :week_number, :date, presence: true
+
+  def course
+    course_offering.course
+  end
 end

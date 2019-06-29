@@ -109,7 +109,7 @@ export default {
 
     this.fillTimeTableMap(tt)
 
-    this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
+    // this.$refs.calendar.scrollToTime(this.firstSlotHour + ':00')
   },
   methods: {
     menuItemReact(item, menuItem) {

@@ -1,5 +1,5 @@
 class CoursesController < ApplicationController
-  before_action :authenticate_user!, except: [:home]
+  before_action :authenticate_user!, except: %i[home attendance_statistics]
   load_and_authorize_resource
 
 
@@ -37,6 +37,19 @@ class CoursesController < ApplicationController
   def home
     render json: {}
   end
+
+  def attendance_statistics
+    # @user = current_user
+    # @course = Course.where(title: params[title], )
+
+    # Get all course offerings
+    # Get all groups
+    # Filter groups that has the lecturer in it
+    # Sort groups by the year and term of its course offering and choose last
+    # For group get each lecture instances
+    # Get attendance sheet for each lecture instance and count faceboxes
+  end
+
 end
 
 
