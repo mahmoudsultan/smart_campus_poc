@@ -94,9 +94,14 @@ export default {
       drawer: true,
       items: [
         {
-          icon: 'person',
+          icon: 'home',
           title: 'Home',
           to: '/'
+        },
+        {
+          icon: 'person',
+          title: 'Profile',
+          to: '/profile'
         },
         {
           icon: 'event',
