@@ -171,7 +171,13 @@ export default {
           }
         */
         this.image = attendanceResponse.data.image
-        this.faceBoxes = attendanceResponse.data.face_boxes
+        this.faceBoxes = _.map(attendanceResponse.data.face_boxes, (faceBox) => {
+          if (faceBox.student_id === 'UNKNOWN') {
+            faceBox.student_id = null
+          }
+
+          return faceBox
+        })
         // console.log(this.faceBoxes) // eslint-disable-line
         // this.faceBoxes = attendanceResponse.data.face_boxes.map((faceBox, index) => {
         //   return { ...faceBox, ...{ id: index } }
